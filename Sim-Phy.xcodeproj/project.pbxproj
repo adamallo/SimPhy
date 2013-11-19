@@ -7,11 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		F1F06EC2183BF9D600115A5E /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F1F06EB9183BF9D600115A5E /* main.c */; };
-		F1F06EC3183BF9D600115A5E /* num_methods.c in Sources */ = {isa = PBXBuildFile; fileRef = F1F06EBA183BF9D600115A5E /* num_methods.c */; };
-		F1F06EC4183BF9D600115A5E /* sampling.c in Sources */ = {isa = PBXBuildFile; fileRef = F1F06EBC183BF9D600115A5E /* sampling.c */; };
-		F1F06EC5183BF9D600115A5E /* sql_managing.c in Sources */ = {isa = PBXBuildFile; fileRef = F1F06EBE183BF9D600115A5E /* sql_managing.c */; };
-		F1F06EC6183BF9D600115A5E /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = F1F06EC0183BF9D600115A5E /* trees.c */; };
+		F14CADCD183C046900A8F7AF /* main.c in Sources */ = {isa = PBXBuildFile; fileRef = F14CADC4183C046900A8F7AF /* main.c */; };
+		F14CADCE183C046900A8F7AF /* num_methods.c in Sources */ = {isa = PBXBuildFile; fileRef = F14CADC5183C046900A8F7AF /* num_methods.c */; };
+		F14CADCF183C046900A8F7AF /* sampling.c in Sources */ = {isa = PBXBuildFile; fileRef = F14CADC7183C046900A8F7AF /* sampling.c */; };
+		F14CADD0183C046900A8F7AF /* sql_managing.c in Sources */ = {isa = PBXBuildFile; fileRef = F14CADC9183C046900A8F7AF /* sql_managing.c */; };
+		F14CADD1183C046900A8F7AF /* trees.c in Sources */ = {isa = PBXBuildFile; fileRef = F14CADCB183C046900A8F7AF /* trees.c */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -27,16 +27,16 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F14CADC4183C046900A8F7AF /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
+		F14CADC5183C046900A8F7AF /* num_methods.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = num_methods.c; sourceTree = "<group>"; };
+		F14CADC6183C046900A8F7AF /* num_methods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = num_methods.h; sourceTree = "<group>"; };
+		F14CADC7183C046900A8F7AF /* sampling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sampling.c; sourceTree = "<group>"; };
+		F14CADC8183C046900A8F7AF /* sampling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sampling.h; sourceTree = "<group>"; };
+		F14CADC9183C046900A8F7AF /* sql_managing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = sql_managing.c; sourceTree = "<group>"; };
+		F14CADCA183C046900A8F7AF /* sql_managing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sql_managing.h; sourceTree = "<group>"; };
+		F14CADCB183C046900A8F7AF /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
+		F14CADCC183C046900A8F7AF /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
-		F1F06EB9183BF9D600115A5E /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = main.c; path = "Sim-Phy/main.c"; sourceTree = SOURCE_ROOT; };
-		F1F06EBA183BF9D600115A5E /* num_methods.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = num_methods.c; path = "Sim-Phy/num_methods.c"; sourceTree = SOURCE_ROOT; };
-		F1F06EBB183BF9D600115A5E /* num_methods.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = num_methods.h; path = "Sim-Phy/num_methods.h"; sourceTree = SOURCE_ROOT; };
-		F1F06EBC183BF9D600115A5E /* sampling.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sampling.c; path = "Sim-Phy/sampling.c"; sourceTree = SOURCE_ROOT; };
-		F1F06EBD183BF9D600115A5E /* sampling.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sampling.h; path = "Sim-Phy/sampling.h"; sourceTree = SOURCE_ROOT; };
-		F1F06EBE183BF9D600115A5E /* sql_managing.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = sql_managing.c; path = "Sim-Phy/sql_managing.c"; sourceTree = SOURCE_ROOT; };
-		F1F06EBF183BF9D600115A5E /* sql_managing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = sql_managing.h; path = "Sim-Phy/sql_managing.h"; sourceTree = SOURCE_ROOT; };
-		F1F06EC0183BF9D600115A5E /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; name = trees.c; path = "Sim-Phy/trees.c"; sourceTree = SOURCE_ROOT; };
-		F1F06EC1183BF9D600115A5E /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = trees.h; path = "Sim-Phy/trees.h"; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -50,10 +50,26 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		F14CADC3183C044C00A8F7AF /* src */ = {
+			isa = PBXGroup;
+			children = (
+				F14CADC4183C046900A8F7AF /* main.c */,
+				F14CADC5183C046900A8F7AF /* num_methods.c */,
+				F14CADC6183C046900A8F7AF /* num_methods.h */,
+				F14CADC7183C046900A8F7AF /* sampling.c */,
+				F14CADC8183C046900A8F7AF /* sampling.h */,
+				F14CADC9183C046900A8F7AF /* sql_managing.c */,
+				F14CADCA183C046900A8F7AF /* sql_managing.h */,
+				F14CADCB183C046900A8F7AF /* trees.c */,
+				F14CADCC183C046900A8F7AF /* trees.h */,
+			);
+			path = src;
+			sourceTree = "<group>";
+		};
 		F1C36ED7180C620700E35F5D = {
 			isa = PBXGroup;
 			children = (
-				F1C36EE2180C620700E35F5D /* Sim-Phy */,
+				F14CADC3183C044C00A8F7AF /* src */,
 				F1C36EE1180C620700E35F5D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -64,23 +80,6 @@
 				F1C36EE0180C620700E35F5D /* Sim-Phy */,
 			);
 			name = Products;
-			sourceTree = "<group>";
-		};
-		F1C36EE2180C620700E35F5D /* Sim-Phy */ = {
-			isa = PBXGroup;
-			children = (
-				F1F06EB9183BF9D600115A5E /* main.c */,
-				F1F06EBA183BF9D600115A5E /* num_methods.c */,
-				F1F06EBB183BF9D600115A5E /* num_methods.h */,
-				F1F06EBC183BF9D600115A5E /* sampling.c */,
-				F1F06EBD183BF9D600115A5E /* sampling.h */,
-				F1F06EBE183BF9D600115A5E /* sql_managing.c */,
-				F1F06EBF183BF9D600115A5E /* sql_managing.h */,
-				F1F06EC0183BF9D600115A5E /* trees.c */,
-				F1F06EC1183BF9D600115A5E /* trees.h */,
-			);
-			name = "Sim-Phy";
-			path = SimPhy;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -134,11 +133,11 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				F1F06EC5183BF9D600115A5E /* sql_managing.c in Sources */,
-				F1F06EC2183BF9D600115A5E /* main.c in Sources */,
-				F1F06EC3183BF9D600115A5E /* num_methods.c in Sources */,
-				F1F06EC6183BF9D600115A5E /* trees.c in Sources */,
-				F1F06EC4183BF9D600115A5E /* sampling.c in Sources */,
+				F14CADD0183C046900A8F7AF /* sql_managing.c in Sources */,
+				F14CADCD183C046900A8F7AF /* main.c in Sources */,
+				F14CADCE183C046900A8F7AF /* num_methods.c in Sources */,
+				F14CADD1183C046900A8F7AF /* trees.c in Sources */,
+				F14CADCF183C046900A8F7AF /* sampling.c in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
