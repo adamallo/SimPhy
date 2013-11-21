@@ -989,7 +989,7 @@ int main (int argc, char **argv)
             /// Statistical output </dd></dl>
             if (stats==1)
             {
-                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%e;%e;%e\n",n_ldigits,curr_ltree,st_losses,st_dups,st_transf,st_leaves,st_gleaves,t_height_cu/ng_trees,t_height_bl/ng_trees,((long double)t_lcoals)/ng_trees);
+                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Le;%Le;%Le\n",n_ldigits,curr_ltree,st_losses,st_dups,st_transf,st_leaves,st_gleaves,t_height_cu/ng_trees,t_height_bl/ng_trees,((long double)t_lcoals)/ng_trees);
             }
             // *******
             /// Gene tree I/O close</dd></dl>

@@ -5410,11 +5410,8 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
 long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
 {
     FILE *reconlg_outfile=NULL;
-    g_node *wg_node=NULL, **gn_pointers=NULL;
+    g_node *wg_node=NULL;
     unsigned int i=0;
-    
-    
-    gn_pointers=calloc(gene_tree->max_childs,sizeof(g_node *));
     
     CollapseGTree(gene_tree,1,1);
     
