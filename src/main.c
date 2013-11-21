@@ -989,12 +989,13 @@ int main (int argc, char **argv)
             /// Statistical output </dd></dl>
             if (stats==1)
             {
-                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Lf;%Lf;%Lf\n",n_ldigits,curr_ltree,st_losses,st_dups,st_transf,st_leaves,st_gleaves,t_height_cu/ng_trees,t_height_bl/ng_trees,((long double)t_lcoals)/ng_trees);
+                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%e;%e;%e\n",n_ldigits,curr_ltree,st_losses,st_dups,st_transf,st_leaves,st_gleaves,t_height_cu/ng_trees,t_height_bl/ng_trees,((long double)t_lcoals)/ng_trees);
             }
             // *******
             /// Gene tree I/O close</dd></dl>
             fclose(g_outfile);
-            fclose(weirdg_outfile);
+            if (weirdness!=0)
+                fclose(weirdg_outfile);
             
 #endif
         }
@@ -1087,7 +1088,7 @@ int main (int argc, char **argv)
 
 void PrintUsage(void)
 {
-    printf("\nUsage: ./SimPhy -[Parameter code] value ...\n\nEssential parameters:\n--------------------\n-Guide tree (\"or\" list):\n\t-Fixed species tree:\n\t\t-S newick_tree string:(\"(...);\")\n\t-Species tree simulation parameters:\n\t\t-Sb birth rate (relative to time if -G != 1) rational:(0,...);\n\t\t-Sd death rate (relative to time if -G != 1) rational:[birth_rate,...);\n\t\t-Sl number of leaves natural:[2,...);\n\t\t-St max tree time rational:(0,...);\n\t\t-So internal branch length for outgroup addition:[0,...);\n\t-Fixed locus tree:\n\t\t-L newick_tree string:(\"(...);\")\n-Number of trees:\n\t-R general replicates natural:[1,...) (number of locus trees, with one gene tree from each, instead if there is no locus tree, which implies using it as number of gene trees);\n\t-Rl locus trees natural:[1,...); \n\t-Rg number of gene trees from each locus tree natural:[1,...);\n-Effective haploid population size:\n\t-P natural:[1,...);\n\nOptional parameters\n-------------------\n-Locus tree simulation parameters:\n\t-Lb birth rate (relative to generations) rational:(0,...);\n\t-Ld death rate (relative to generations) rational:(0,...);\n\t-Lt transfer rate (relative to generations) rational:(0,...)\n\t-Ll minimum number of leaves natural:[2,species_tree_n_leaves];\n\t-Ls minimum number of leaves from different species. natural:[2,species_tree_n_leaves];\n-Generation time:\n\t-G generation time rational:(0,...) (if it is not set, the species tree is considered with time in number of generations);\n-Substitution rate:\n\t-U rational:(0,...);\n-Substitution rate heterogeneity:\n\t-Hs Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Lineage specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hl Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene family (gene tree) specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hg Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene tree branch specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n-Bounded Multispecies Coalescent sampling related parameters:\n\t-E Brent root epsilon (maximum difference between iterations to consider them convergent): rational: (0,...);\n\tMinimum number of coalescent units to the bound to use a politomy. rational: (0,...) (0 = no politomies);\n-Verbosity:\n\t-V natural:[0-6];\n-General settings:\n\t -Cs seed of the random number generator. rational: (0,...)\n-Output related settings:\n\t-O common prefix for output files string:*;\n\t-Os logical flag to activate the csv *.stats file with some summary statistics binary;\n\t-Or logical flag to activate the *.recon file with the reconciliation between each gene tree and the common species tree binary;\n\t-Od logical flag to activate the output of a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.\n\t-Op logical flag to activate the output of the file prefix.params with the main params of the simulation\n\nExample\n\t./SimPhy -Rl 10 -Rg 10 -Lb 0.001 -Ld 0.0011 -P 200 -V 2 -O test1 -S \"((A:250#2000/2,B:250):250,(C:300,D:300):200);\"");
+    printf("\nUsage: ./SimPhy -[Parameter code] value ...\n\nEssential parameters:\n--------------------\n-Guide tree (\"or\" list):\n\t-Fixed species tree:\n\t\t-S newick_tree string:(\"(...);\")\n\t-Species tree simulation parameters:\n\t\t-Sb birth rate (relative to time if -G != 1) rational:(0,...);\n\t\t-Sd death rate (relative to time if -G != 1) rational:[birth_rate,...);\n\t\t-Sl number of leaves natural:[2,...);\n\t\t-St max tree time rational:(0,...);\n\t\t-So internal branch length for outgroup addition:[0,...);\n\t-Fixed locus tree:\n\t\t-L newick_tree string:(\"(...);\")\n-Number of trees:\n\t-R general replicates natural:[1,...) (number of locus trees, with one gene tree from each, instead if there is no locus tree, which implies using it as number of gene trees);\n\t-Rl locus trees natural:[1,...); \n\t-Rg number of gene trees from each locus tree natural:[1,...);\n-Effective haploid population size:\n\t-P natural:[1,...);\n\nOptional parameters\n-------------------\n-Locus tree simulation parameters:\n\t-Lb birth rate (relative to generations) rational:(0,...);\n\t-Ld death rate (relative to generations) rational:(0,...);\n\t-Lt transfer rate (relative to generations) rational:(0,...)\n\t-Ll minimum number of leaves natural:[2,species_tree_n_leaves];\n\t-Ls minimum number of leaves from different species. natural:[2,species_tree_n_leaves];\n-Generation time:\n\t-G generation time rational:(0,...) (if it is not set, the species tree is considered with time in number of generations);\n-Substitution rate:\n\t-U rational:(0,...);\n-Substitution rate heterogeneity:\n\t-Hs Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Lineage specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hl Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene family (gene tree) specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hg Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene tree branch specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n-Bounded Multispecies Coalescent sampling related parameters:\n\t-E Brent root epsilon (maximum difference between iterations to consider them convergent): rational: (0,...);\n\tMinimum number of coalescent units to the bound to use a politomy. rational: (0,...) (0 = no politomies);\n-Verbosity:\n\t-V natural:[0-6];\n-General settings:\n\t -Cs seed of the random number generator. rational: (0,...)\n-Output related settings:\n\t-O common prefix for output files string:*;\n\t-Os logical flag to activate the csv *.stats file with some summary statistics binary;\n\t-Or logical flag to activate the *.recon file with the reconciliation between each gene tree and the common species tree binary;\n\t-Od logical flag to activate the output of a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.\n\t-Op logical flag to activate the output of the file prefix.params with the main params of the simulation\n\nExample\n\t./SimPhy -Rl 10 -Rg 10 -Lb 0.001 -Ld 0.0011 -P 200 -V 2 -O test1 -S \"((A:250#2000/2,B:250):250,(C:300,D:300):200);\"\n");
     
     fflush(stdout);
     
@@ -1830,7 +1831,7 @@ void PrintSettings(char * s_tree_newick, sampling_unit gen_time, char * l_tree_n
                 printf("\n\t\t-Time units: generations\n");
             }
         }
-        if (get_sampling(lb_rate)==0 && get_sampling(ld_rate)==0 && get_sampling(lt_rate)==0)
+        if (is_sampling_set(lb_rate)!=0 && is_sampling_set(ld_rate)!=0 && is_sampling_set(lt_rate)!=0)
         {
             printf("\n\t-Locus tree: directly obtained from the species tree (no birth-death process)\n");
         }
@@ -2155,7 +2156,7 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
 #endif
         if (get_sampling(gen_time)!=1)
         {
-            printf("\n\t\t-Time units: time\n\t\t-Generation time %lf\n",get_sampling(gen_time));
+            printf("\n\t\t-Time units: time\n\t\t-Generation time %e\n",get_sampling(gen_time));
 #ifdef DEBUG
             fflush(stdout);
 #endif
@@ -2178,7 +2179,7 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
 #endif
             if (get_sampling(gen_time)!=1)
             {
-                printf("\n\t\t-Time units: time\n\t\t-Generation time %lf\n",get_sampling(gen_time));
+                printf("\n\t\t-Time units: time\n\t\t-Generation time %e\n",get_sampling(gen_time));
 #ifdef DEBUG
                 fflush(stdout);
 #endif
@@ -2195,10 +2196,10 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
         {
             if (get_sampling(gen_time)!=1)
             {
-                printf("\n\t-Species tree: Birth-death simulation\n\t\t-Birth rate (per generation): %lf",get_sampling(sb_rate));
-                printf("\n\t\t-Death rate (per generation): %lf",get_sampling(sd_rate));
+                printf("\n\t-Species tree: Birth-death simulation\n\t\t-Birth rate (per generation): %e",get_sampling(sb_rate));
+                printf("\n\t\t-Death rate (per generation): %e",get_sampling(sd_rate));
                 if (get_sampling(outgroup)>0||outgroup.distribution_code!=0)
-                    printf("\n\t\t-Outgroup addition:\n\t\t\t-Internal branch length deviation from the half of the height of the ingroup: %lf",get_sampling(outgroup));
+                    printf("\n\t\t-Outgroup addition:\n\t\t\t-Internal branch length deviation from the half of the height of the ingroup: %e",get_sampling(outgroup));
                 else
                     printf("\n\t\t-Outgroup addition: No addition");
                 
@@ -2212,22 +2213,22 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
                 
                 
                 if (get_sampling(s_time)>0||s_time.distribution_code!=0)
-                    printf("\n\t\t\t-Time: %lf",get_sampling(s_time));
+                    printf("\n\t\t\t-Time: %e",get_sampling(s_time));
                 else
                 {
                     sprintf(buffer,"%s","Not used");
                     printf("\n\t\t\t-Time: %s",buffer);
                 }
                 
-                printf("\n\t\t-Time units: time\n\t\t-Generation time %lf\n",get_sampling(gen_time));
+                printf("\n\t\t-Time units: time\n\t\t-Generation time %e\n",get_sampling(gen_time));
                 printf("\t\tNOTE: The intensity of the b-d process is going to correspond to the time units instead of the number of generations\n");
             }
             else
             {
-                printf("\n\t-Species tree: Birth-death simulation\n\t\t-Birth rate: %lf",get_sampling(sb_rate));
-                printf("\n\t\t-Death rate: %lf",get_sampling(sd_rate));
+                printf("\n\t-Species tree: Birth-death simulation\n\t\t-Birth rate: %e",get_sampling(sb_rate));
+                printf("\n\t\t-Death rate: %e",get_sampling(sd_rate));
                 if (get_sampling(outgroup)>0||outgroup.distribution_code!=0)
-                    printf("\n\t\t-Outgroup addition:\n\t\t\t-Internal branch length deviation from the half of the height of the ingroup: %lf",get_sampling(outgroup));
+                    printf("\n\t\t-Outgroup addition:\n\t\t\t-Internal branch length deviation from the half of the height of the ingroup: %e",get_sampling(outgroup));
                 else
                     printf("\n\t\t-Outgroup addition: No addition");
                 
@@ -2241,7 +2242,7 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
                 }
                 
                 if (get_sampling(s_time)>0||s_time.distribution_code!=0)
-                    printf("\n\t\t\t-Generations: %lf",get_sampling(s_time));
+                    printf("\n\t\t\t-Generations: %e",get_sampling(s_time));
                 else
                 {
                     sprintf(buffer,"%s","Not used");
@@ -2256,22 +2257,22 @@ void PrintSampleSettings(char * s_tree_newick, sampling_unit gen_time, char * l_
         }
         else
         {
-            printf("\n\t-Locus tree: birth-death simulation\n\t\t-Birth rate: %lf",get_sampling(lb_rate));
-            printf("\n\t\t-Death rate: %lf",get_sampling(ld_rate));
-            printf("\n\t\t-Transference rate: %lf",get_sampling(lt_rate));
+            printf("\n\t-Locus tree: birth-death simulation\n\t\t-Birth rate: %e",get_sampling(lb_rate));
+            printf("\n\t\t-Death rate: %e",get_sampling(ld_rate));
+            printf("\n\t\t-Transference rate: %e",get_sampling(lt_rate));
             printf("\n\t\t-Minimum number of leaves: %u\n\t\t-Minimum number of leaves from different species: %u\n",min_lleaves,min_lsleaves);
         }
         
     }
-    printf("\nParameters (multi species coalescent simulation):\n\t-Haploid efective population size: %lf",get_sampling(Ne));
-    printf("\n\t-Substitution rate: %lf",get_sampling(mu));
-    sprintf(buffer, "%lf",get_sampling(alpha_s));
+    printf("\nParameters (multi species coalescent simulation):\n\t-Haploid efective population size: %e",get_sampling(Ne));
+    printf("\n\t-Substitution rate: %e",get_sampling(mu));
+    sprintf(buffer, "%e",get_sampling(alpha_s));
     printf("\n\t-Substitution rate heterogeneities\n\t\t-Lineage (species) specific rate heterogeneity gamma shape: %s",get_sampling(alpha_s)==0?"No heterogeneity":buffer);
-    sprintf(buffer, "%lf",get_sampling(alpha_l));
+    sprintf(buffer, "%e",get_sampling(alpha_l));
     printf("\n\t\t-Gene family (gene tree) specific rate heterogeneity gamma shape: %s",get_sampling(alpha_l)==0?"No heterogeneity":buffer);
-    sprintf(buffer, "%lf",get_sampling(alpha_g));
+    sprintf(buffer, "%e",get_sampling(alpha_g));
     printf("\n\t\t-Gene tree branch specific rate heterogeneity gamma shape: %s",get_sampling(alpha_g)==0?"No heterogeneity":buffer);
-    printf("\n\t-Individuals per species: %lf",get_sampling(ind_per_sp));
+    printf("\n\t-Individuals per species: %e",get_sampling(ind_per_sp));
     printf("\n\nPrecision parameters (bounded multispecies coalescent sampling):\n\t-Rooting method epsilon: %f\n\t-Min cu to the bound to sample bmc: %f %s\n\nReplication options:\n\t-Number of locus trees: %d",epsilon,min_cu_bc,min_cu_bc>0?"":" => No politomies",nl_trees.value.i);
     printf("\n\t-Number of gene trees from each locus tree: %d\n\nSimulation:\n-----------\n",ng_trees);
     

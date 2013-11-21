@@ -2184,7 +2184,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     unsigned int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0;
     unsigned int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate+h_rate,b_prob=(b_rate/(d_rate+b_rate+h_rate)), bd_prob=(b_rate+d_rate/(b_rate+d_rate+h_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0;
+    double w_prob=d_rate+b_rate+h_rate,b_prob=(b_rate/(d_rate+b_rate+h_rate)), bd_prob=((b_rate+d_rate)/(b_rate+d_rate+h_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0;
     
     // ******
     /// Loop related variables</dd></dl>
