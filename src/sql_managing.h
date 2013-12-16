@@ -16,7 +16,7 @@
 #define sql_managing_h
 
 #ifndef _SQLITE3_H_
-#include "sqlite3.h"
+#include <sqlite3.h>
 #endif
 
 #ifndef _sampling_h
@@ -27,6 +27,10 @@
 #include "trees.h"
 #endif
 
+extern int MAX_IT;
+extern int MAX_NAME;
+extern int MAX_CHILDS;
+extern int MAX_LEAVES;
 
 // *********************** Prototype of functions ******************************* //
 
@@ -43,9 +47,9 @@ long int InitDB(sqlite3 **database, char * db_filename);
 
 // *** Database write values *** //
 
-long int WriteSTreeDB(sqlite3 **database, unsigned int n_leaves, double height, double length, double outgroup, unsigned int ind_per_sp, unsigned int n_loci, double alpha_s, double alpha_l, double alpha_g, unsigned int Ne, double mu, double gen_time);
-long int WriteLTreeDB(sqlite3 **database,unsigned int n_ltree, unsigned int SID, double b_rate, double d_rate, double t_rate, unsigned int n_leaves, unsigned int n_dup, unsigned int n_loss, unsigned int n_transf, double gamma);
-long int WriteGTreeDB(sqlite3 **database, unsigned int n_gtree, unsigned long long LID, unsigned int n_ltree, unsigned int SID, unsigned int n_leaves, unsigned int extra_lineages, double tree_h_cu, double tree_l_ss);
+long int WriteSTreeDB(sqlite3 **database, int n_leaves, double height, double length, double outgroup, int ind_per_sp, int n_loci, double alpha_s, double alpha_l, double alpha_g, int Ne, double mu, double gen_time);
+long int WriteLTreeDB(sqlite3 **database,int n_ltree, int SID, double b_rate, double d_rate, double t_rate, int n_leaves, int n_dup, int n_loss, int n_transf, double gamma);
+long int WriteGTreeDB(sqlite3 **database, int n_gtree, unsigned long long LID, int n_ltree, int SID, int n_leaves, int extra_lineages, double tree_h_cu, double tree_l_ss);
 
 long int CloseDB(sqlite3 **database);
 

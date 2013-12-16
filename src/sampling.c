@@ -17,7 +17,7 @@
 
 
 // *** Sampling variables managing *** //
-inline void set_sampling_uint(sampling_unit *variable, unsigned int value)
+inline void set_sampling_uint(sampling_unit *variable, int value)
 {
     variable->distribution_code=FIXED;
     variable->value=(ui_d)value;
@@ -36,7 +36,7 @@ inline void set_sampling_double(sampling_unit *variable, double value)
 long int sample_distr(gsl_rng *r,int n_arg,...)
 {
     va_list ap;
-    unsigned int i;
+    int i;
     sampling_unit * param;
     
     va_start(ap, n_arg);
@@ -83,8 +83,8 @@ long int sample_distr(gsl_rng *r,int n_arg,...)
 long int ParseSampling(char * p, sampling_unit * sample)
 {
     char * buffer=calloc(strlen(p), sizeof(char));
-    unsigned int in_parsing=0;
-    unsigned int b_index=0;
+    int in_parsing=0;
+    int b_index=0;
     int p_index=-1, is_neg=0;
     
     switch (toupper(*p))
@@ -181,7 +181,7 @@ void Print_Sampling(sampling_unit sample, char * buffer)
     switch (sample.distribution_code)
     {
         case FIXED:
-            sample.vtype==UI?sprintf(buffer,"Fixed %u",(unsigned int)sample.params[0]):sprintf(buffer,"Fixed %lf",sample.params[0]);
+            sample.vtype==UI?sprintf(buffer,"Fixed %u",(int)sample.params[0]):sprintf(buffer,"Fixed %lf",sample.params[0]);
             break;
         case UNIFORM:
             sprintf(buffer,"Uniform [%lf,%lf)",sample.params[0],sample.params[1]);
@@ -207,7 +207,7 @@ void Print_Sampling(sampling_unit sample, char * buffer)
     }
 }
 
-unsigned int is_sampling_set(sampling_unit value)
+int is_sampling_set(sampling_unit value)
 {
     if (value.vtype==UI)
     {

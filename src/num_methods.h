@@ -17,6 +17,12 @@
 #ifndef trees_h
 #include "trees.h"
 #endif
+#ifndef __GSL_SF_GAMMA_H
+#include <gsl/gsl_sf_gamma.h>
+#endif
+#ifndef __GSL_RNG_H
+#include <gsl/gsl_rng.h>
+#endif
 
 //MPFR Library
 #ifndef  _STDARG_H
@@ -24,6 +30,11 @@
 #endif
 #include <mpfr.h>
 #include <float.h>
+
+extern int MAX_IT;
+extern int MAX_NAME;
+extern int MAX_CHILDS;
+extern int MAX_LEAVES;
 
 
 /** \name Root finding methods **/
@@ -59,7 +70,8 @@
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double brent_root (double (*function) (double value, double c1, unsigned int c2,unsigned int c3, double c4, int c5),double a, double b,double c1, unsigned int c2, unsigned int c3, double c4, int c5, float epsilon,unsigned int verbosity);
+extern double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...);
+
 ///@}
 
 /** 
@@ -83,7 +95,7 @@ extern double brent_root (double (*function) (double value, double c1, unsigned 
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double cdf_bounded_coalescent(double w_time, unsigned int n_leaves,unsigned int pop_size, double bound_time);
+extern double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time);
 
 /**
  * Sampler of a bounded coalescent process.
@@ -105,7 +117,7 @@ extern double cdf_bounded_coalescent(double w_time, unsigned int n_leaves,unsign
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double sample_bounded_coalescent(double w_time, double density, unsigned int n_leaves, unsigned int pop_size, double bound_time, int precision);
+extern double sample_bounded_coalescent(double w_time, double density, int n_leaves, int pop_size, double bound_time, int precision);
 
 /**
  * Arbitrary-precision CDF function of a bounded coalescent process.
@@ -125,7 +137,13 @@ extern double sample_bounded_coalescent(double w_time, double density, unsigned 
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern long double cdf_bounded_coalescent_mpfr(long double time, unsigned int n_leaves,unsigned int pop_size, long double bound_time, int precision);
+extern long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision);
+
+extern double ProbCoalFromXtoYLineages(int i_lineages,int o_lineages,double bound_time,int pop_size);
+
+extern double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity);
+
+extern double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap);
 
 ///@}
 /**
@@ -232,6 +250,8 @@ extern int Compare_DBL (const void * n1, const void *n2);
  *******************************************************************************/
 extern int Compare_periods (const void * n1, const void *n2);
 
+
+extern inline size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed);
 ///@}
 ///@}
 

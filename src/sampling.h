@@ -34,8 +34,12 @@
 /**
  * Function-like macro to set the value with the proper type (it has to had been initialized before).
  ********************/
-#define set_propsampling(a,b) (a->vtype==UI?(a->value=(ui_d)(unsigned int)b):(a->value=(ui_d)(double)b))
+#define set_propsampling(a,b) (a->vtype==UI?(a->value=(ui_d)(int)b):(a->value=(ui_d)(double)b))
 
+extern int MAX_IT;
+extern int MAX_NAME;
+extern int MAX_CHILDS;
+extern int MAX_LEAVES;
 
 /**
  * \enum DISTRIBUTIONS
@@ -59,7 +63,7 @@ enum DISTRIBUTIONS {FIXED=0, UNIFORM=1, NORMAL=2, EXPONENTIAL=3, GAMMA=4, LOGNOR
  * This constants are a kind of text codification of interesting int values.
  *
  * \var UI
- *  Unsigned int
+ *  int
  * \var D
  *  Double
  *******************************************************************************/
@@ -71,12 +75,12 @@ typedef union ui_d ui_d;
 typedef struct sampling_unit sampling_unit;
 
 /**
- * Union of double and unsigned int
+ * Union of double and int
  *******************************************************************************/
 
 union ui_d
 {
-    unsigned int i;
+    int i;
     double d;
 };
 
@@ -86,10 +90,10 @@ union ui_d
 
 struct sampling_unit
 {
-    unsigned int distribution_code; ///< Distribution id
+    int distribution_code; ///< Distribution id
     double params[5]; ///< parameters
     ui_d value; ///< sampled value (current value)
-    unsigned int vtype;
+    int vtype;
     
 };
 
@@ -99,12 +103,12 @@ struct sampling_unit
 
 ///@{
 
-void set_sampling_uint(sampling_unit *variable, unsigned int value);
+void set_sampling_uint(sampling_unit *variable, int value);
 void set_sampling_double(sampling_unit *variable, double value);
 long int sample_distr(gsl_rng *r, int n_arg,...);
 long int ParseSampling(char * p, sampling_unit * sample);
 void Print_Sampling(sampling_unit sample, char * buffer);
-unsigned int is_sampling_set(sampling_unit value);
+int is_sampling_set(sampling_unit value);
 
 ///@}
 

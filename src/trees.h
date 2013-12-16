@@ -25,8 +25,12 @@
 #ifndef num_methods_h
 #include "num_methods.h"
 #endif
+#ifndef __GSL_RNG_H
 #include <gsl/gsl_rng.h>
+#endif
+#ifndef __GSL_RANDIST_H
 #include <gsl/gsl_randist.h>
+#endif
 #ifndef _STDARG_H
 #include <stdarg.h>
 #endif
@@ -86,7 +90,7 @@ enum ERRORS {NO_ERROR=(long int)NULL+1,MEM_ERROR=(long int) NULL,IO_ERROR=(long 
  *  Max number of leaves in a birth-death process. It is used to construct the
  *  locus tree from the species tree under a birth-death process.
  *******************************************************************************/
-enum LIMITS{MAX_IT=10000, MAX_NAME=100, MAX_CHILDS=100, MAX_LEAVES=1000};
+//enum LIMITS{MAX_IT=10000, MAX_NAME=100, MAX_CHILDS=100, MAX_LEAVES=1000};
 
 /**
  * \enum NODE_VALUES
@@ -145,15 +149,15 @@ struct g_node
 {
     /** \name Codes **/
     /// @{
-    unsigned int index;///< Memory position in the array.
-    unsigned int sp_index; ///< Position of the name of this node in name_c
-    unsigned int replica; ///< Code for the replica number of the node (Applicable in species trees with more than one replica in any taxa)
-    unsigned int paralog; ///< Number to identify one "paralog"
+    int index;///< Memory position in the array.
+    int sp_index; ///< Position of the name of this node in name_c
+    int replica; ///< Code for the replica number of the node (Applicable in species trees with more than one replica in any taxa)
+    int paralog; ///< Number to identify one "paralog"
     /// @}
     
     /** \name Node info **/
     /// @{
-    unsigned int n_child; ///< Number of children (offspring) of this node.
+    int n_child; ///< Number of children (offspring) of this node.
     /// @}
     
     /** \name Data **/
@@ -182,8 +186,8 @@ struct g_node
  *******************************************************************************/
 struct g_tree
 {
-    unsigned int n_nodes;///< Number of nodes
-    unsigned int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the g_node::childs allocated memory.
+    int n_nodes;///< Number of nodes
+    int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the g_node::childs allocated memory.
     g_node * m_node; ///< Memory block of nodes
     g_node * root; ///< Pointer to the root of the tree
     l_tree *locus_tree; ///< Pointer to the locus tree.
@@ -204,21 +208,23 @@ struct l_node
 {
     /** \name Codes **/
     /// @{
-    unsigned int index; ///< Memory position in the array.
-    unsigned int sp_index; ///< Position of the name of this node in name_c
-    unsigned int kind_node; ///< Event tag of the node (SP, DUP, LOSS, TRFR, RTRFR). See \ref VALUES
-    unsigned int paralog; ///< Number to identify one "paralog".
+    int index; ///< Memory position in the array.
+    int sp_index; ///< Position of the name of this node in name_c
+    int kind_node; ///< Event tag of the node (SP, DUP, LOSS, TRFR, RTRFR). See \ref VALUES
+    int paralog; ///< Number to identify one "paralog".
     /// @}
     
     /** \name Node info **/
     /// @{
-    unsigned int n_child; ///< Number of children (offspring) of this node.
-    unsigned int n_nodes; ///< Number of g_nodes wich are being pointed by this restriction tree (avaliable nodes).
+    int n_child; ///< Number of children (offspring) of this node.
+    int n_nodes; ///< Number of g_nodes wich are being pointed by this restriction tree (avaliable nodes).
+    int n_ilin; ///< Number of input lineages.
+    int n_olin; ///< Number of output lineages.
     /// @}
     
     /** \name Data **/
     /// @{
-    unsigned int Ne; ///< Branch specific effective population size (0=> the global one).
+    int Ne; ///< Branch specific effective population size (0=> the global one).
     double n_gen; ///< Number of generations of this node (from the current time).
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific substitution rate multi.
@@ -231,6 +237,8 @@ struct l_node
     l_node *lat_node; ///< Lateral node to do not use a big array of memory to save the avaliable locus nodes in the birth-death process of the locus tree creation.
     g_node **g_nodes; ///< Array of pointers to g_nodes (avaliable gene nodes).
     s_node *conts; ///< s_node that contains this g_node along his branch.
+    double *i_probs; ///< Array of probabilities for each number of input lineages (0,1,2...)
+    double *o_probs; ///< Array of probabilities for each number of output lineages (0,1,2...)
     ///@}
     
 };
@@ -247,12 +255,12 @@ struct l_tree
 {
     /** \name Tree info **/
     /// @{
-    unsigned int n_nodes; ///< Number of nodes of the tree.
-    unsigned int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the l_node::childs allocated memory.
-    unsigned int n_leaves; ///< Number of leaves of the l_tree. It is necessary due to allowing polytomy.
-    unsigned int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
+    int n_nodes; ///< Number of nodes of the tree.
+    int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the l_node::childs allocated memory.
+    int n_leaves; ///< Number of leaves of the l_tree. It is necessary due to allowing polytomy.
+    int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
     double gen_time;///< Generation time
-    unsigned int Ne; ///< Global effective population size.
+    int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
     
@@ -278,21 +286,21 @@ struct s_node
 {
     /** \name Codes **/
     /// @{
-    unsigned int index; ///< Memory position in the array.
-    unsigned int sp_index; ///< Position of the name of this node in name_c
+    int index; ///< Memory position in the array.
+    int sp_index; ///< Position of the name of this node in name_c
     /// @}
     
     /** \name Node info **/
     /// @{
-    unsigned int n_child; ///< Number of children (offspring) of this node.
-    unsigned int n_lnodes; ///< Number of l_nodes wich are being pointed by this species tree (avaliable nodes).
-    unsigned int n_replicas; ///< Number of g nodes that will evolve within this leaf (only for leaves). 
+    int n_child; ///< Number of children (offspring) of this node.
+    int n_lnodes; ///< Number of l_nodes wich are being pointed by this species tree (avaliable nodes).
+    int n_replicas; ///< Number of g nodes that will evolve within this leaf (only for leaves). 
 
     /// @}
     
     /** \name Data **/
     /// @{
-    unsigned int Ne; ///< Branch specific effective population size (0=> the global one).
+    int Ne; ///< Branch specific effective population size (0=> the global one).
     double n_gen; ///< Number of generations of this node (from the current time).
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific effective substitution rate multi.
@@ -318,12 +326,12 @@ struct s_tree
 {
     /** \name Tree info **/
     /// @{
-    unsigned int n_nodes; ///< Number of nodes of the tree.
-    unsigned int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the s_node::childs allocated memory.
-    unsigned int n_leaves; ///< Number of leaves of the s_tree. It is necessary due to allowing polytomy.
-    unsigned int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
+    int n_nodes; ///< Number of nodes of the tree.
+    int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the s_node::childs allocated memory.
+    int n_leaves; ///< Number of leaves of the s_tree. It is necessary due to allowing polytomy.
+    int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
     double gen_time;///< Generation time
-    unsigned int Ne; ///< Global effective population size.
+    int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
     
@@ -348,8 +356,8 @@ struct s_tree
 struct name_c
 {
     char * names; ///< String of names
-    unsigned int max_lname; ///< Max name-length
-    unsigned int n_names; ///< Number of taxa names
+    int max_lname; ///< Max name-length
+    int n_names; ///< Number of taxa names
     
 };
 
@@ -363,7 +371,7 @@ struct period
 {
     double r_bound;
     l_node **l_nodes;
-    unsigned int n_lnodes;
+    int n_lnodes;
     
 };
 
@@ -384,7 +392,7 @@ struct period
  * \return s_node pointer to the allocated memory.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-s_node * NewSNodes (unsigned int n_nodes,unsigned int max_childs);
+s_node * NewSNodes (int n_nodes,int max_childs);
 
 /**
  * Creates a memory block of n l_nodes, and initializes it.
@@ -396,10 +404,12 @@ s_node * NewSNodes (unsigned int n_nodes,unsigned int max_childs);
  *  where these new nodes will point. It is used to allocate l_node::g_node.
  * \param max_childs
  *  Number of maximum childs in each node. It is used to allocate l_node::childs.
+ * \param probs
+ *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
  * \return l_node pointer to the allocated memory.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-l_node * NewLNodes (unsigned int n_nodes,unsigned int n_treeleaves,unsigned int max_childs);
+l_node * NewLNodes (int n_nodes,int n_treeleaves,int max_childs, int probs);
 
 /**
  * Creates a memory block of n g_nodes, and initializes it. 
@@ -411,7 +421,7 @@ l_node * NewLNodes (unsigned int n_nodes,unsigned int n_treeleaves,unsigned int 
  * \return g_node pointer to the allocated memory of NULL if n_nodes=0.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-g_node * NewGNodes(unsigned int n_nodes, unsigned int max_childs);
+g_node * NewGNodes(int n_nodes, int max_childs);
 
 /**
  * Creates a memory block of n periods, and initializes it.
@@ -423,7 +433,7 @@ g_node * NewGNodes(unsigned int n_nodes, unsigned int max_childs);
  * \return period pointer to the allocated memory or NULL if n_periods=0.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-period * NewPeriods(unsigned int n_periods, unsigned int max_nodes);
+period * NewPeriods(int n_periods, int max_nodes);
 
 ///@}
 
@@ -456,7 +466,7 @@ period * NewPeriods(unsigned int n_periods, unsigned int max_nodes);
  *   s_tree pointer to the allocated memory.
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern s_tree * NewSTree (unsigned int n_nodes, unsigned int n_leaves, unsigned int n_gleaves, unsigned int max_childs, double gen_time, unsigned int Ne, double mu);
+extern s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_childs, double gen_time, int Ne, double mu);
 
 /**
  * Tree parser, from modified Newick tree to s_tree with spread nodes.
@@ -494,7 +504,7 @@ extern s_tree * NewSTree (unsigned int n_nodes, unsigned int n_leaves, unsigned 
  * the number of replicas with a /. Example: A:200#2000/3 its the same as
  * A/3#2000:200.
  *******************************************************************************/
-extern s_tree * ReadNewickSTree(char* newick,name_c ** names,unsigned int verbosity, double gen_time, unsigned int Ne, double mu, unsigned int ind_persp);
+extern s_tree * ReadNewickSTree(char* newick,name_c ** names,int verbosity, double gen_time, int Ne, double mu, int ind_persp);
 
 /**
  *  Makes a new non-collapsed \ref s_tree "species tree", using a birth-death process.
@@ -543,7 +553,7 @@ extern s_tree * ReadNewickSTree(char* newick,name_c ** names,unsigned int verbos
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int NewBDSTree (s_tree ** out_tree,unsigned int leaves, double time, double b_rate, double d_rate, double gen_time, unsigned int Ne, double mu, unsigned int ind_per_sp, double outgroup, unsigned int complete, unsigned int two_lineages, gsl_rng *seed, int verbosity);
+extern long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int two_lineages, gsl_rng *seed, int verbosity);
 
 /**
  *  Simulates a new locus tree under a birth death model (duplication-loss).
@@ -585,7 +595,7 @@ extern long int NewBDSTree (s_tree ** out_tree,unsigned int leaves, double time,
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, unsigned int min_lleaves, unsigned int min_lsleaves, double gen_time, unsigned int verbosity, unsigned int *st_losses, unsigned int *st_dups, unsigned int *st_leaves, unsigned int *st_gleaves);
+extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new locus tree taking into account GDL and HGT.
@@ -629,7 +639,36 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, gsl_rng *seed, unsigned int min_lleaves, unsigned int min_lsleaves, double gen_time, unsigned int verbosity, unsigned int *st_losses, unsigned int *st_dups, unsigned int *st_transfr, unsigned int *st_leaves, unsigned int *st_gleaves);
+extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_leaves, int *st_gleaves);
+
+/**
+ *  Simulates a new gene tree under the multispecies coalescent process along a locus tree.
+ *
+ * \param wlocus_tree
+ *   Guide tree pointer (locus tree).
+ * \param gene_tree
+ *   Pointer to a gene tree ponter, where the program returns the simulated gene tree.
+ * \param names
+ *  Pointer to the name container.
+ * \param epsilon_brent
+ *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
+ * \param min_cu_bc
+ *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
+ * \param seed
+ *   Seed for the random number generator.
+ * \paran tn_lcoals
+ *   Pointer to return the number of observed extra lineages.
+ * \param simlosses
+ *   Logical flag. If ==1, then the lost locus tree lineages are simulated at the gene tree level, using only one leave. This is mainly for DBGging and it is not recomended for general users.
+ * \param verbosity
+ *   Config about verbosity.
+ * \param gen_time
+ *   Generation time.
+ *
+ * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
+ * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
+ *******************************************************************************/
+extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  *  Simulates a new gene tree under the multilocus coalescent process along a locus tree.
@@ -644,14 +683,12 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
  * \param min_cu_bc
  *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
- * \param precision
- *  Precision to sample the bounded multilocus coalescent process using the mpfr library (trying to avoid underflow problems).
  * \param seed
  *   Seed for the random number generator.
  * \paran tn_lcoals
  *   Pointer to return the number of observed extra lineages.
  * \param simlosses
- *   Logical flag. If ==1, then the lost locus tree lineages are simulated at the gene tree level, using only one leave. This is mainly for debugging and it is not recomended for general users.
+ *   Logical flag. If ==1, then the lost locus tree lineages are simulated at the gene tree level, using only one leave. This is mainly for DBGging and it is not recomended for general users.
  * \param verbosity
  *   Config about verbosity.
  * \param gen_time
@@ -660,7 +697,7 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern inline long int SimGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc,int precision, gsl_rng *seed, unsigned int *tn_lcoals, unsigned int simlosses,unsigned int verbosity, double gen_time);
+extern inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  * Creates a new l_tree, and initializes it.
@@ -681,11 +718,13 @@ extern inline long int SimGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c 
  *   Global effective population size.
  * \param mu
  *   Global substitution rate.
+ * \param probs
+ *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
  * \return
  *   l_tree pointer to the allocated memory.
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern l_tree * NewLTree (unsigned int n_nodes, unsigned int n_leaves, unsigned int n_gleaves, unsigned int max_childs, double gen_time, unsigned int Ne, double mu);
+extern l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_childs, double gen_time, int Ne, double mu, int probs);
 
 /**
  * Tree parser, from modified Newick tree to l_tree with spread nodes.
@@ -725,7 +764,7 @@ extern l_tree * NewLTree (unsigned int n_nodes, unsigned int n_leaves, unsigned 
  * just after or before it. Ne is indicated with a # and * the number of replicas
  * with a /. Example: A:200#2000/3 its the same as A/3#2000:200.
  *******************************************************************************/
-extern l_tree * ReadNewickLTree(char* newick,name_c ** names,unsigned int verbosity, double gen_time, unsigned int Ne, double mu, unsigned int ind_persp);
+extern l_tree * ReadNewickLTree(char* newick,name_c ** names,int verbosity, double gen_time, int Ne, double mu, int ind_persp);
 
 /**
  * Creates a new g_tree and initializes it.
@@ -740,7 +779,7 @@ extern l_tree * ReadNewickLTree(char* newick,name_c ** names,unsigned int verbos
  * \return Pointer to the new allocated g_tree.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern g_tree * NewGTree (unsigned int n_nodes, unsigned int max_childs);
+extern g_tree * NewGTree (int n_nodes, int max_childs);
 
 // ** Tree copy ** //
 
@@ -764,7 +803,7 @@ extern g_tree * NewGTree (unsigned int n_nodes, unsigned int max_childs);
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, unsigned int tree_struct, unsigned int l_nodes_ptr);
+extern long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, int tree_struct, int l_nodes_ptr);
 
 /**
  * Copies or reallocates a l_tree.
@@ -790,7 +829,7 @@ extern long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, unsigned int 
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, unsigned int tree_struct, unsigned int l_nodes_ptr, unsigned int g_nodes_ptr, unsigned int relink);
+extern long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int relink);
 
 /**
  * Direct copy of a species tree into a locus tree (no dl)
@@ -873,7 +912,7 @@ extern void FreeLTree (l_tree ** tree);
  *  Logical flag. If complete == 1 all the tree memory is deleted, else the g_tree
  * memory and the root node alive, and only is deleted g_tree::m_nodes.
  *******************************************************************************/
-extern void FreeGTree (g_tree ** tree, unsigned int complete);
+extern void FreeGTree (g_tree ** tree, int complete);
 
 /**
  * Frees a block of periods.
@@ -883,7 +922,7 @@ extern void FreeGTree (g_tree ** tree, unsigned int complete);
  * \param n_periods
  *  Number of periods that constitues this block.
  *******************************************************************************/
-extern void FreePeriods(period * periods, unsigned int n_periods);
+extern void FreePeriods(period * periods, int n_periods);
 
 ///@}
 
@@ -900,7 +939,7 @@ extern void FreePeriods(period * periods, unsigned int n_periods);
  * \return name_c pointer pointing to the allocated memory.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern name_c * NewNames (unsigned int n_names, unsigned int max_lname);
+extern name_c * NewNames (int n_names, int max_lname);
 
 /**
  * Reallocs the name string of a name_c struct.
@@ -916,7 +955,7 @@ extern name_c * NewNames (unsigned int n_names, unsigned int max_lname);
  *  Maximum length of each name.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern void ReallocNames (name_c * names, unsigned int max_lname);
+extern void ReallocNames (name_c * names, int max_lname);
 
 /**
  * Frees the allocated memory of names_c.
@@ -932,7 +971,7 @@ extern void FreeNames (name_c ** names);
 // ** G and R tree reunification ** // 
 
 /**
- * Associates a l_tree and a g_tree. 
+ * Associates a l_tree and a g_tree to use \ref SimMSCGTree
  *
  * Resets the g_tree simulation dependent values of a l_tree, and associates
  * the leaves with g_nodes to start a new g_tree simulation. After so, each
@@ -941,7 +980,7 @@ extern void FreeNames (name_c ** names);
  * does not point any g_node.
  * Indeed, it can reset the g_tree (pointers and data).
  *
- * \param guide_tree
+ * \param locus_tree
  *  l_tree (locus tree).
  * \param gene_tree
  *  g_tree (gene tree).
@@ -954,7 +993,35 @@ extern void FreeNames (name_c ** names);
  * \note If the l_tree is spread (l_tree::root instead of l_tree::m_node) the
  *  tree is collapsed by  \ref CollapseLTree in a post-order.
  *******************************************************************************/
-extern long int MatchTrees(l_tree * guide_tree, g_tree * gene_tree, unsigned int reset_gtree, unsigned int includelosses);
+extern long int MatchTreesMSC(l_tree * locus_tree, g_tree * gene_tree, int reset_gtree, int includelosses);
+
+/**
+ * Associates a l_tree and a g_tree to use \ref SimMLCGTre
+ *
+ * Resets the g_tree simulation dependent values of a l_tree, and associates
+ * the leaves with g_nodes to start a new g_tree simulation. After so, each
+ * restriction tree leaf points the corresponding g_tree leaf/leaves
+ * (if there are more than one replicate) and the internal nodes of the l_tree
+ * does not point to any g_nodes. It also get the bounded subtrees, and initializes the lnode::n_ilin and lnode:n_olin for leaves and bounds.
+ * Indeed, it can reset the g_tree (pointers and data).
+ *
+ * \param locus_tree
+ *  l_tree (locus tree).
+ * \param gene_tree
+ *  g_tree (gene tree).
+ * \param reset_gtree
+ *  Logical flag. If =1 the g_tree is reset by the function.
+ * \param includelosses
+ *  Number of g_nodes associated to each lost l_node (0= normal behaviour, 1= simulate lost lineages).
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \note If the l_tree is spread (l_tree::root instead of l_tree::m_node) the
+ *  tree is collapsed by  \ref CollapseLTree in a post-order.
+ *******************************************************************************/
+extern long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, int includelosses);
+
+extern int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity);
+extern void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed);
 
 // ** Tree conversion ** //
 
@@ -970,7 +1037,7 @@ extern long int MatchTrees(l_tree * guide_tree, g_tree * gene_tree, unsigned int
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int CollapseSTree (s_tree * in_tree, unsigned int post_order);
+extern long int CollapseSTree (s_tree * in_tree, int post_order);
 
 /**
  * Collapse a sparse l_tree (root) in an l_tree with nodes in an array (m_node)
@@ -982,10 +1049,12 @@ extern long int CollapseSTree (s_tree * in_tree, unsigned int post_order);
  *  it will be in a pre-order.
  * \param relink
  *  Logical flag. If relink = 1, the \ref l_node::lat_node and \ref s_node::l_nodes pointer of the \ref l_node::conts nodes will be updated. If = 0, the \ref l_node::lat_node will be erased to avoid malfunctioning due to the reference of freed memory.
+ * \param probs
+ *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int CollapseLTree (l_tree * in_tree, unsigned int post_order, unsigned int relink);
+extern long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs);
 
 /**
  * Collapse a sparse g_tree (root) in an g_tree with nodes in an array (m_node)
@@ -1000,7 +1069,7 @@ extern long int CollapseLTree (l_tree * in_tree, unsigned int post_order, unsign
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int CollapseGTree (g_tree * in_tree, unsigned int post_order, unsigned int relink);
+extern long int CollapseGTree (g_tree * in_tree, int post_order, int relink);
 
 // ** Gene tree branch length modification ** //
 /**
@@ -1110,7 +1179,7 @@ extern long int Rateheter_GTbranchspec(g_tree *tree,double alpha, gsl_rng *seed,
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Count_duplications(l_tree *tree, unsigned int *n_dup);
+extern long int Count_duplications(l_tree *tree, int *n_dup);
 
 /**
  * Counts the number of losses in a locus tree.
@@ -1122,7 +1191,7 @@ extern long int Count_duplications(l_tree *tree, unsigned int *n_dup);
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Count_losses(l_tree *tree, unsigned int *n_losses);
+extern long int Count_losses(l_tree *tree, int *n_losses);
 
 /**
  * Measures g_tree height under different units using a post-order recursion.
@@ -1136,7 +1205,7 @@ extern long int Count_losses(l_tree *tree, unsigned int *n_losses);
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Measure_GT_height(g_tree *tree,long double *height,unsigned int unit);
+extern long int Measure_GT_height(g_tree *tree,long double *height,int unit);
 
 /**
  * Measures g_tree length under different units using a post-order recursion.
@@ -1150,7 +1219,7 @@ extern long int Measure_GT_height(g_tree *tree,long double *height,unsigned int 
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Measure_GT_length(g_tree *tree, long double *length, unsigned int unit);
+extern long int Measure_GT_length(g_tree *tree, long double *length, int unit);
 
 /**
  * Measures s_tree height under different units using a post-order recursion.
@@ -1164,7 +1233,7 @@ extern long int Measure_GT_length(g_tree *tree, long double *length, unsigned in
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Measure_ST_height(s_tree *tree,long double *height, unsigned int unit);
+extern long int Measure_ST_height(s_tree *tree,long double *height, int unit);
 
 /**
  * Measures s_tree length under different units using a post-order recursion.
@@ -1178,7 +1247,7 @@ extern long int Measure_ST_height(s_tree *tree,long double *height, unsigned int
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Measure_ST_length(s_tree *tree,long double *length,unsigned int unit);
+extern long int Measure_ST_length(s_tree *tree,long double *length,int unit);
 ///@}
 
 /** \name Trees I/O **/
@@ -1198,7 +1267,7 @@ extern long int Measure_ST_length(s_tree *tree,long double *length,unsigned int 
  *  ocurrs.
  *  \note It requires a known root node into the r_tree structure.
  *******************************************************************************/
-extern long int WriteSTree (s_tree *in_tree, name_c * names, unsigned int time);
+extern long int WriteSTree (s_tree *in_tree, name_c * names, int time);
 
 /**
  * Writes a given s_tree in Newick format in a file.
@@ -1218,7 +1287,7 @@ extern long int WriteSTree (s_tree *in_tree, name_c * names, unsigned int time);
  *  closed after this function.
  * \note It requires a known root node into the s_tree structure.
  *******************************************************************************/
-extern long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, unsigned int time);
+extern long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, int time);
 
 /**
  * Writes a given l_tree in Newick format in stdout.
@@ -1234,7 +1303,7 @@ extern long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, unsi
  *  ocurrs.
  * \note It requires a known root node into the r_tree structure.
  *******************************************************************************/
-extern long int WriteLTree (l_tree *in_tree, name_c * names, unsigned int time);
+extern long int WriteLTree (l_tree *in_tree, name_c * names, int time);
 
 /**
  * Writes a given l_tree in Newick format in a file.
@@ -1254,7 +1323,7 @@ extern long int WriteLTree (l_tree *in_tree, name_c * names, unsigned int time);
  *  closed after this function.
  *  \note It requires a known root node into the l_tree structure.
  *******************************************************************************/
-extern long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, unsigned int time);
+extern long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, int time);
 
 /**
  * Writes a given g_tree in Newick format in stdout.
@@ -1341,7 +1410,7 @@ extern inline long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reco
 //DEPRECATED AND OUTDATED (It doesn't work with transfers)
 
 /**
- * Calculates and writes the reconciliation of the gene and species trees in a file (those trees have to be linked in the way that the program does along the locus and gene tree simulation). This function if mainly for debugging and it should not be used by a common user. The resulting reconciliation does not have to be a true representation of the reality (since you cannot skip the locus tree).
+ * Calculates and writes the reconciliation of the gene and species trees in a file (those trees have to be linked in the way that the program does along the locus and gene tree simulation). This function if mainly for DBGging and it should not be used by a common user. The resulting reconciliation does not have to be a true representation of the reality (since you cannot skip the locus tree).
  *
  * \param wsp_tree
  *  Species tree.
@@ -1391,7 +1460,7 @@ static void ErrorReporter(long int);
 
 ///@}
 
-unsigned int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num);
+int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num);
 /**
  * Detector of errors. 
  * This function writes info of errors in stderr and closes

@@ -47,18 +47,22 @@ double RndGamma2 (double s, long int *seed);
  *******************************************************************************/
 ///@{
 
-double brent_root (double (*f) (double value, double c1, unsigned int c2,unsigned int c3, double c4, int precision),double a, double b,double c1, unsigned int c2, unsigned int c3, double c4, int precision, float epsilon, unsigned int verbosity)
+double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...)
 {
+    
+    va_list ap;
+    int i=0;
     double prev_b,bprev_b,new_val;
     double fa,fb,fprev_b,fnew_val,initial_a=a, initial_b=b;
     double cond1;
     
-    unsigned int prev_bis=1;
-    unsigned long i=0;
+    int prev_bis=1;
     
-    //printf("Density %lf ",c1); //Debug
-    fa=(*f)(a,c1,c2,c3,c4,precision);
-    fb=(*f)(b,c1,c2,c3,c4,precision);
+    //printf("Density %lf ",c1); //DBG
+    va_start(ap,n_arg);
+    fa=(*f)(a,n_arg,ap);
+    va_start(ap,n_arg);
+    fb=(*f)(b,n_arg,ap);
     
     //printf("Test %lf, %lf\n",fa,fb);
 
@@ -116,7 +120,8 @@ double brent_root (double (*f) (double value, double c1, unsigned int c2,unsigne
         }
         
         //New values
-        fnew_val=(*f)(new_val,c1,c2,c3,c4,precision);
+        va_start(ap,n_arg);
+        fnew_val=(*f)(new_val,n_arg,ap);
                 
         bprev_b=prev_b;
         prev_b=b;
@@ -145,7 +150,7 @@ double brent_root (double (*f) (double value, double c1, unsigned int c2,unsigne
         ++i;
         
         if(i>MAX_IT)
-            ErrorReporter(MAX_IT);
+            ErrorReporter(LOOP_ERROR);
         
     }
     return(b);
@@ -157,7 +162,7 @@ double brent_root (double (*f) (double value, double c1, unsigned int c2,unsigne
  *******************************************************************************/
 ///@{
 
-double cdf_bounded_coalescent(double w_time, unsigned int n_leaves,unsigned int pop_size, double bound_time)
+double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time)
 {
 	int i=0;
     int pn_leaves=n_leaves;
@@ -190,7 +195,7 @@ double cdf_bounded_coalescent(double w_time, unsigned int n_leaves,unsigned int 
    	return (double)(pn_leaves/sum2) * ((pn_leaves-1)*sum1);
 }
 
-long double cdf_bounded_coalescent_mpfr(long double time, unsigned int n_leaves,unsigned int pop_size, long double bound_time, int precision)
+long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision)
 {
 	//Variable initialization
 	
@@ -288,7 +293,7 @@ long double cdf_bounded_coalescent_mpfr(long double time, unsigned int n_leaves,
    	return result_ldouble;
 }
 
-double sample_bounded_coalescent(double time, double density, unsigned int n_leaves, unsigned int pop_size, double bound_time, int precision)
+double sample_bounded_coalescent(double time, double density, int n_leaves, int pop_size, double bound_time, int precision)
 {
     long double ltime=(long double)time, ldensity=(long double) density, lbound_time=(long double)bound_time; //Increasing precision
     
@@ -306,7 +311,136 @@ double sample_bounded_coalescent(double time, double density, unsigned int n_lea
     }
 }
 
+double ProbCoalFromXtoYLineages(int i_lin,int o_lin,double bound_time,int Ne)
+{
+    double C=1, sum=0;
+    int i=0, pi=0;
+    
+    for (i=0;i<o_lin;++i)
+    {
+        C*=(o_lin+i)*(i_lin-i)/(double)(i_lin+i);
+    }
+    
+    sum=exp(-o_lin*(o_lin-1)*bound_time/2/Ne)*C;
+    
+    for (i=o_lin+1; i<=i_lin;++i)
+    {
+        pi=i-1;
+        C*=(double)(o_lin+pi)*(i_lin-pi)/(i_lin+pi)/(o_lin-i);
+        sum+=exp(-i*pi*bound_time/2/Ne)*(2*i-1)/(pi+o_lin)*C;
+    }
+    
+    if (o_lin<GSL_SF_FACT_NMAX)
+        return sum/gsl_sf_fact(o_lin);
+    else
+    {
+        fprintf(stderr,"Error using a factorial function. A big numbers factorial library should be used\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
+        return -1;
+    }
+}
 
+double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity)
+{
+    double lambda_i=0, lambda_o=0, C0=1, out_sum=0;
+    int i=0;
+    
+    lambda_i= -i_lin*(i_lin-1)/(double)(2*pop_size);
+    lambda_o= -o_lin*(o_lin-1)/(double)(2*pop_size);
+    for (i=0;i<o_lin;++i)
+    {
+        C0*=(o_lin+i)*(i_lin-i-1)/(double)(i_lin-1+i);
+    }
+    
+    if (o_lin>GSL_SF_FACT_NMAX)
+    {
+        fprintf(stderr,"Error using a factorial function. A big numbers factorial library should be used\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
+        return -1;
+    }
+    
+    out_sum=(-lambda_i)/(gsl_sf_fact(o_lin)*ProbCoalFromXtoYLineages(i_lin, o_lin, bound_time, pop_size)); /// \todo test if this is the proper order to avoid precision errors.
+    
+    return brent_root(*(SampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,verbosity,9,i_lin,o_lin,bound_time,pop_size,lambda_i,lambda_o,C0,out_sum,density);
+}
+
+
+double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap)
+{
+    double C=0,sum=0,lambda_k=0,bound_time=0,lambda_i=0,lambda_o=0,out_sum=0,density=0;
+    int k=0,k1=0,i=0,i_lin=0,o_lin=0,pop_size=0;
+    
+    if (n_arg!=9)
+        ErrorReporter(UNEXPECTED_VALUE);
+    
+    for (i=0; i<n_arg; ++i)
+    {
+        switch (i)
+        {
+            case 0:
+                i_lin=va_arg(ap,int);
+                break;
+            case 1:
+                o_lin=va_arg(ap,int);
+                break;
+            case 2:
+                bound_time=va_arg(ap,double);
+                break;
+            case 3:
+                pop_size=va_arg(ap,int);
+                break;
+            case 4:
+                lambda_i=va_arg(ap,double);
+                break;
+            case 5:
+                lambda_o=va_arg(ap,double);
+                break;
+            case 6:
+                C=va_arg(ap,double);
+                break;
+            case 7:
+                out_sum=va_arg(ap,double);
+                break;
+            case 8:
+                density=va_arg(ap,double);
+                break;
+            default:
+                ErrorReporter(UNEXPECTED_VALUE);
+                break;
+                
+        }
+    }
+    va_end(ap);
+
+    k1=o_lin-1;
+    
+    if (w_time<=0)
+    {
+        return w_time - density;
+    }
+    else if (w_time>=bound_time)
+    {
+        return 1-density + (w_time - bound_time);
+    }
+    else
+    {
+        sum= exp(lambda_o*bound_time) * (exp((lambda_i-lambda_o)*w_time)-1)/ (lambda_i-lambda_o)*C; //First iteration of the summatory.
+        for (k=o_lin+1; k<i_lin; ++k) //K = number of lineages
+        {
+            ++k1;
+            lambda_k=-k*k1/(double)(2*pop_size);
+            C=(o_lin+k1)*(i_lin-1-k1)/(double)(i_lin-1+k1)/(o_lin-k)*C;
+            sum += exp(lambda_k*bound_time)*(exp((lambda_i-lambda_k)*w_time)-1)/(lambda_i-lambda_k)*(2*k-1)/(k1+o_lin)*C;
+        }
+        return sum*out_sum-density;
+    }
+}
 //@}
 
 /**
@@ -521,6 +655,29 @@ int Compare_periods (const void * n1, const void *n2)
         else
             return -1;
     }
+}
+
+inline size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed)
+{
+    size_t i=0;
+    double sum=0, value=0;
+    
+    for (i=0; i<n;++i)
+    {
+        sum+=*(array+i);
+    }
+    
+    value=gsl_rng_uniform_pos(seed)*sum;
+    
+    sum=0;
+    for (i=0; i<n;++i)
+    {
+        sum+=*(array+i);
+        if (sum>=value)
+            break;
+    }
+        
+    return i;
 }
 
 
