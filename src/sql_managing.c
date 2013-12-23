@@ -51,7 +51,7 @@ long int InitDB(sqlite3 **database, char * db_filename)
 	}
 
 
-	sprintf(query,"CREATE TABLE IF NOT EXISTS Locus_Trees(LID INTEGER PRIMARY KEY,n_ltree INTEGER NOT NULL,SID INTEGER NOT NULL,b_rate REAL,d_rate REAL,t_rate REAL,n_leaves INTEGER,n_dup INTEGER,n_loss INTEGER, n_transf INTEGER, gamma REAL, FOREIGN KEY(SID) REFERENCES Species_Trees(SID))");
+	sprintf(query,"CREATE TABLE IF NOT EXISTS Locus_Trees(LID INTEGER PRIMARY KEY,n_ltree INTEGER NOT NULL,SID INTEGER NOT NULL,b_rate REAL,d_rate REAL,t_rate REAL,gc_rate REAL,n_leaves INTEGER,n_dup INTEGER,n_loss INTEGER, n_transf INTEGER, n_gc INTEGER, gamma REAL, FOREIGN KEY(SID) REFERENCES Species_Trees(SID))");
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	if(db_iserror!=SQLITE_OK)
 	{
@@ -133,14 +133,14 @@ long int WriteSTreeDB(sqlite3 **database, int n_leaves, double height, double le
     return NO_ERROR;
 }
 
-long int WriteLTreeDB(sqlite3 **database, int n_ltree, int SID, double b_rate, double d_rate, double t_rate, int n_leaves, int n_dup, int n_loss, int n_transf, double gamma)
+long int WriteLTreeDB(sqlite3 **database, int n_ltree, int SID, double b_rate, double d_rate, double t_rate, double gc_rate,int n_leaves, int n_dup, int n_loss, int n_transf, int n_gc, double gamma)
 {
 	char *query;
 	char *zErrMsg=NULL;
 	int db_iserror=0;
     query=calloc(1000, sizeof(char));
 	
-	sprintf(query,"INSERT INTO Locus_Trees VALUES(NULL,'%d','%d','%e','%e','%e','%d','%d','%d','%d','%e')",n_ltree,SID,b_rate,d_rate,t_rate,n_leaves,n_dup,n_loss,n_transf,gamma); //63+numbers
+	sprintf(query,"INSERT INTO Locus_Trees VALUES(NULL,'%d','%d','%e','%e','%e','%e','%d','%d','%d','%d','%d','%e')",n_ltree,SID,b_rate,d_rate,t_rate,gc_rate,n_leaves,n_dup,n_loss,n_transf,n_gc,gamma); //63+numbers
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	
 	if(db_iserror!=SQLITE_OK)

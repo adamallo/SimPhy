@@ -1285,7 +1285,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         for (j=0; j<leaves-1;++j)
         {
             // * First offspring node * //
-            node_index= gsl_rng_uniform(seed)*n_leaves;//Samples nodes
+            node_index= (int)gsl_rng_uniform_int(seed,n_leaves);//Samples nodes
             w_node1=*(node_ptrs+node_index);
             --n_leaves;
             *(node_ptrs + node_index) = *(node_ptrs + n_leaves);/* The pointer to this node now points to the last node_ptr, inaccesible due to --n_leaves*/
@@ -1293,12 +1293,12 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             // * Second offspring node * //
 #ifndef NO_VAR
             if (n_leaves>1)
-                node_index= gsl_rng_uniform(seed)*n_leaves;//Samples nodes
+                node_index= (int)gsl_rng_uniform_int(seed,n_leaves);//Samples nodes
             else
                 node_index=0;
 #endif
 #ifdef NO_VAR
-            node_index=gsl_rng_uniform(seed)*n_leaves;
+            node_index=(int)gsl_rng_uniform_int(seed,n_leaves);
 #endif
             w_node2= *(node_ptrs + node_index);
             *(node_ptrs + node_index)= (*out_tree)->m_node + j + leaves; //Now the node_ptr that pointed to w_node2 points to the new ancestral node, for using it in the next loop iteration
@@ -1470,12 +1470,12 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 /// Chooses the leave for the next event
 #ifndef NO_VAR
                 if(avail_leaves>1)
-                    node_index=gsl_rng_uniform(seed)*avail_leaves;
+                    node_index=(int)gsl_rng_uniform_int(seed,avail_leaves);
                 else
                     node_index=0;
 #endif
 #ifdef NO_VAR
-                node_index=gsl_rng_uniform(seed)*avail_leaves;
+                node_index=(int)gsl_rng_uniform_int(seed,avail_leaves);
 #endif
                 // ***
                 /// <dl><dt>Chooses the process</dt><dd>
@@ -1740,7 +1740,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     
     // ******
     ///Structures
-    l_node dummy_node,*aux_lnode=NULL,*g_lnode=NULL,*anc_lnode=NULL,*w_lnode=NULL,*w_lnode2=NULL;
+    l_node dummy_node,*aux_lnode=NULL,*w_lnode3=NULL,*anc_lnode=NULL,*w_lnode=NULL,*w_lnode2=NULL;
     s_node *w_snode=NULL;
     
     // ******
@@ -1807,7 +1807,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                 continue;
             
             dummy_node.lat_node=w_snode->anc_node->l_nodes; //dummy node to allow the loop to start in the first iteration, due to the use of different structures (first iteration: s_node->l_nodes, rest: l_node->lat_node)
-            g_lnode=&dummy_node;
+            w_lnode3=&dummy_node;
             diffs_true_leaves=0;
             
             // *****
@@ -1826,8 +1826,8 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                 
                 // ****
                 /// Waiting-time sampling
-                g_lnode=g_lnode->lat_node;
-                anc_lnode=g_lnode;
+                w_lnode3=w_lnode3->lat_node;
+                anc_lnode=w_lnode3;
                 
                 current_ngen=w_snode->anc_node->n_gen;
                 max_ngen=w_snode->n_gen;
@@ -1935,7 +1935,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                         // ***
                         /// Chooses the leave for the next event
                         if(avail_leaves>1)
-                            node_index=gsl_rng_uniform(seed)*avail_leaves;
+                            node_index=(int)gsl_rng_uniform_int(seed,avail_leaves);
                         else
                             node_index=0;
                         
@@ -2199,34 +2199,29 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     
 }
 
-long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_leaves, int *st_gleaves)
+long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves)
 {
-    
-    //////////////////////////////DBG/////////////////////////////////////////
-    
-    int dist_dependent=1;
-    ////////////////////////////////////////////////////////////////////////////
-    
     
     // *******
     /// <dl><dt>Declarations</dt><dd>
     
     // ******
     ///Structures
-    l_node dummy_node,*aux_lnode=NULL,*g_lnode=NULL,*anc_lnode=NULL,*w_lnode=NULL,*w_lnode2=NULL;
+    l_node dummy_node,*aux_lnode=NULL,*anc_lnode=NULL,*w_lnode=NULL,*w_lnode2=NULL,*w_lnode3=NULL;
+    l_node **avail_receptors=NULL;
     s_node *w_snode=NULL;
     period *periods=NULL, *w_period=NULL, *w_period2=NULL;
     
     // ******
-    /// B-D process related variables
-    int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0;
-    int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0;
+    /// B-D + Poisson process related variables
+    int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
+    int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate+h_rate,b_prob=(b_rate/(d_rate+b_rate+h_rate)), bd_prob=((b_rate+d_rate)/(b_rate+d_rate+h_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0;
+    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0;
     
     // ******
     /// Loop related variables</dd></dl>
-    int ltree_iter=0,bd_iter=0,l_tree_retries=0, maxnleaves_reached=0,done=0;
+    int ltree_iter=0,bd_iter=0,l_tree_retries=0, maxnleaves_reached=0,done=0, discarded_t=0;
     int i=0,j=0,k=0;
     
     while (done!=1 && ltree_iter<=MAX_IT)
@@ -2257,11 +2252,13 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         extra_nodes=0;
         n_losses=0;
         n_ltransf=0;
+        n_lgc=0;
         *st_leaves=0;
         *st_gleaves=0;
         *st_dups=0;
         *st_losses=0;
         *st_transfr=0;
+        *st_gc=0;
         ++ltree_iter;
         maxnleaves_reached=0;
         
@@ -2284,7 +2281,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 continue;
             
             dummy_node.lat_node=w_snode->anc_node->l_nodes; //dummy node to allow the loop to start in the first iteration, due to the use of different structures (first iteration: s_node->l_nodes, rest: l_node->lat_node)
-            g_lnode=&dummy_node;
+            w_lnode3=&dummy_node;
             diffs_true_leaves=0;
             
             // *****
@@ -2303,8 +2300,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 
                 // ****
                 /// Waiting-time sampling
-                g_lnode=g_lnode->lat_node;
-                anc_lnode=g_lnode;
+                w_lnode3=w_lnode3->lat_node;
+                anc_lnode=w_lnode3;
                 
                 current_ngen=w_snode->anc_node->n_gen;
                 max_ngen=w_snode->n_gen;
@@ -2412,63 +2409,14 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         // ***
                         /// Chooses the leave for the next event
                         if(avail_leaves>1)
-                            node_index=gsl_rng_uniform(seed)*avail_leaves;
+                            node_index=(int)gsl_rng_uniform_int(seed,avail_leaves);
                         else
                             node_index=0;
                         
                         // ***
                         /// <dl><dt>Chooses the process</dt><dd>
                         rnumber=gsl_rng_uniform(seed);
-                        if (rnumber>bd_prob)
-                        {
-                            // **
-                            /// <dl><dt>Transfer (donnor)</dt><dd>
-                            
-                            // *
-                            /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
-                            w_lnode=NewLNodes(1,0,wsp_tree->max_childs,0);
-                            
-                            //Tree pointers and branch lengths reconfiguration
-                            anc_lnode=*(node_ptrs+node_index);
-                            *(anc_lnode->childs)=w_lnode;
-                            w_lnode->anc_node=anc_lnode;
-                            
-                            anc_lnode->n_gen=current_ngen-sampled_ngen;
-                            anc_lnode->gen_length=anc_lnode->anc_node->n_gen-anc_lnode->n_gen;
-                            
-                            //Ancestor node info
-                            anc_lnode->kind_node=TRFR; //Transfer (donnor)
-                            anc_lnode->n_child=1;
-                            anc_lnode->sp_index=w_snode->sp_index;
-                            anc_lnode->Ne=w_snode->Ne;
-                            anc_lnode->mu_mult=w_snode->mu_mult;
-                            anc_lnode->conts=w_snode;
-                            
-                            //New nodes info
-                            w_lnode->paralog=anc_lnode->paralog;
-                            
-                            //New leaves addition
-                            *(node_ptrs+node_index)=w_lnode;
-                            ++n_nodes;
-                            ++(*st_transfr);
-                            
-                            if (verbosity==5)
-                            {
-                                printf("\n\t\t\t\t\tNew transfer donnor");
-#ifdef DBG
-                                fflush(stdout);
-#endif
-                            }
-                            else if (verbosity==6)
-                            {
-                                printf("\n\t\t\t\t\tNew transfer donnor, time %lf",anc_lnode->n_gen*gen_time);
-#ifdef DBG
-                                fflush(stdout);
-#endif
-                                
-                            }
-                        }
-                        else if (rnumber<b_prob)
+                        if (rnumber>dtgc_prob)
                         {
                             // **
                             /// <dl><dt>Birth</dt><dd>
@@ -2524,9 +2472,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
 #endif
                                 
                             }
-                            
                         }
-                        else
+                        else if (rnumber>tgc_prob)
                         {
                             // **
                             /// <dl><dt>Death</dt><dd>
@@ -2571,8 +2518,104 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 fflush(stdout);
 #endif
                             }
+                        }
+                        else if (rnumber>gc_prob)
+                        {
+                            // **
+                            /// <dl><dt>Transfer (donnor)</dt><dd>
                             
+                            // *
+                            /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_childs,0);
                             
+                            //Tree pointers and branch lengths reconfiguration
+                            anc_lnode=*(node_ptrs+node_index);
+                            *(anc_lnode->childs)=w_lnode;
+                            w_lnode->anc_node=anc_lnode;
+                            
+                            anc_lnode->n_gen=current_ngen-sampled_ngen;
+                            anc_lnode->gen_length=anc_lnode->anc_node->n_gen-anc_lnode->n_gen;
+                            
+                            //Ancestor node info
+                            anc_lnode->kind_node=TRFR; //Transfer (donnor)
+                            anc_lnode->n_child=1;
+                            anc_lnode->sp_index=w_snode->sp_index;
+                            anc_lnode->Ne=w_snode->Ne;
+                            anc_lnode->mu_mult=w_snode->mu_mult;
+                            anc_lnode->conts=w_snode;
+                            
+                            //New nodes info
+                            w_lnode->paralog=anc_lnode->paralog;
+                            
+                            //New leaves addition
+                            *(node_ptrs+node_index)=w_lnode;
+                            ++n_nodes;
+                            ++(*st_transfr);
+                            
+                            if (verbosity==5)
+                            {
+                                printf("\n\t\t\t\t\tNew transfer donnor");
+#ifdef DBG
+                                fflush(stdout);
+#endif
+                            }
+                            else if (verbosity==6)
+                            {
+                                printf("\n\t\t\t\t\tNew transfer donnor, time %lf",anc_lnode->n_gen*gen_time);
+#ifdef DBG
+                                fflush(stdout);
+#endif
+                                
+                            }
+                        }
+                        else
+                        {
+                            // **
+                            /// <dl><dt>Gene conversion (donnor)</dt><dd>
+                            
+                            // *
+                            /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_childs,0);
+                            
+                            //Tree pointers and branch lengths reconfiguration
+                            anc_lnode=*(node_ptrs+node_index);
+                            *(anc_lnode->childs)=w_lnode;
+                            w_lnode->anc_node=anc_lnode;
+                            
+                            anc_lnode->n_gen=current_ngen-sampled_ngen;
+                            anc_lnode->gen_length=anc_lnode->anc_node->n_gen-anc_lnode->n_gen;
+                            
+                            //Ancestor node info
+                            anc_lnode->kind_node=GC; //Gene conversion (donnor)
+                            anc_lnode->n_child=1;
+                            anc_lnode->sp_index=w_snode->sp_index;
+                            anc_lnode->Ne=w_snode->Ne;
+                            anc_lnode->mu_mult=w_snode->mu_mult;
+                            anc_lnode->conts=w_snode;
+                            
+                            //New nodes info
+                            w_lnode->paralog=anc_lnode->paralog;
+                            
+                            //New leaves addition
+                            *(node_ptrs+node_index)=w_lnode;
+                            ++n_nodes;
+                            ++(*st_transfr);
+                            
+                            if (verbosity==5)
+                            {
+                                printf("\n\t\t\t\t\tNew gene conversion donnor");
+#ifdef DBG
+                                fflush(stdout);
+#endif
+                            }
+                            else if (verbosity==6)
+                            {
+                                printf("\n\t\t\t\t\tNew gene conversion donnor, time %lf",anc_lnode->n_gen*gen_time);
+#ifdef DBG
+                                fflush(stdout);
+#endif
+                                
+                            }
                         }
                         
                         // ***
@@ -2715,21 +2758,26 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     }
     else
     {
-        if (*st_transfr>0)
+        if (*st_transfr+*st_gc>0)
         {
+            
             if (verbosity>4)
             {
-                printf("\n\n\t\tCompleting transfers... ");
+                printf("\n\n\t\tCompleting transfers and/or gene conversions... ");
 #ifdef DBG
                 fflush(stdout);
 #endif
             }
+            
+            // Tree realocation (adding necessary memory)
             (*wlocus_tree)->n_leaves=*st_leaves;
-            (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr;//One extra node will be needed for each transfer
+            (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr+*st_gc;//One extra node will be needed for each transfer/gc
             (*wlocus_tree)->n_gleaves=*st_gleaves;
             (*wlocus_tree)->species_tree=wsp_tree;
             ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0));
             
+            
+            //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
             
             //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra for loop
@@ -2738,6 +2786,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             periods->l_nodes=NULL;
             periods->n_lnodes=0;
             j=1;
+            
+            avail_receptors=calloc(*st_leaves,sizeof(l_node *));
             
             if (verbosity>4)
             {
@@ -2798,6 +2848,9 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             {
                 w_period=periods+i;
                 w_period2=periods+i-1;
+                n_avail_receptors=0;
+                discarded_t=0;
+                w_lnode2=NULL;
                 
                 if (verbosity>5)
                 {
@@ -2821,128 +2874,186 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         *(w_period2->l_nodes+w_period2->n_lnodes)=w_lnode;
                         w_period2->n_lnodes+=1;
                     }
-                    else if (w_period->n_lnodes>1 && (w_lnode->kind_node==TRFR && w_lnode->n_gen==w_period2->r_bound))
+                    else if (w_period->n_lnodes>1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->n_gen==w_period2->r_bound))
                     {
-                        //Perform the transfer
-                        
-                        switch (w_period->n_lnodes)
-                        {
-                            case 2:
-                                switch (j)
+                        w_snode=w_lnode->conts;
+                        w_lnode2=w_lnode;
+                        t_event=w_lnode->kind_node;
+                    }
+                    else if (w_period->n_lnodes==1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->n_gen==w_period2->r_bound))
+                    {
+                        w_lnode2=w_lnode;
+                        discarded_t=1;
+                    }
+                }
+                
+                if (w_lnode2!=NULL)
+                {
+                    switch (discarded_t)
+                    {
+                        case 0:
+                            for (j=0; j<w_period->n_lnodes; ++j)
+                            {
+                                w_lnode=*(w_period->l_nodes+j);
+                                switch (t_event)
                                 {
-                                    case 0:
-                                        node_index=1;
+                                    case TRFR:
+                                        if (w_lnode->conts!=w_snode)
+                                        {
+                                            *(avail_receptors+n_avail_receptors)=w_lnode;
+                                            ++n_avail_receptors;
+                                        }
                                         break;
-                                    case 1:
-                                        node_index=0;
+                                    case GC:
+                                        if (w_lnode->conts==w_snode && w_lnode!=w_lnode2) //w_lnode2=GC node
+                                        {
+                                            *(avail_receptors+n_avail_receptors)=w_lnode;
+                                            ++n_avail_receptors;
+                                        }
                                         break;
                                     default:
                                         ErrorReporter(UNEXPECTED_VALUE);
                                         break;
                                 }
-                                break;
-                            default:
-                                switch (dist_dependent)
+                            }
+                            if (n_avail_receptors>0)
+                            {
+                                switch (t_kind)
                                 {
                                     case 1:
-                                        node_index=ChooseLNodePeriod(w_period,w_lnode,gsl_rng_uniform_pos(seed));
+                                        w_lnode=w_lnode2;
+                                        w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed));
                                         break;
                                     case 0:
-                                        node_index=gsl_rng_uniform_pos(seed)*(w_period->n_lnodes-2);
-                                        if (node_index>=j)
-                                            node_index++;
+                                        w_lnode2=*(avail_receptors+gsl_rng_uniform_int(seed,n_avail_receptors));
                                         break;
                                     default:
                                         ErrorReporter(SETTINGS_ERROR);
-                                    
+                                        break;
+                                        
                                 }
-                                break;
-                        }
-                        
-                        //w_lnode -> donnor
-                        //w_lnode2 -> receptor after reception
-                        //g_lnode -> receptor (lost)
-                        
-                        w_lnode2=*(w_period->l_nodes+node_index);
-                        
-                        g_lnode=(*wlocus_tree)->m_node+tn_nodes+n_transfer; //This will be the receptor
-                        anc_lnode=w_lnode2->anc_node;
-                        g_lnode->anc_node=anc_lnode;
-                        g_lnode->n_gen=w_lnode->n_gen;
-                        g_lnode->gen_length=g_lnode->anc_node->n_gen-g_lnode->n_gen;
-                        g_lnode->kind_node=RTRFR;
-                        g_lnode->paralog=w_lnode2->paralog;
-                        g_lnode->conts=w_lnode2->conts;
-                        g_lnode->mu_mult=w_lnode2->mu_mult;
-                        g_lnode->Ne=w_lnode2->Ne;
-                        
-                        for (k=0; k<anc_lnode->n_child; ++k)
-                        {
-                            if (*(anc_lnode->childs+k)==w_lnode2)
-                                *(anc_lnode->childs+k)=g_lnode;
-                        }
-                        
-                        w_lnode2->gen_length=w_lnode->n_gen-w_lnode2->n_gen;
-                        w_lnode2->anc_node=w_lnode;
-                        
-                        
-                        *(w_lnode->childs+1)=w_lnode2; //The second node in a TRFR node is allways the transfered lineage (bound!!).
-                        w_lnode->n_child=2;
-                        
-                        ++n_transfer;
-                        switch (verbosity)
-                        {
-                            case 0:
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                                break;
-                            case 5:
-                                printf("\n\t\t\t\t\t Transfer");
-                                break;
-                            default:
-                                printf("\n\t\t\t\t\tTransfer from %d to %d, time %lf",w_lnode->index, w_lnode2->index, w_period2->r_bound);
-                                break;
-                        }
 
+                                //w_lnode -> donnor
+                                //w_lnode2 -> receptor after reception
+                                //w_lnode3 -> receptor (lost)
+                                
+                                w_lnode3=(*wlocus_tree)->m_node+tn_nodes+n_transfer+n_gc; //This will be the receptor
+                                anc_lnode=w_lnode2->anc_node;
+                                w_lnode3->anc_node=anc_lnode;
+                                w_lnode3->n_gen=w_lnode->n_gen;
+                                w_lnode3->gen_length=w_lnode3->anc_node->n_gen-w_lnode3->n_gen;
+                                w_lnode3->paralog=w_lnode2->paralog;
+                                w_lnode3->conts=w_lnode2->conts;
+                                w_lnode3->mu_mult=w_lnode2->mu_mult;
+                                w_lnode3->Ne=w_lnode2->Ne;
+                                
+                                for (k=0; k<anc_lnode->n_child; ++k)
+                                {
+                                    if (*(anc_lnode->childs+k)==w_lnode2)
+                                        *(anc_lnode->childs+k)=w_lnode3;
+                                }
+                                
+                                w_lnode2->gen_length=w_lnode->n_gen-w_lnode2->n_gen;
+                                w_lnode2->anc_node=w_lnode;
+                                
+                                
+                                *(w_lnode->childs+1)=w_lnode2; //The second node in a TRFR node is allways the transfered lineage (bound!!).
+                                w_lnode->n_child=2;
+                                
+                                switch (t_event)
+                                {
+                                    case TRFR:
+                                        w_lnode3->kind_node=RTRFR;
+                                        ++n_transfer;
+                                        switch (verbosity)
+                                        {
+                                            case 0:
+                                            case 1:
+                                            case 2:
+                                            case 3:
+                                            case 4:
+                                                break;
+                                            case 5:
+                                                printf("\n\t\t\t\t\t Transfer");
+                                                break;
+                                            default:
+                                                printf("\n\t\t\t\t\tTransfer from %d to %d, time %lf",w_lnode->index, w_lnode2->index, w_period2->r_bound);
+                                                break;
+                                        }
+                                        
 #ifdef DBG
-                        fflush(stdout);
+                                        fflush(stdout);
 #endif
-                    }
-                    else if (w_period->n_lnodes==1 && (w_lnode->kind_node==TRFR && w_lnode->n_gen==w_period2->r_bound))
-                    {
-                        switch (verbosity)
-                        {
-                            case 0:
-                            case 1:
-                            case 2:
-                            case 3:
-                            case 4:
-                                break;
-                            case 5:
-                                printf("\n\t\t\t\t\t Discarded transfer");
-                                break;
-                            default:
-                                printf("\n\t\t\t\t\tImpossible to perform the sampled transfer from the node %u, as there is no candidate receptors. Discarded transfer\n",w_lnode->index);
-                                break;
-                        }
-                        
+                                        break;
+                                    case GC:
+                                        w_lnode3->kind_node=RGC;
+                                        ++n_gc;
+                                        switch (verbosity)
+                                        {
+                                            case 0:
+                                            case 1:
+                                            case 2:
+                                            case 3:
+                                            case 4:
+                                                break;
+                                            case 5:
+                                                printf("\n\t\t\t\t\t Gene conversion");
+                                                break;
+                                            default:
+                                                printf("\n\t\t\t\t\tGene conversion from %d to %d, time %lf",w_lnode->index, w_lnode2->index, w_period2->r_bound);
+                                                break;
+                                        }
+                                        
 #ifdef DBG
-                        fflush(stdout);
+                                        fflush(stdout);
 #endif
-                        (*(w_lnode->childs))->anc_node=w_lnode->anc_node;
-                        for(k=0;k<w_lnode->anc_node->n_child;++k)
-                        {
-                            if (*(w_lnode->anc_node->childs+k)==w_lnode)
-                            {
-                                *(w_lnode->anc_node->childs+k)=*(w_lnode->childs);
+                                        break;
+                                        
+                                    default:
+                                        ErrorReporter(UNEXPECTED_VALUE);
+                                        break;
+                                }
+                                
                                 break;
                             }
-                        }
-                        (*(w_lnode->childs))->gen_length=w_lnode->anc_node->n_gen-(*(w_lnode->childs))->n_gen;
-                        ++n_ltransf;
-
+                            //else go to default
+                            
+                        default:
+                            switch (verbosity)
+                            {
+                                case 0:
+                                case 1:
+                                case 2:
+                                case 3:
+                                case 4:
+                                    break;
+                                case 5:
+                                    printf("\n\t\t\t\t\t Discarded %s",w_lnode2->kind_node==TRFR?"transfer":"gene conversion");
+                                    break;
+                                default:
+                                    printf("\n\t\t\t\t\tImpossible to perform the sampled %s from the node %u, as there is no candidate receptors. Discarded transfer\n",w_lnode2->kind_node==TRFR?"transfer":"gene conversion",w_lnode2->index);
+                                    break;
+                            }
+                            
+    #ifdef DBG
+                            fflush(stdout);
+    #endif
+                            (*(w_lnode2->childs))->anc_node=w_lnode2->anc_node;
+                            for(k=0;k<w_lnode2->anc_node->n_child;++k)
+                            {
+                                if (*(w_lnode2->anc_node->childs+k)==w_lnode2)
+                                {
+                                    *(w_lnode2->anc_node->childs+k)=*(w_lnode2->childs);
+                                    break;
+                                }
+                            }
+                            (*(w_lnode2->childs))->gen_length=w_lnode2->anc_node->n_gen-(*(w_lnode2->childs))->n_gen;
+                            if (w_lnode2->kind_node==TRFR)
+                                ++n_ltransf;
+                            else
+                                ++n_lgc;
+                            
+                            break;
                     }
                 }
                 
@@ -2955,13 +3066,15 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
 #endif
             }
             FreePeriods(periods, n_periods);
+            free(avail_receptors);
             (*wlocus_tree)->root=((*wlocus_tree)->m_node+tn_nodes-1);
         }
         // ******
         /// Filling information of the just simulated l_tree
         *st_transfr-=n_ltransf;
-        (*wlocus_tree)->n_leaves=*st_leaves+*st_transfr;
-        (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr-n_ltransf;
+        *st_gc-=n_lgc;
+        (*wlocus_tree)->n_leaves=*st_leaves+*st_transfr+*st_gc;
+        (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr-n_ltransf+*st_gc-n_lgc;
         (*wlocus_tree)->n_gleaves=*st_gleaves;
         (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
@@ -2998,7 +3111,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     int next_avail_inode=0,max_coals=0,n_anc_nodes=0,p_Ne=0,k=0;
     double p_mu=0;
     double sampled_ngen=0, max_ngen=0, current_ngen=0;
-    int avail_leaves=0,node_index=0, extra_nodes=0;
+    int avail_leaves=0,node_index=0;
     
     // ******
     /// Loop related variables</dd></dl>
@@ -3015,7 +3128,6 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     w_gnodes=(*gene_tree)->m_node;
     next_avail_inode=wlocus_tree->n_gleaves;
-    extra_nodes=0;
     *n_lcoals=0;
     
     // ****
@@ -3254,7 +3366,6 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         else //Last
         {
             (*gene_tree)->root=anc_gnode; //Saves the root of the gene tree
-            (*gene_tree)->n_nodes-=extra_nodes; //Unused nodes due to the presence of polytomies.
         }
         
         if (verbosity>4)
@@ -3680,7 +3791,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
     {
         fmax_nlin=0;
         *(node->i_probs)=1;
-        *(node->o_probs)=1;//Lost lineage (LOSS or RTRFR)
+        *(node->o_probs)=1;//Lost lineage (LOSS, RTRFR or RGC)
     }
     
     if (max_nlin!=NULL)
@@ -5168,7 +5279,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     }
     else if (locus_tree->m_node==NULL)
     {
-        if (locus_tree->root == NULL)
+        if (locus_tree->root==NULL)
             return MEM_ERROR;
         
         CollapseLTree(locus_tree,1,0,locus_tree->root->o_probs!=NULL?1:0); //Post-order
@@ -5181,29 +5292,32 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     
     // **
     /// <dl><dt>Gene tree loop</dt><dd>
-    if (reset_gtree==1)
+    switch (reset_gtree)
     {
-        for (i=0;i<gene_tree->n_nodes;++i)
-        {
-            // *
-            /// Gene node info and pointers reset</dd></dl></dd></dl>
-            w_gnode=gene_tree->m_node+i;
-            w_gnode->index=i;
-            w_gnode->sp_index=0;
-            w_gnode->paralog=0;
-            w_gnode->replica=0;
-            w_gnode->conts=NULL;
-            w_gnode->contl=NULL;
-            w_gnode->n_child=0;
-            w_gnode->anc_node=NULL;
-            w_gnode->height=0.0;
-            w_gnode->bl=0.0;
-            w_gnode->gen_length=0.0;
-        }
-        
-        // **
-        /// Gene tree root deletion</dd></dl>
-        gene_tree->root=NULL;
+        case 1:
+            for (i=0;i<gene_tree->n_nodes;++i)
+            {
+                // *
+                /// Gene node info and pointers reset</dd></dl></dd></dl>
+                w_gnode=gene_tree->m_node+i;
+                w_gnode->index=i;
+                w_gnode->sp_index=0;
+                w_gnode->paralog=0;
+                w_gnode->replica=0;
+                w_gnode->conts=NULL;
+                w_gnode->contl=NULL;
+                w_gnode->n_child=0;
+                w_gnode->anc_node=NULL;
+                w_gnode->height=0.0;
+                w_gnode->bl=0.0;
+                w_gnode->gen_length=0.0;
+            }
+            
+            // **
+            /// Gene tree root deletion</dd></dl>
+            gene_tree->root=NULL;
+            break;
+
     }
     
     // ***
@@ -5214,32 +5328,39 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         
         // **
         /// <dl><dt>Leaf nodes association </dt><dd>
-        if (w_lnode->n_child==0)
+        switch (w_lnode->n_child)
         {
-            // *
-            /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
-            if (w_lnode->conts!=NULL)
-                w_lnode->n_nodes=w_lnode->conts->n_replicas;
-            if(w_lnode->kind_node==LOSS || w_lnode->kind_node==RTRFR)
-                w_lnode->n_nodes=includelosses;
-            
-            // *
-            /// l_node::g_nodes are filled with g_node leaves by a loop with as much iterations as l_node::n_nodes, and each of these \ref g_node "g_nodes" is set with the same l_node::sp_index and with it own g_node::replica. </dd></dl></dd></dl>
-            for (j=0;j<w_lnode->n_nodes;++j)
-            {
-                w_gnode=gene_tree->m_node+next_leaf;
-                ++next_leaf;
-                *(w_lnode->g_nodes+j)=w_gnode;
-                w_gnode->sp_index=w_lnode->sp_index;
-                w_gnode->paralog=w_lnode->paralog;
-                w_gnode->replica=j;
-                w_gnode->contl=w_lnode;
-                w_gnode->conts=w_lnode->conts;
-            }
-        }
-        else
-        {
-            w_lnode->n_nodes=0;
+            case 0:
+                // *
+                /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
+                if (w_lnode->conts!=NULL)
+                    w_lnode->n_nodes=w_lnode->conts->n_replicas;
+                switch (w_lnode->kind_node) //Losses
+                {
+                    case LOSS:
+                    case RTRFR:
+                    case RGC:
+                        w_lnode->n_nodes=includelosses;
+                        break;
+                }
+                // *
+                /// l_node::g_nodes are filled with g_node leaves by a loop with as much iterations as l_node::n_nodes, and each of these \ref g_node "g_nodes" is set with the same l_node::sp_index and with it own g_node::replica. </dd></dl></dd></dl>
+                for (j=0;j<w_lnode->n_nodes;++j)
+                {
+                    w_gnode=gene_tree->m_node+next_leaf;
+                    ++next_leaf;
+                    *(w_lnode->g_nodes+j)=w_gnode;
+                    w_gnode->sp_index=w_lnode->sp_index;
+                    w_gnode->paralog=w_lnode->paralog;
+                    w_gnode->replica=j;
+                    w_gnode->contl=w_lnode;
+                    w_gnode->conts=w_lnode->conts;
+                }
+                break;
+                
+            default:
+                w_lnode->n_nodes=0;
+                break;
         }
     }
     
@@ -5280,29 +5401,31 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     
     // **
     /// <dl><dt>Gene tree loop</dt><dd>
-    if (reset_gtree==1)
+    switch (reset_gtree)
     {
-        for (i=0;i<gene_tree->n_nodes;++i)
-        {
-            // *
-            /// Gene node info and pointers reset</dd></dl></dd></dl>
-            w_gnode=gene_tree->m_node+i;
-            w_gnode->index=i;
-            w_gnode->sp_index=0;
-            w_gnode->paralog=0;
-            w_gnode->replica=0;
-            w_gnode->conts=NULL;
-            w_gnode->contl=NULL;
-            w_gnode->n_child=0;
-            w_gnode->anc_node=NULL;
-            w_gnode->height=0.0;
-            w_gnode->bl=0.0;
-            w_gnode->gen_length=0.0;
-        }
-        
-        // **
-        /// Gene tree root deletion</dd></dl>
-        gene_tree->root=NULL;
+        case 1:
+            for (i=0;i<gene_tree->n_nodes;++i)
+            {
+                // *
+                /// Gene node info and pointers reset</dd></dl></dd></dl>
+                w_gnode=gene_tree->m_node+i;
+                w_gnode->index=i;
+                w_gnode->sp_index=0;
+                w_gnode->paralog=0;
+                w_gnode->replica=0;
+                w_gnode->conts=NULL;
+                w_gnode->contl=NULL;
+                w_gnode->n_child=0;
+                w_gnode->anc_node=NULL;
+                w_gnode->height=0.0;
+                w_gnode->bl=0.0;
+                w_gnode->gen_length=0.0;
+            }
+            
+            // **
+            /// Gene tree root deletion</dd></dl>
+            gene_tree->root=NULL;
+            break;
     }
     
     // ***
@@ -5319,39 +5442,47 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         
         // **
         /// <dl><dt>Leaf nodes association </dt><dd>
-        if (w_lnode->n_child==0)
+        switch (w_lnode->n_child)
         {
-            // *
-            /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
-            if (w_lnode->conts!=NULL)
-            {
-                w_lnode->n_nodes=w_lnode->conts->n_replicas;
-                w_lnode->n_ilin=w_lnode->conts->n_replicas;
-                *(w_lnode->i_probs+w_lnode->conts->n_replicas)=1;
-            }
-            if(w_lnode->kind_node==LOSS || w_lnode->kind_node==RTRFR)
-            {
-                w_lnode->n_nodes=includelosses;
-                w_lnode->n_ilin=includelosses;
-                *(w_lnode->i_probs+includelosses)=1;
-            }
-            
-            // *
-            /// l_node::g_nodes are filled with g_node leaves by a loop with as much iterations as l_node::n_nodes, and each of these \ref g_node "g_nodes" is set with the same l_node::sp_index and with it own g_node::replica. </dd></dl></dd></dl>
-            for (j=0;j<w_lnode->n_nodes;++j)
-            {
-                w_gnode=gene_tree->m_node+next_leaf;
-                ++next_leaf;
-                *(w_lnode->g_nodes+j)=w_gnode;
-                w_gnode->sp_index=w_lnode->sp_index;
-                w_gnode->paralog=w_lnode->paralog;
-                w_gnode->replica=j;
-                w_gnode->contl=w_lnode;
-                w_gnode->conts=w_lnode->conts;
-            }
+            case 0:
+                // *
+                /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
+                if (w_lnode->conts!=NULL)
+                {
+                    w_lnode->n_nodes=w_lnode->conts->n_replicas;
+                    w_lnode->n_ilin=w_lnode->conts->n_replicas;
+                    *(w_lnode->i_probs+w_lnode->conts->n_replicas)=1;
+                }
+                switch (w_lnode->kind_node)
+                {
+                    case LOSS:
+                    case RTRFR:
+                    case RGC:
+                        w_lnode->n_nodes=includelosses;
+                        w_lnode->n_ilin=includelosses;
+                        *(w_lnode->i_probs+includelosses)=1;
+                        break;
+                }
+                
+                // *
+                /// l_node::g_nodes are filled with g_node leaves by a loop with as much iterations as l_node::n_nodes, and each of these \ref g_node "g_nodes" is set with the same l_node::sp_index and with it own g_node::replica. </dd></dl></dd></dl>
+                for (j=0;j<w_lnode->n_nodes;++j)
+                {
+                    w_gnode=gene_tree->m_node+next_leaf;
+                    ++next_leaf;
+                    *(w_lnode->g_nodes+j)=w_gnode;
+                    w_gnode->sp_index=w_lnode->sp_index;
+                    w_gnode->paralog=w_lnode->paralog;
+                    w_gnode->replica=j;
+                    w_gnode->contl=w_lnode;
+                    w_gnode->conts=w_lnode->conts;
+                }
+                break;
+                
+            default:
+                w_lnode->n_nodes=0;
+                break;
         }
-        else
-            w_lnode->n_nodes=0;
     }
     
     gene_tree->species_tree=locus_tree->species_tree;
@@ -6242,6 +6373,13 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                     }
                 }
             }
+            else if (wl_node->kind_node==SP)
+            {
+                if (names==NULL)
+                    fprintf(reconsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                else
+                    fprintf(reconsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+            }
             else if (wl_node->kind_node==LOSS)
             {
                 
@@ -6254,11 +6392,7 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
             }
             else
             {
-                
-                if (names==NULL)
-                    fprintf(reconsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                else
-                    fprintf(reconsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                fprintf(reconsl_outfile,"\'Rgc–%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             
         }
@@ -6300,37 +6434,49 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
                 }
                 else //External l_node
                 {
-                    if (wg_node->contl->kind_node==LOSS) //Lost l_node
-                        fprintf(reconlg_outfile,"%d\t\'Lost–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                    else if(wg_node->contl->kind_node==RTRFR) //Rtransfer l_node
-                        fprintf(reconlg_outfile,"%d\t\'Rtransf–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                    else
+                    switch (wg_node->contl->kind_node)
                     {
-                        if (names==NULL)
-                            fprintf(reconlg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
-                        else
-                            fprintf(reconlg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                        case LOSS:
+                            fprintf(reconlg_outfile,"%d\t\'Lost–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RTRFR:
+                            fprintf(reconlg_outfile,"%d\t\'Rtransf–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RGC:
+                            fprintf(reconlg_outfile,"%d\t\'Rgc–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            break;
+                            
+                        default:
+                            if (names==NULL)
+                                fprintf(reconlg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                            else
+                                fprintf(reconlg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
                     }
-                    
                 }
-                
             }
             else //g_node and l_node external
             {
-                if (wg_node->contl->kind_node==LOSS)
-                    fprintf(reconlg_outfile,"\'Lost–%d_%d_%d\'\t\'Lost–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                else if (wg_node->contl->kind_node==RTRFR) //Rtransfer l_node
-                    fprintf(reconlg_outfile,"\'Rtransf–%d_%d_%d\'\t\'Rtransf–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                else //Everything external
+                switch (wg_node->contl->kind_node)
                 {
-                    if (names==NULL)
-                        fprintf(reconlg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
-                    else
-                        fprintf(reconlg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                    case LOSS:
+                        fprintf(reconlg_outfile,"\'Lost–%d_%d_%d\'\t\'Lost–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        break;
+                    case RTRFR:
+                        fprintf(reconlg_outfile,"\'Rtransf–%d_%d_%d\'\t\'Rtransf–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        break;
+                    case RGC:
+                        fprintf(reconlg_outfile,"\'Rgc–%d_%d_%d\'\t\'Rgc–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        break;
+                        
+                    default:
+                        if (names==NULL)
+                            fprintf(reconlg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                        else
+                            fprintf(reconlg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                        break;
                 }
-                
             }
-            
         }
         else
             return (UNEXPECTED_VALUE);
@@ -6340,88 +6486,6 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
     fclose(reconlg_outfile);
     return (NO_ERROR);
 }
-
-//long int WriteReconLosses(s_tree *wsp_tree, g_tree *gene_tree, name_c *names, char *recon_outname)
-//{
-//    int i=0, j=0, is_dup=0, locus=0;
-//    g_node *wg_node=NULL;
-//    FILE *recon_outfile=NULL;
-//    
-//    if ((recon_outfile=fopen(recon_outname, "w"))==NULL)
-//    {
-//        return(IO_ERROR);
-//    }
-//    fprintf(recon_outfile,"Gt_node\tLocus\tSt_node\tEvent\n");
-//    
-//    
-//    PostReorderSNodes(wsp_tree->root,&i);
-//    CollapseGTree(gene_tree,1,1);
-//    
-//    for (i=0;i<gene_tree->n_nodes;++i)
-//    {
-//        wg_node=gene_tree->m_node+i;
-//        if (wg_node->conts!=NULL)
-//        {
-//            if (wg_node->n_child!=0) //Internal g_node
-//            {
-//                is_dup=0;
-//                locus=(*wg_node->childs)->paralog;
-//                
-//                for (j=1; j<wg_node->n_child; ++j)
-//                {
-//                    if (locus!=(*(wg_node->childs+j))->paralog)
-//                    {
-//                        is_dup=1;
-//                        break;
-//                    }
-//                }
-//                if (wg_node->conts->n_child==0) //External s_node
-//                {
-//                    if (names==NULL)
-//                        fprintf(recon_outfile,"%d\t%d\t\'%d\'\t%s\n",wg_node->index,wg_node->paralog,wg_node->sp_index,is_dup==1?"Dup":"Coal");
-//                    else
-//                        fprintf(recon_outfile,"%d\t%d\t\'%s\'\t%s\n",wg_node->index,wg_node->paralog,(names->names+(wg_node->sp_index*names->max_lname)),is_dup==1?"Dup":"Coal");
-//                }
-//                else
-//                    fprintf(recon_outfile,"%d\t%d\t%d\t%s\n",wg_node->index,wg_node->paralog,wg_node->conts->index,is_dup==1?"Dup":"Coal");
-//            }
-//            else //External g_node
-//            {
-//                if (wg_node->contl->kind_node==LOSS)
-//                {
-//                    if (wg_node->conts->n_child==0) //Everything external
-//                    {
-//                        if (names==NULL)
-//                            fprintf(recon_outfile,"\'Lost–%d_%d_%d\'\t%d\t\'%d\'\tLoss\n",wg_node->conts->index,wg_node->paralog,wg_node->replica,wg_node->paralog,wg_node->sp_index);
-//                        else
-//                            fprintf(recon_outfile,"\'Lost–%s_%d_%d\'\t%d\t\'%s\'\tLoss\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,wg_node->paralog,(names->names+(wg_node->sp_index*names->max_lname)));
-//                    }
-//                    else //Loss inside an internal species branch
-//                    {
-//                        fprintf(recon_outfile,"\'Lost–%d_%d_%d\'\t%d\t\%d\tLoss\n",wg_node->conts->index,wg_node->paralog,wg_node->replica,wg_node->paralog,wg_node->conts->index);
-//                    }
-//                    
-//                }
-//                else //Everything external
-//                {
-//                    if (names==NULL)
-//                        fprintf(recon_outfile,"\'%d_%d_%d\'\t%d\t\'%d\'\tLeaf\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->paralog,wg_node->sp_index);
-//                    else
-//                        fprintf(recon_outfile,"\'%s_%d_%d\'\t%d\t\'%s\'\tLeaf\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,wg_node->paralog,(names->names+(wg_node->sp_index*names->max_lname)));
-//                }
-//                
-//            }
-//            
-//        }
-//        else
-//            return UNEXPECTED_VALUE;
-//        
-//    }
-//    
-//    fclose(recon_outfile);
-//    
-//    return(NO_ERROR);
-//}
 
 long int CheckNewickSTree (char * tree)
 {
@@ -7842,68 +7906,81 @@ void WriteLNodes (l_node * p, name_c * names, double gen_time)
     
     if (p != NULL)
     {
-		if (p->n_child==0)
+        switch (p->n_child)
         {
-            // **
-            /// <dl><dt>If the node is a leaf:</dt><dd>
-            // *
-            /// Prints the node name and its branch length.</dd></dl>
-            if(p->kind_node!=LOSS && p->kind_node!=RTRFR)
-            {
-                if (names==NULL)
-                    printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
-                else
-                    printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-            }
-            else if (p->kind_node==RTRFR)
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-                }
-                else
-                {
-                    printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
-                }
-            }
-            else
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-                }
-                else
-                {
-                    printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
-                }
-            }
-
-        }
-		else
-        {
-            // **
-            /// <dl><dt>Else (internal node):</dt><dd>
-            // *
-            /// Prints "(" and starts the post-order recursion (child loop)
-			printf("(");
-            for (i=0;i<p->n_child-1;++i)
-            {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
                 // *
-                /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteLNodes(*(p->childs+i),names,gen_time);
-                printf(",");
-            }
-			WriteLNodes (*(p->childs+i), names,gen_time);
-            
-            // **
-            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
-			if (p->anc_node !=NULL)
-				printf("):%.8lf",p->gen_length*gen_time);
-            else
-                printf(");");
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->kind_node)
+                {
+                        
+                    default:
+                        if (names==NULL)
+                            printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
+                        else
+                            printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        break;
+                        
+                    case LOSS:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                    case RTRFR:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                    case RGC:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                        
+                }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodes(*(p->childs+i),names,gen_time);
+                    printf(",");
+                }
+                WriteLNodes (*(p->childs+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf("):%.8lf",p->gen_length*gen_time);
+                else
+                    printf(");");
+                break;
         }
     }
-	
 }
 
 void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
@@ -7915,68 +7992,79 @@ void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
     
     if (p != NULL)
     {
-		if (p->n_child==0)
+        switch (p->n_child)
         {
-            // **
-            /// <dl><dt>If the node is a leaf:</dt><dd>
-            // *
-            /// Prints the node name and its branch length.</dd></dl>
-            if(p->kind_node!=LOSS && p->kind_node!=RTRFR)
-            {
-                if (names==NULL)
-                    fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
-                else
-                    fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-            }
-            else if (p->kind_node==RTRFR)
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-                }
-                else
-                {
-                    fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
-                }
-            }
-            else
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
-                }
-                else
-                {
-                    fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
-                }
-            }
-
-        }
-		else
-        {
-            // **
-            /// <dl><dt>Else (internal node):</dt><dd>
-            // *
-            /// Prints "(" and starts the post-order recursion (child loop)
-			fprintf(file,"(");
-            for (i=0;i<p->n_child-1;++i)
-            {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
                 // *
-                /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteLNodesFile(file,*(p->childs+i),names,gen_time);
-                fprintf(file,",");
-            }
-			WriteLNodesFile (file,*(p->childs+i), names,gen_time);
-            
-            // **
-            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
-			if (p->anc_node !=NULL)
-				fprintf(file,"):%.8lf",p->gen_length*gen_time);
-            else
-                fprintf(file,");\n");
+                /// Prints the node name and its branch length.</dd></dl>
+                
+                switch (p->kind_node)
+                {
+                    default:
+                        if (names==NULL)
+                            fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
+                        else
+                            fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        break;
+                    case LOSS:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                    case RTRFR:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                    case RGC:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                        }
+                        else
+                        {
+                            fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                        }
+                        break;
+                }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesFile(file,*(p->childs+i),names,gen_time);
+                    fprintf(file,",");
+                }
+                WriteLNodesFile (file,*(p->childs+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,"):%.8lf",p->gen_length*gen_time);
+                else
+                    fprintf(file,");\n");
+                break;
         }
     }
-	
 }
 
 void WriteGNodes (g_node * p, name_c * names)
@@ -7987,74 +8075,83 @@ void WriteGNodes (g_node * p, name_c * names)
     /// <dl><dt> Function structure </dt><dd>
     if (p != NULL)
     {
-
-		if (p->n_child==0)
+        switch (p->n_child)
         {
-            // **
-            /// <dl><dt>If the node is a leaf:</dt><dd>
-            // *
-            /// Prints the node name and its branch length.</dd></dl>
-            if (p->contl->kind_node!=LOSS && p->contl->kind_node!=RTRFR)
-            {
-                if (names==NULL)
-                    printf("%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+                {
+                    default:
+                        if (names==NULL)
+                            printf("%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+                        
+                        else
+                            printf("%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                        break;
+                    case LOSS:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            printf("Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RTRFR:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            printf("Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RGC:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            printf("Rgc–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            printf("Rgc–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteGNodes(*(p->childs+i),names);
+                    printf(",");
+                }
+                WriteGNodes(*(p->childs+i),names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf("):%.8lf",p->bl);
                 
                 else
-                    printf("%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
-            }
-            else if (p->contl->kind_node==RTRFR)
-            {
-                if (p->conts->n_child==0 && names!=NULL)
                 {
-                    printf("Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    //printf("):%.8lf);",p->gen_length);//To print the length of the p
+                    printf(");");
                 }
-                else
-                {
-                    printf("Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
-                }
-            }
-            else
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    printf("Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
-                }
-                else
-                {
-                    printf("Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
-                }
-            }
-
-        }
-		else
-        {
-            // **
-            /// <dl><dt>Else (internal node):</dt><dd>
-            // *
-            /// Prints "(" and starts the post-order recursion (child loop)
-			printf("(");
-            for (i=0;i<p->n_child-1;++i)
-            {
-                // *
-                /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteGNodes(*(p->childs+i),names);
-                printf(",");
-            }
-            WriteGNodes(*(p->childs+i),names);
-            
-            // **
-            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
-			if (p->anc_node !=NULL)
-				printf("):%.8lf",p->bl);
-            
-            else
-            {
-                //printf("):%.8lf);",p->gen_length);//To print the length of the p
-                printf(");");
-            }
+                break;
         }
     }
-    
 }
 
 void WriteGNodesStr (char * str, g_node * p, name_c * names)
@@ -8066,73 +8163,87 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
     
     if (p != NULL)
     {
-		if (p->n_child==0)
+        switch (p->n_child)
         {
-            // **
-            /// <dl><dt>If the node is a leaf:</dt><dd>
-            // *
-            /// Prints the node name and its branch length.</dd></dl>
-            if (p->contl->kind_node!=LOSS && p->contl->kind_node==RTRFR)
-            {
-                if (names==NULL)
-                    sprintf(str,"%s%d_%d_%d:%.8lf",str,p->sp_index,p->paralog,p->replica,p->bl);
-                
-                else
-                    sprintf(str,"%s%s_%d_%d:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
-            }
-            else if (p->contl->kind_node==RTRFR)
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    sprintf(str,"%sRtransf–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
-                }
-                else
-                {
-                    sprintf(str,"%sRtransf–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
-                }
-            }
-            else
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    sprintf(str,"%sLost–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
-                }
-                else
-                {
-                    sprintf(str,"%sLost–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
-                }
-            }
-        }
-		else
-        {
-            // **
-            /// <dl><dt>Else (internal node):</dt><dd>
-            // *
-            /// Prints "(" and starts the post-order recursion (child loop)
-            sprintf(str,"%s(",str);
-            for (i=0;i<p->n_child-1;++i)
-            {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
                 // *
-                /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteGNodesStr(str,*(p->childs+i),names);
-                printf(",");
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+                {
+                    default:
+                        if (names==NULL)
+                            sprintf(str,"%s%d_%d_%d:%.8lf",str,p->sp_index,p->paralog,p->replica,p->bl);
+                        
+                        else
+                            sprintf(str,"%s%s_%d_%d:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                        break;
+                        
+                    case LOSS:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            sprintf(str,"%sLost–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            sprintf(str,"%sLost–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RTRFR:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            sprintf(str,"%sRtransf–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            sprintf(str,"%sRtransf–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RGC:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            sprintf(str,"%sRgc–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            sprintf(str,"%sRgc–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                        
+
+                }
+                break;
                 
-            }
-			WriteGNodesStr(str,*(p->childs+i),names);
-            
-            // **
-            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
-			if (p->anc_node !=NULL)
-				sprintf(str,"%s):%.8lf",str, p->bl);
-            
-            else
-            {
-                //                sprintf(str,"(%s):%.8lf);",str, p->gen_length);//To print the length of the p
-                sprintf(str,"%s;",str);
-            }
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                sprintf(str,"%s(",str);
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteGNodesStr(str,*(p->childs+i),names);
+                    printf(",");
+                    
+                }
+                WriteGNodesStr(str,*(p->childs+i),names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    sprintf(str,"%s):%.8lf",str, p->bl);
+                
+                else
+                {
+                    //                sprintf(str,"(%s):%.8lf);",str, p->gen_length);//To print the length of the p
+                    sprintf(str,"%s;",str);
+                }
+                break;
         }
     }
-	
 }
 
 void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
@@ -8144,70 +8255,81 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
     
     if (p != NULL)
     {
-		if (p->n_child==0)
+        switch (p->n_child)
         {
-            // **
-            /// <dl><dt>If the node is a leaf:</dt><dd>
-            // *
-            /// Prints the node name and its branch length.</dd></dl>
-            if (p->contl->kind_node!=LOSS && p->contl->kind_node!=RTRFR)
-            {
-                if (names==NULL)
-                    fprintf(file,"%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+                {
+                    default:
+                        if (names==NULL)
+                            fprintf(file,"%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+                        
+                        else
+                            fprintf(file,"%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                        break;
+                    case LOSS:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            fprintf(file,"Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RTRFR:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            fprintf(file,"Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                    case RGC:
+                        if (p->conts->n_child==0 && names!=NULL)
+                        {
+                            fprintf(file,"Rgc–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        }
+                        else
+                        {
+                            fprintf(file,"Rgc–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        }
+                        break;
+                }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    WriteGNodesFile(file, *(p->childs+i), names);
+                    fprintf(file,",");
+                }
+                WriteGNodesFile(file, *(p->childs+i), names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,"):%.8lf",p->bl);
                 
                 else
-                    fprintf(file,"%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
-            }
-            else if (p->contl->kind_node==RTRFR)
-            {
-                if (p->conts->n_child==0 && names!=NULL)
                 {
-                    fprintf(file,"Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    //                fprintf(file,"):%.8lf);\n",p->gen_length); //To print the length of the p
+                    fprintf(file,");\n");
                 }
-                else
-                {
-                    fprintf(file,"Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
-                }
-            }
-            else
-            {
-                if (p->conts->n_child==0 && names!=NULL)
-                {
-                    fprintf(file,"Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
-                }
-                else
-                {
-                    fprintf(file,"Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
-                }
-            }
-        }
-		else
-        {
-            // **
-            /// <dl><dt>Else (internal node):</dt><dd>
-            // *
-            /// Prints "(" and starts the post-order recursion (child loop)
-			fprintf(file,"(");
-            for (i=0;i<p->n_child-1;++i)
-            {
-                WriteGNodesFile(file, *(p->childs+i), names);
-                fprintf(file,",");
-            }
-            WriteGNodesFile(file, *(p->childs+i), names);
-            
-            // **
-            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
-			if (p->anc_node !=NULL)
-				fprintf(file,"):%.8lf",p->bl);
-            
-            else
-            {
-                //                fprintf(file,"):%.8lf);\n",p->gen_length); //To print the length of the p
-                fprintf(file,");\n");
-            }
+                break;
         }
     }
-	
 }
 
 long int RelinkLGTrees(l_tree * wl_tree, g_node * m_node)
@@ -8237,51 +8359,48 @@ long int RelinkLGTrees(l_tree * wl_tree, g_node * m_node)
     return NO_ERROR;
 }
 
-int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num)
+l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num)
 {
     int i=0, j=0;
-    l_node **l_pointers=calloc(w_period->n_lnodes,sizeof(l_node*));
-    double *t_times=calloc(w_period->n_lnodes,sizeof(double));
-    double t_prob=0, c_prob=0;
-    l_node *w_lnode=NULL;
-    l_node *w_tnode=t_node;
     int done=0, next_t=1;
+    double *t_times=calloc(n_nodes,sizeof(double));
+    double t_prob=0, c_prob=0;
+    l_node *w_lnode=NULL,*w_tnode=t_node, **wl_pointers=calloc(n_nodes,sizeof(l_node *));
     
-    for (j=0; j<w_period->n_lnodes;++j)
+    for (j=0; j<n_nodes; ++j) //Reset
     {
-        *(l_pointers+j)=*(w_period->l_nodes+j);
+        *(t_times+j)=0;
     }
-    while (i<MAX_IT && done==0)
+    memcpy(wl_pointers,l_pointers,sizeof(l_node *)*n_nodes);
+    
+    while (i<MAX_IT && done==0) //while it gets all the distances or the loop reaches MAX_IT
     {
         done=1;
         next_t=1;
-        for (j=0; j<w_period->n_lnodes;++j)
+        for (j=0; j<n_nodes;++j)
         {
-            if (*(t_times+j)!=0)
+            if (*(t_times+j)!=0) //We already have the time for this node. If all of them enter here, done==1, and the program continue, leaving the while loop.
                 continue;
-            w_lnode=*(l_pointers+j);
-            if (w_lnode!=NULL)
+            w_lnode=*(wl_pointers+j);
+            done=0;
+            if ((w_lnode->n_gen<w_tnode->n_gen) && (w_lnode != w_tnode)) //We have to consider the ancestor of the receptor, but the t_node can still be a good choice (next_t=0)
             {
-                done=0;
-                if ((w_lnode->n_gen<w_tnode->n_gen) && (w_lnode != w_tnode))
-                {
-                    *(l_pointers+j)=w_lnode->anc_node;
-                    next_t=0;
-                }
-                else if (w_lnode==w_tnode)
-                {
-                    *(t_times+j)=w_lnode->n_gen;
-                }
+                *(wl_pointers+j)=w_lnode->anc_node;
+                next_t=0;
+            }
+            else if (w_lnode==w_tnode) //Ancestor, we get the number of generations (This will be changed with non-ultrametric species trees)
+            {
+                *(t_times+j)=w_lnode->n_gen;
             }
         }
         if (next_t==1 && done==0)
         {
-            w_tnode=w_tnode->anc_node;
+            w_tnode=w_tnode->anc_node; //All the candidates below the t_node, so we need to consider its ancestor
         }
-        
+        ++i;
     }
     
-    for (j=0; j<w_period->n_lnodes;++j)
+    for (j=0; j<n_nodes;++j) //Calculating the inverse of the distance and the total inverse distance
     {
         if (*(t_times+j)-t_node->n_gen<DBL_EPSILON)
             *(t_times+j)=0;
@@ -8294,8 +8413,7 @@ int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num)
     
     w_lnode=NULL;
     
-    done=0;
-    for (j=0; j<w_period->n_lnodes;++j)
+    for (j=0; j<n_nodes;++j) //Samples the probabilities
     {
         if (u_num>c_prob+(*(t_times+j)/t_prob))
         {
@@ -8303,17 +8421,16 @@ int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num)
         }
         else
         {
-            w_lnode=*(w_period->l_nodes+j);
-            done=1;
+            w_lnode=*(l_pointers+j);
             break;
         }
     }
     
-    free(l_pointers);
     free(t_times);
+    free(wl_pointers);
     
-    if (done==0)
+    if (w_lnode==NULL)
         ErrorReporter(UNEXPECTED_VALUE);
     
-    return j;
+    return w_lnode;
 }

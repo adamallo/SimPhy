@@ -60,8 +60,12 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -rs 1 -rl f1 -rg 1 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 5 -od 1 -cs 22"
+            argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -lg f0.0000005 -rs 100 -rl f2 -rg 2 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 6 -od 1 -cs 22"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -rs 10 -rl f2 -rg 2 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 6 -od 1 -cs 22"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sb f0.000001 -sl f3 -ld f0.0000005 -lb f0.0000005 -lt f0 -rs 10 -rl f1000 -rg 1 -o test1 -p f1000000 -i f3 -os 1 -or 1 -v 3 -od 1 -cs 22"

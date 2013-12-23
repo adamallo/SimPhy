@@ -109,7 +109,7 @@ enum ERRORS {NO_ERROR=(long int)NULL+1,MEM_ERROR=(long int) NULL,IO_ERROR=(long 
  * \var SP
  *  Value of l_node::kind_node which identifies the node as a transfer reception (loss).
  *******************************************************************************/
-enum NODE_VALUES{SP=0,DUP=1,LOSS=2,TRFR=3,RTRFR=4};
+enum NODE_VALUES{SP=0,DUP=1,LOSS=2,TRFR=3,RTRFR=4,GC=5,RGC=6};
 
 /**
  * \enum UNITS
@@ -613,6 +613,10 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  *   Death rate (death per generation).
  * \param h_rate
  *   Transfer rate (transfers per generation).
+ * \param gc_rate
+ *   Gene conversion rate (transfers per generation).
+ * \param t_kind
+ *   Logical flag. 0=> RTRFR randomly sampled. 1=> RTRFR sampled with probability inversely related to distance (generations).
  * \param seed
  *   Seed for the random number generator.
  * \param min_lleaves
@@ -631,6 +635,8 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  *   Pointer to return the number of observed duplications in the new tree.
  * \paran st_transfr
  *   Pointer to return the number of observed transferences in the new tree.
+ * \paran st_gc
+ *   Pointer to return the number of observed gene conversions in the new tree.
  * \paran st_leaves
  *   Pointer to return the number of observed number of leaves.
  * \paran st_gleaves
@@ -639,7 +645,7 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_leaves, int *st_gleaves);
+extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new gene tree under the multispecies coalescent process along a locus tree.
@@ -1460,7 +1466,7 @@ static void ErrorReporter(long int);
 
 ///@}
 
-int ChooseLNodePeriod(period *w_period, l_node * t_node, double u_num);
+l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num);
 /**
  * Detector of errors. 
  * This function writes info of errors in stderr and closes

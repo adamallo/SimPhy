@@ -48,7 +48,7 @@ long int InitDB(sqlite3 **database, char * db_filename);
 // *** Database write values *** //
 
 long int WriteSTreeDB(sqlite3 **database, int n_leaves, double height, double length, double outgroup, int ind_per_sp, int n_loci, double alpha_s, double alpha_l, double alpha_g, int Ne, double mu, double gen_time);
-long int WriteLTreeDB(sqlite3 **database,int n_ltree, int SID, double b_rate, double d_rate, double t_rate, int n_leaves, int n_dup, int n_loss, int n_transf, double gamma);
+long int WriteLTreeDB(sqlite3 **database,int n_ltree, int SID, double b_rate, double d_rate, double t_rate, double gc_rate, int n_leaves, int n_dup, int n_loss, int n_transf, int n_gc, double gamma);
 long int WriteGTreeDB(sqlite3 **database, int n_gtree, unsigned long long LID, int n_ltree, int SID, int n_leaves, int extra_lineages, double tree_h_cu, double tree_l_ss);
 
 long int CloseDB(sqlite3 **database);
