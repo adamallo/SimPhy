@@ -86,6 +86,7 @@ long int ParseSampling(char * p, sampling_unit * sample)
     int in_parsing=0;
     int b_index=0;
     int p_index=-1, is_neg=0;
+    int i=0;
     
     switch (toupper(*p))
     {
@@ -125,7 +126,7 @@ long int ParseSampling(char * p, sampling_unit * sample)
     }
     ++p;
     
-    while (*p!='\0')
+    while (*p!='\0' && i<= MAX_IT)
     {
         if (p_index>4)
         {
@@ -157,7 +158,7 @@ long int ParseSampling(char * p, sampling_unit * sample)
             ++b_index;
         }
         
-        
+        ++i;
         ++p;
     }
     buffer[b_index]='\0';

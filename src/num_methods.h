@@ -24,12 +24,12 @@
 #include <gsl/gsl_rng.h>
 #endif
 
-//MPFR Library
-#ifndef  _STDARG_H
-#include <stdarg.h>
-#endif
-#include <mpfr.h>
-#include <float.h>
+////MPFR Library
+//#ifndef  _STDARG_H
+//#include <stdarg.h>
+//#endif
+//#include <mpfr.h>
+//#include <float.h>
 
 extern int MAX_IT;
 extern int MAX_NAME;

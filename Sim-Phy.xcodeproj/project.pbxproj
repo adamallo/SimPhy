@@ -228,7 +228,6 @@
 				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-lgmp",
-					"-lmpfr",
 					"-lgsl",
 					"-lgslcblas",
 					"-lsqlite3",
@@ -246,7 +245,6 @@
 				);
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-lgmp",
-					"-lmpfr",
 					"-lgsl",
 					"-lgslcblas",
 					"-lsqlite3",

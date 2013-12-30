@@ -60,7 +60,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -lg f0.0000005 -rs 100 -rl f2 -rg 2 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 6 -od 1 -cs 22"
+            argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -lg f0.0000005 -rs 100 -rl f2 -rg 2 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 6 -od 1 -cs 22 -i /Users/Diego/Desktop/Sim-Phy/src/inputfile_example.txt"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

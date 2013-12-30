@@ -9,7 +9,7 @@ _OBJECTS= num_methods.o sampling.o sql_managing.o trees.o
 OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 _DBG_OBJECTS= num_methods_dbg.o sampling_dbg.o sql_managing_dbg.o trees_dbg.o
 DBG_OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_DBG_OBJECTS))
-LIBS=-lm -lmpfr -lgsl -lcblas -lsqlite3
+LIBS=-lm -lgsl -lcblas -lsqlite3
 
 simphy: main.c $(OBJECTS)
 	$(CC) $(CFLAGS) $(LIBS) $^ -o $@
