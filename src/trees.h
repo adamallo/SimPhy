@@ -228,6 +228,7 @@ struct l_node
     double n_gen; ///< Number of generations of this node (from the current time).
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific substitution rate multi.
+    double gtime_mult; ///< Branch specific generation time multi.
     /// @}
     
     /** \name Pointers **/
@@ -259,7 +260,7 @@ struct l_tree
     int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the l_node::childs allocated memory.
     int n_leaves; ///< Number of leaves of the l_tree. It is necessary due to allowing polytomy.
     int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
-    double gen_time;///< Generation time
+    double gen_time;///< Global generation time
     int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
@@ -304,6 +305,7 @@ struct s_node
     double n_gen; ///< Number of generations of this node (from the current time).
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific effective substitution rate multi.
+    double gtime_mult; ///< Branch specific generation time multi.
     /// @}
     
     /** \name Pointers **/
@@ -330,7 +332,7 @@ struct s_tree
     int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the s_node::childs allocated memory.
     int n_leaves; ///< Number of leaves of the s_tree. It is necessary due to allowing polytomy.
     int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
-    double gen_time;///< Generation time
+    double gen_time;///< Global generation time
     int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
