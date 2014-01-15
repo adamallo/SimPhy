@@ -3774,7 +3774,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
             *(node->i_probs+node->n_ilin)=1;//leaf (SP)
         }
         
-        if (node->anc_node!=NULL && !((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR) && *(node->anc_node->childs+0)==node) && fmax_nlin>1)
+        if (node->anc_node!=NULL && !((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->childs+0)==node) && fmax_nlin>1)
         {
             
             for (i=1; i<=fmax_nlin;++i)
