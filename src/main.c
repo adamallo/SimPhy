@@ -812,10 +812,10 @@ int main (int argc, char **argv)
         {
             Measure_ST_height(sp_tree, &st_height, CU);
             Measure_ST_length(sp_tree, &st_length, CU);
-            ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,get_sampling(outgroup) * (*sp_tree->root->childs)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time))); //Measure_ST_height(sp_tree), Measure_ST_length(sp_tree)
+            ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,(*sp_tree->root->childs)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time)));
         }
 #endif
-        curr_ltree =(*sp_tree->root->childs)->gen_length;
+        
         // ********
         /// <dl><dt> Main loop for each locus tree </dt><dd>
         
