@@ -5434,7 +5434,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     {
         w_lnode=locus_tree->m_node+i;
         
-        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
+        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC ) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
         {
             w_lnode->n_olin=1;
             *(w_lnode->o_probs+1)=1;
