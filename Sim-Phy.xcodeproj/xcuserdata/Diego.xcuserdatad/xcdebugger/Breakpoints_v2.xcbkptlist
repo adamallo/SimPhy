@@ -1016,9 +1016,7 @@
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8427"
-            endingLineNumber = "8427"
-            landmarkName = "ChooseLNodePeriod()"
-            landmarkType = "7">
+            endingLineNumber = "8427">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1065,7 +1063,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8420"
             endingLineNumber = "8420"
-            landmarkName = "ChooseLNodePeriod()"
+            landmarkName = "RelinkLGTrees()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

@@ -4090,7 +4090,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                 //The n_lineages have to be previosly set here.
                 break;
             default:
-                fprintf(stderr,"Not yet implemented\n"); //When I implement this, I can remove the ifs (it should be general)
+                fprintf(stderr,"Not yet implemented\n"); //When I implement this, I can remove the switches (it should be general)
 #ifdef DBG
                 fflush(stderr);
 #endif
@@ -5476,7 +5476,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     {
         w_lnode=locus_tree->m_node+i;
         
-        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
+        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
         {
             w_lnode->n_olin=1;
             *(w_lnode->o_probs+1)=1;
@@ -6602,7 +6602,7 @@ long int CheckNewickSTree (char * tree)
             case ')':
                 if (!(previous == ')' || isalnum(previous)!=0)) /// ")" following something different to ")" or alphanumerics.
                     error=1;
-                if (!(next == ')' || next== ',' || next== ':' || next=='#' || next=='/'|| next=='*')) /// ")" followed by something different to codes( ":","#","/", ")","*" or "," )
+                if (!(next == ')' || next== ',' || next== ':' || next=='#' || next=='/'|| next=='*' || next=='~')) /// ")" followed by something different to codes( ":","#","/", ")","*" or "," )
                     error=1;
                 if (next==';' && i==strlen(tree)-2) /// Allowing the final ";"
                     error=0;
@@ -6744,7 +6744,7 @@ long int CheckNewickLTree (char * tree)
             case ')':
                 if (!(previous == ')' || isalnum(previous)!=0)) /// ")" following something different to ")" or alphanumerics.
                     error=1;
-                if (!(next == ')' || next== ',' || next== ':' || next=='#' || next=='/' || next=='%' || next=='*')) /// ")" followed by something different to codes( ":","#","/", ")", "*", "%" or ",")
+                if (!(next == ')' || next== ',' || next== ':' || next=='#' || next=='/' || next=='%' || next=='*' || next=='~')) /// ")" followed by something different to codes( ":","#","/", ")", "*", "%" or ",")
                     error=1;
                 if (next==';' && i==strlen(tree)-2) /// Allowing the final ";"
                     error=0;
@@ -7662,6 +7662,8 @@ static long double Measure_s_node_gl_length(s_node *node)
     
     // **
     /// <dl><dt> Function structure </dt><dd>
+    
+    ///\attention This could be improved looking for the leaf with the biggest n_gen! (but we are not using loops here)
     
     // *
     /// Post-order recursion selecting the longest accumulated branch length
