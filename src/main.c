@@ -1962,7 +1962,9 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
     /// <dl><dt> Line's loop </dt><dd>
     while (fgets(buffer,LENGTH,input_file)!=NULL && i<=MAX_IT)
     {
-        if (*buffer!='-' || ferror(input_file)!=0 || feof(input_file)!=0)
+        if (*buffer=='#' || (*buffer=='/' && *buffer=='/'))
+            continue;
+        else if (*buffer!='-' || ferror(input_file)!=0 || feof(input_file)!=0)
         {
             fprintf(stderr,"Error in the parameter: %s\n",buffer);
             return (SETTINGS_ERROR);
