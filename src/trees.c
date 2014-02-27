@@ -286,22 +286,22 @@ static int Count_duplications_lnodes(l_node *node);
 static int Count_losses_lnodes(l_node *node);
 
 /**
- * Gets the height of the tree in coalescent units (n_gen/Ne).
+ * Gets the n_gen of the tree in coalescent units (n_gen/Ne).
  *
  * \param node
  *  s_node to analyze.
  * \param g_Ne
  *  Global effective population size.
- * \return Tree height in coalescent units.
+ * \return Tree n_gen in coalescent units.
  *******************************************************************************/
 static long double Measure_s_node_cu_height(s_node *node, int g_Ne);
 
 /**
- * Gets the height of the tree in generations.
+ * Gets the n_gen of the tree in generations.
  *
  * \param node
  *  g_node to analyze.
- * \return Tree height in number of generations.
+ * \return Tree n_gen in number of generations.
  *******************************************************************************/
 static long double Measure_s_node_gl_height(s_node *node);
 
@@ -326,22 +326,22 @@ static long double Measure_s_node_cu_length(s_node *node, int g_Ne);
 static long double Measure_s_node_gl_length(s_node *node);
 
 /**
- * Gets the height of the tree in coalescent units (n_gen/Ne).
+ * Gets the n_gen of the tree in coalescent units (n_gen/Ne).
  *
  * \param node
  *  g_node to analyze.
  * \param g_Ne
  *  Global effective population size.
- * \return Tree height in coalescent units.
+ * \return Tree n_gen in coalescent units.
  *******************************************************************************/
 static long double Measure_g_node_cu_height(g_node *node, int g_Ne);
 
 /**
- * Gets the height of the tree in expected number of substitutions per site.
+ * Gets the n_gen of the tree in expected number of substitutions per site.
  *
  * \param node
  *  g_node to analyze.
- * \return Tree height in units of expected number of substitutions per site.
+ * \return Tree n_gen in units of expected number of substitutions per site.
  *******************************************************************************/
 static long double Measure_g_node_bl_height(g_node *node);
 
@@ -378,10 +378,10 @@ static long double Measure_g_node_bl_length(g_node *node);
  *  s_node to refine (root in the first call).
  * \param ind_persp
  *  Number of individuals for nodes without a pre-specified s_node::n_replicas.
- * \attention This function assumes ultrametricity (s_node::n_gen is calculated
- *  using the s_node::gen_length of the first offspring node)
+ * \param gen_time
+ *  Generation time.
  *******************************************************************************/
-static void RefineSNodes(s_node * node, int ind_persp);
+static void RefineSNodes(s_node * node, int ind_persp, double gen_time);
 
 /**
  * Refines a just-read-from-Newick l_node group with tree structure.
@@ -395,16 +395,16 @@ static void RefineSNodes(s_node * node, int ind_persp);
  *  Number of gene tree leaves to allocate the l_node::g_nodes properly.
  * \param ind_persp
  *  Number of individuals for nodes without a pre-specified l_node::n_nodes.
- * \attention This function assumes ultrametricity (l_node::n_gen is calculated
- *  using the l_node::gen_length of the first offspring node)
+ * \param gen_time
+ *  Generation time.
  *******************************************************************************/
-static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp);
+static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time);
 
 /**
  * Deletes superfluous nodes due to losses.
  *
  * This function deletes superfluous nodes due to losses of a \ref l_tree after
- * it generation by a birth-death process.
+ * their generation by a birth-death process.
  *
  * \param node
  *  Node to delete if it is a superfluous one.
@@ -418,27 +418,26 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp);
 static void CleanlossesLNodes(l_node * node, l_node ** root,int * n_deletions, int * n_leaves);
 
 /**
- * Transforms the branch lenght of a gene node from number of generations to time recursively following a post-order.
- *
- * \param node
- *  Input g_node (root in the first recursion).
- * \param gen_time
- *  Generation time.
- * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
- *  ocurrs.
- * \attention Only applicable to ultrametric trees.
- *  *******************************************************************************/
-static void Temporalize_GNodes(g_node * node,double gen_time);
-
-/**
- * Pre-order recursive addition of a constant number of generations.
+ * Pre-order recursive addition of a constant number of generations and recalculation of times.
  *
  * \param node
  *  Species tree node to modify (root in the first recursion).
  * \param constant
  *  Number of generations to add.
- *  *******************************************************************************/
-static void AddConstantNgenSTree(s_node *node, double constant);
+ * \param gen_time
+ *  Generation time
+ * *******************************************************************************/
+static void AddConstantNgenSNodes(s_node *node, double constant, double gen_time);
+
+/**
+ * Recursively (pre-order) updates the l_node::time of a bunch/tree of l_nodes.
+ *
+ * \param node
+ *  Imput node.
+ * \param gen_time
+ *  Global generation time.
+ *******************************************************************************/
+static void TemporalizeLNodes(l_node *node, double gen_time);
 
 // ** Node I/O ** //
 
@@ -596,6 +595,7 @@ s_node * NewSNodes(int n_nodes, int max_childs)
         w_node->l_nodes=NULL;
         w_node->gen_length=0.0;
         w_node->n_gen=0.0;
+        w_node->time=0;
         w_node->mu_mult=1;
         w_node->gtime_mult=1;
         
@@ -649,6 +649,7 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_childs, int probs)
         w_node->conts=NULL;
         w_node->gen_length=0.0;
         w_node->n_gen=0.0;
+        w_node->time=0.0;
         w_node->mu_mult=1;
         w_node->gtime_mult=1;
         
@@ -750,7 +751,7 @@ g_node * NewGNodes(int n_nodes, int max_childs)
         w_node->anc_node=NULL;
         w_node->contl=NULL;
         w_node->conts=NULL;
-        w_node->height=0.0;
+        w_node->n_gen=0.0;
         w_node->bl=0.0;
         w_node->gen_length=0.0;
         
@@ -1022,7 +1023,6 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 // *
                 /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
                 sscanf(bl_buffer,"%lf",&current_node->gtime_mult);
-                
                 break;
             case '#':
                 // **
@@ -1139,7 +1139,7 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
     // ***
     /// Refines the readed nodes by \ref RefineSNodes
     
-    RefineSNodes(root,ind_persp);
+    RefineSNodes(root,ind_persp,gen_time);
     max_lname++; //One extra character for \0.
     
     // ***
@@ -1236,12 +1236,6 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         ErrorReporter((long int)i_nodes);
         node_ptrs=calloc((*out_tree)->n_nodes,sizeof(s_node *));
         ErrorReporter((long int)node_ptrs);
-        for (j=0;j<(*out_tree)->n_nodes;++j)
-        {
-            *(node_ptrs+j)=(*out_tree)->m_node+j;
-        }
-        
-        n_leaves=leaves;
         
         // ****
         /// Calculates the start of the tree (From user options or sampled from the inverse of the pdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.)
@@ -1259,7 +1253,10 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             }
             if (verbosity>4)
             {
-                printf("\n\t\t\tRoot time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf",leaves,time);
+                if (outgroup==0)
+                    printf("\n\t\t\tRoot time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf",leaves,time);
+                else
+                    printf("\n\t\t\tIngroup root time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf, root time = %.8lf",leaves,time,time*outgroup/2);
 #ifdef DBG
                 fflush(stdout);
 #endif
@@ -1268,7 +1265,10 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         }
         else if (verbosity>4)
         {
-            printf("\n\t\t\tRoot time (user defined) = %.8lf",time);
+            if (outgroup==0)
+                printf("\n\t\t\tTree height (user defined) = %.8lf",time);
+            else
+                printf("\n\t\t\tIngroup tree height (user defined) = %.8lf, total tree height = %.8lf",time, time*outgroup/2);
 #ifdef DBG
             fflush(stdout);
 #endif
@@ -1277,6 +1277,15 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         //        {
         //            stats_time+=(time/gen_time);
         //        }
+        
+        for (j=0;j<(*out_tree)->n_nodes;++j)
+        {
+            *(node_ptrs+j)=(*out_tree)->m_node+j;
+            (*(node_ptrs+j))->n_gen=time+time*outgroup/2;
+            (*(node_ptrs+j))->time=(time+time*outgroup/2)*gen_time;//Here we still have ultrametric species trees even measured in number of generations, and therefore we can calculate times so easily.
+        }
+        
+        n_leaves=leaves;
         
         // ****
         /// Calculates the internal node branches, or sampled from the inverse of the pdf of the speciation events, Hartmann et al., 2010; Gernhard, 2008.
@@ -1307,7 +1316,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 printf("\n\t\t\t\tDuplication times:");
                 for (j=0; j<leaves-1; ++j)
                 {
-                    printf(" %.8lf,",time-*(i_nodes+j));
+                    printf(" %.8lf,",time+time*outgroup/2-*(i_nodes+j));
                 }
             }
 #ifdef DBG
@@ -1348,7 +1357,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node1->anc_node=anc_node;
             w_node2->anc_node=anc_node;
             // * Branch lenghts and times * //
-            anc_node->n_gen=time-*(i_nodes+j);
+            anc_node->n_gen=time+time*outgroup/2-*(i_nodes+j);
+            anc_node->time=anc_node->n_gen*gen_time; //Here we still have ultrametric species trees even measured in number of generations, and therefore we can calculate times so easily.
             anc_node->n_child=2;
             w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
             w_node2->gen_length=w_node2->n_gen-anc_node->n_gen;
@@ -1367,17 +1377,20 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         
         if (outgroup>0)
         {
-            w_node1=(*out_tree)->m_node+leaves*2;
-            w_node2=(*out_tree)->m_node+leaves*2-1;
+            w_node1=(*out_tree)->m_node+leaves*2; //Outgroup
+            w_node2=(*out_tree)->m_node+leaves*2-1; //New root
             
             w_node1->anc_node=w_node2;
             *w_node2->childs=(*out_tree)->root;
             *(w_node2->childs+1)=w_node1;
             w_node2->n_gen=0;
+            w_node2->time=0;
             w_node2->n_child=2;
             (*out_tree)->root->gen_length=(outgroup*time/2);
             (*out_tree)->root->anc_node=w_node2;
-            w_node1->gen_length=time;
+            w_node1->gen_length=time+outgroup*time/2;
+            w_node1->n_gen=time+outgroup*time/2;
+            w_node1->time=(time+outgroup*time/2)*gen_time;
             w_node1->n_replicas=1;
             
             (*out_tree)->root=w_node2;
@@ -1553,7 +1566,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                     }
                     else if (verbosity==6)
                     {
-                        printf("\n\t\t\tNew duplication, time %.8lf",anc_node->n_gen);
+                        printf("\n\t\t\tNew duplication, %.8lf generations",anc_node->n_gen);
 #ifdef DBG
                         fflush(stdout);
 #endif
@@ -1684,7 +1697,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         }
         
         // ****
-        /// Deletion of the dummie root of the tree if there is no outgroup addition
+        /// Deletion of the dummie root of the tree if there is no outgroup addition, and reescaling and outgroup addition otherwise
         if (outgroup>0)
         {
             outgroup=time*outgroup/2; //From a deviation to the half of the tree heigth to a real internal branch length
@@ -1695,9 +1708,11 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             (*out_tree)->root->n_child=2;
             (*(*out_tree)->root->childs)->gen_length=outgroup;
             w_node1->gen_length=time+outgroup;
+            w_node1->time=(time+outgroup)*gen_time;
+            w_node1->n_gen=time+outgroup;
             w_node1->n_replicas=1;
             
-            AddConstantNgenSTree((*(*out_tree)->root->childs), outgroup);
+            AddConstantNgenSNodes((*(*out_tree)->root->childs), outgroup,gen_time);
   
             (*out_tree)->n_nodes=n_nodes+extra_nodes+2;
             (*out_tree)->n_leaves=avail_leaves+(extra_nodes/2)+1;
@@ -1804,7 +1819,8 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
         /// Reseting of B-D process variables and linking the root of both trees
         wsp_tree->root->l_nodes=(*wlocus_tree)->root;
         wsp_tree->root->n_lnodes=1;
-        (*wlocus_tree)->root->n_gen=wsp_tree->root->n_gen;
+        (*wlocus_tree)->root->n_gen=0;
+        (*wlocus_tree)->root->time=0;
         (*wlocus_tree)->root->conts=wsp_tree->root;
         next_paralog=1;
         n_leaves=0;
@@ -1904,6 +1920,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                     // Branches
                     w_lnode->n_gen=w_snode->n_gen;
                     w_lnode->gen_length=w_snode->gen_length;
+                    w_lnode->time=w_snode->time;
                     //w_lnode info
                     w_lnode->sp_index=w_snode->sp_index;
                     w_lnode->Ne=w_snode->Ne;
@@ -1993,6 +2010,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             
                             anc_lnode->n_gen=current_ngen+sampled_ngen;
                             anc_lnode->gen_length=anc_lnode->n_gen-anc_lnode->anc_node->n_gen;
+                            anc_lnode->time=anc_lnode->anc_node->time+anc_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             
                             //Ancestor node info
                             anc_lnode->kind_node=DUP; //Duplication
@@ -2025,7 +2043,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\tNew duplication, time %lf",anc_lnode->n_gen*gen_time);
+                                printf("\n\t\t\tNew duplication, generation %lf",anc_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2047,6 +2065,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             //Reconfiguring branches
                             w_lnode->n_gen=current_ngen+sampled_ngen;
                             w_lnode->gen_length=w_lnode->n_gen-anc_lnode->n_gen;
+                            w_lnode->time=w_lnode->anc_node->time+w_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             
                             //Setting the leaf as non avaliable
                             *(node_ptrs+node_index)=*(node_ptrs+avail_leaves-1);
@@ -2074,7 +2093,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\t\t\tNew loss, time %lf",w_lnode->n_gen*gen_time);
+                                printf("\n\t\t\t\t\tNew loss, generation %lf",w_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2108,6 +2127,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             w_lnode=*(node_ptrs);
                             w_lnode->n_gen=w_snode->n_gen;
                             w_lnode->gen_length=w_lnode->n_gen-w_lnode->anc_node->n_gen;
+                            w_lnode->time=w_snode->time;
                             w_lnode->sp_index=w_snode->sp_index;
                             w_lnode->Ne=w_snode->Ne;
                             w_lnode->mu_mult=w_snode->mu_mult;
@@ -2135,6 +2155,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                         w_lnode=*(node_ptrs+k);
                         w_lnode->n_gen=w_snode->n_gen;
                         w_lnode->gen_length=w_lnode->n_gen-w_lnode->anc_node->n_gen;
+                        w_lnode->time=w_snode->time;
                         w_lnode->sp_index=w_snode->sp_index;
                         w_lnode->Ne=w_snode->Ne;
                         w_lnode->mu_mult=w_snode->mu_mult;
@@ -2238,7 +2259,6 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
 
 long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves)
 {
-    
     // *******
     /// <dl><dt>Declarations</dt><dd>
     
@@ -2254,7 +2274,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
     int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0;
+    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0;
     
     // ******
     /// Loop related variables</dd></dl>
@@ -2280,6 +2300,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         wsp_tree->root->l_nodes=(*wlocus_tree)->root;
         wsp_tree->root->n_lnodes=1;
         (*wlocus_tree)->root->n_gen=0;
+        (*wlocus_tree)->root->time=0;
         (*wlocus_tree)->root->conts=wsp_tree->root;
         next_paralog=1;
         n_leaves=0;
@@ -2298,6 +2319,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         *st_gc=0;
         ++ltree_iter;
         maxnleaves_reached=0;
+        max_time=0;
         
         // ******
         /// <dl><dt>Pre-order s_node loop, to do a SSA (Simple sampling approach) algorithm along each branch of the species tree (GSA (General Sampling approach) is not required with fixed time)</dt><dd>
@@ -2383,6 +2405,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     // Branches
                     w_lnode->n_gen=w_snode->n_gen;
                     w_lnode->gen_length=w_snode->gen_length;
+                    
                     //w_lnode info
                     w_lnode->sp_index=w_snode->sp_index;
                     w_lnode->Ne=w_snode->Ne;
@@ -2390,6 +2413,9 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     w_lnode->gtime_mult=w_snode->gtime_mult;
                     w_lnode->paralog=w_lnode->anc_node->paralog;
                     w_lnode->n_nodes=w_snode->n_replicas;
+                    w_lnode->time=w_snode->time;
+                    if (max_time<w_lnode->time)
+                        max_time=w_lnode->time;
                     //S_Node info
                     w_snode->n_lnodes++;
                     
@@ -2473,7 +2499,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             anc_lnode->n_gen=current_ngen+sampled_ngen;
                             anc_lnode->gen_length=anc_lnode->n_gen-anc_lnode->anc_node->n_gen;
-                            
+                            anc_lnode->time=anc_lnode->anc_node->time+anc_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             //Ancestor node info
                             anc_lnode->kind_node=DUP; //Duplication
                             anc_lnode->n_child=2;
@@ -2505,7 +2531,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\t\t\tNew duplication, time %lf",anc_lnode->n_gen*gen_time);
+                                printf("\n\t\t\t\t\tNew duplication, generation %lf",anc_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2526,6 +2552,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             //Reconfiguring branches
                             w_lnode->n_gen=current_ngen+sampled_ngen;
                             w_lnode->gen_length=w_lnode->n_gen-anc_lnode->n_gen;
+                            w_lnode->time=w_lnode->anc_node->time+w_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             
                             //Setting the leaf as non avaliable
                             *(node_ptrs+node_index)=*(node_ptrs+avail_leaves-1);
@@ -2553,7 +2580,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\t\t\tNew loss, time %lf",w_lnode->n_gen*gen_time);
+                                printf("\n\t\t\t\t\tNew loss, generation %lf",w_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2575,6 +2602,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             anc_lnode->n_gen=current_ngen+sampled_ngen;
                             anc_lnode->gen_length=anc_lnode->n_gen-anc_lnode->anc_node->n_gen;
+                            anc_lnode->time=anc_lnode->anc_node->time+anc_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             
                             //Ancestor node info
                             anc_lnode->kind_node=TRFR; //Transfer (donnor)
@@ -2602,7 +2630,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\t\t\tNew transfer donnor, time %lf",anc_lnode->n_gen*gen_time);
+                                printf("\n\t\t\t\t\tNew transfer donnor, generation %lf",anc_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2625,6 +2653,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             anc_lnode->n_gen=current_ngen+sampled_ngen;
                             anc_lnode->gen_length=anc_lnode->n_gen-anc_lnode->anc_node->n_gen;
+                            anc_lnode->time=anc_lnode->anc_node->time+anc_lnode->gen_length*w_snode->gtime_mult*gen_time;
                             
                             //Ancestor node info
                             anc_lnode->kind_node=GC; //Gene conversion (donnor)
@@ -2641,7 +2670,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             //New leaves addition
                             *(node_ptrs+node_index)=w_lnode;
                             ++n_nodes;
-                            ++(*st_transfr);
+                            ++(*st_gc);
                             
                             if (verbosity==5)
                             {
@@ -2652,7 +2681,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             else if (verbosity==6)
                             {
-                                printf("\n\t\t\t\t\tNew gene conversion donnor, time %lf",anc_lnode->n_gen*gen_time);
+                                printf("\n\t\t\t\t\tNew gene conversion donnor, generation %lf",anc_lnode->n_gen);
 #ifdef DBG
                                 fflush(stdout);
 #endif
@@ -2685,12 +2714,15 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             w_lnode=*(node_ptrs);
                             w_lnode->n_gen=w_snode->n_gen;
                             w_lnode->gen_length=w_lnode->n_gen-w_lnode->anc_node->n_gen;
+                            w_lnode->time=w_snode->time;
                             w_lnode->sp_index=w_snode->sp_index;
                             w_lnode->Ne=w_snode->Ne;
                             w_lnode->mu_mult=w_snode->mu_mult;
                             w_lnode->gtime_mult=w_snode->gtime_mult;
                             w_lnode->n_nodes=w_snode->n_replicas;
                             w_lnode->conts=w_snode;
+                            if (max_time<w_lnode->time)
+                                max_time=w_lnode->time;
                             w_snode->l_nodes=w_lnode;
                             aux_lnode=w_lnode;
                             ++w_snode->n_lnodes;
@@ -2712,12 +2744,15 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         w_lnode=*(node_ptrs+k);
                         w_lnode->n_gen=w_snode->n_gen;
                         w_lnode->gen_length=w_lnode->n_gen-w_lnode->anc_node->n_gen;
+                        w_lnode->time=w_snode->time;
                         w_lnode->sp_index=w_snode->sp_index;
                         w_lnode->Ne=w_snode->Ne;
                         w_lnode->mu_mult=w_snode->mu_mult;
                         w_lnode->gtime_mult=w_snode->gtime_mult;
                         w_lnode->n_nodes=w_snode->n_replicas;
                         w_lnode->conts=w_snode;
+                        if (max_time<w_lnode->time)
+                            max_time=w_lnode->time;
                         aux_lnode->lat_node=w_lnode;
                         aux_lnode=w_lnode;
                         ++w_snode->n_lnodes;
@@ -2813,20 +2848,20 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
 #endif
             }
             
+            
             // Tree realocation (adding necessary memory)
             (*wlocus_tree)->n_leaves=*st_leaves;
             (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr+*st_gc;//One extra node will be needed for each transfer/gc
             (*wlocus_tree)->n_gleaves=*st_gleaves;
             (*wlocus_tree)->species_tree=wsp_tree;
-            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0));
-            
+            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0)); //The root of this tree is going to be badly set due to the extra still not used nodes.
             
             //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
             
             //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra for loop
             periods=calloc(n_periods, sizeof(struct period));
-            periods->r_bound=0;
+            periods->r_bound=max_time;
             periods->l_nodes=NULL;
             periods->n_lnodes=0;
             j=1;
@@ -2840,10 +2875,11 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 fflush(stdout);
 #endif
             }
+
             for (i=0; i<tn_nodes; ++i)
             {
                 w_lnode=((*wlocus_tree)->m_node+i);
-                if (w_lnode->n_gen==0)
+                if (w_lnode->kind_node==SP && w_lnode->n_child==0)
                     continue;
                 w_period=periods+j;
                 w_period->l_nodes=calloc(*st_leaves, sizeof(l_node *)); //The maximum number of lineages in a period is the number of leaves (star tree)
@@ -2852,7 +2888,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 {
                     *(w_period->l_nodes+k)=*(w_lnode->childs+k);
                 }
-                w_period->r_bound=w_lnode->n_gen;
+                w_period->r_bound=w_lnode->time;
                 ++j;
             }
             if (verbosity>4)
@@ -2888,10 +2924,10 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 fflush(stdout);
 #endif
             }
-            for (i=n_periods-1; i>=0; --i)
+            for (i=0; i<n_periods; ++i)
             {
                 w_period=periods+i;
-                w_period2=periods+i-1;
+                w_period2=periods+i+1;
                 n_avail_receptors=0;
                 discarded_t=0;
                 w_lnode2=NULL;
@@ -2903,10 +2939,12 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     fflush(stdout);
 #endif
                 }
+                
                 for (j=0; j<w_period->n_lnodes; ++j)
                 {
                     w_lnode=*(w_period->l_nodes+j);
-                    if (w_lnode->n_gen<w_period2->r_bound)
+
+                    if (w_lnode->time>w_period2->r_bound)
                     {
                         if (verbosity>5)
                         {
@@ -2918,13 +2956,13 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         *(w_period2->l_nodes+w_period2->n_lnodes)=w_lnode;
                         w_period2->n_lnodes+=1;
                     }
-                    else if (w_period->n_lnodes>1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->n_gen==w_period2->r_bound))
+                    else if (w_period->n_lnodes>1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->time==w_period2->r_bound))
                     {
                         w_snode=w_lnode->conts;
                         w_lnode2=w_lnode;
                         t_event=w_lnode->kind_node;
                     }
-                    else if (w_period->n_lnodes==1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->n_gen==w_period2->r_bound))
+                    else if (w_period->n_lnodes==1 && ((w_lnode->kind_node==TRFR || w_lnode->kind_node==GC) && w_lnode->time==w_period2->r_bound))
                     {
                         w_lnode2=w_lnode;
                         discarded_t=1;
@@ -2984,13 +3022,14 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 w_lnode3=(*wlocus_tree)->m_node+tn_nodes+n_transfer+n_gc; //This will be the receptor
                                 anc_lnode=w_lnode2->anc_node;
                                 w_lnode3->anc_node=anc_lnode;
-                                w_lnode3->n_gen=w_lnode->n_gen;
-                                w_lnode3->gen_length=w_lnode3->n_gen-w_lnode3->anc_node->n_gen;
                                 w_lnode3->paralog=w_lnode2->paralog;
                                 w_lnode3->conts=w_lnode2->conts;
                                 w_lnode3->mu_mult=w_lnode2->mu_mult;
                                 w_lnode3->gtime_mult=w_lnode2->gtime_mult;
                                 w_lnode3->Ne=w_lnode2->Ne;
+                                w_lnode3->time=w_lnode->time;
+                                w_lnode3->n_gen=anc_lnode->n_gen+ (w_lnode3->time-anc_lnode->time)/w_lnode3->gtime_mult/w_lnode3->gtime_mult; //gen_lenth=Time_length * (1/gen_time*gtime_mult)
+                                w_lnode3->gen_length=w_lnode3->n_gen-anc_lnode->n_gen;
                                 
                                 for (k=0; k<anc_lnode->n_child; ++k)
                                 {
@@ -2998,7 +3037,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         *(anc_lnode->childs+k)=w_lnode3;
                                 }
                                 
-                                w_lnode2->gen_length=w_lnode2->n_gen-w_lnode->n_gen;
+                                w_lnode2->gen_length=w_lnode2->n_gen-w_lnode3->n_gen;
                                 w_lnode2->anc_node=w_lnode;
                                 
                                 
@@ -3083,12 +3122,14 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     #ifdef DBG
                             fflush(stdout);
     #endif
-                            (*(w_lnode2->childs))->anc_node=w_lnode2->anc_node;
+                            //w_lnode2 -> candidate transfer node
+                            
+                            (*(w_lnode2->childs))->anc_node=w_lnode2->anc_node; //connecting daughter with grandmather
                             for(k=0;k<w_lnode2->anc_node->n_child;++k)
                             {
                                 if (*(w_lnode2->anc_node->childs+k)==w_lnode2)
                                 {
-                                    *(w_lnode2->anc_node->childs+k)=*(w_lnode2->childs);
+                                    *(w_lnode2->anc_node->childs+k)=*(w_lnode2->childs); //connecting grandmather with daughter
                                     break;
                                 }
                             }
@@ -3110,6 +3151,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 fflush(stdout);
 #endif
             }
+
             FreePeriods(periods, n_periods);
             free(avail_receptors);
             (*wlocus_tree)->root=((*wlocus_tree)->m_node+tn_nodes-1);
@@ -3124,6 +3166,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
         
+
         if (verbosity>4)
         {
             printf("\n\t\tDone\n");
@@ -3208,7 +3251,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         
         // ** Constraining coalescent time and number of events ** //
         current_ngen=w_lnode->n_gen;
-        min_ngen=w_lnode->gen_length+current_ngen;
+        min_ngen=current_ngen-w_lnode->gen_length;
         max_coals=w_lnode->n_nodes-1;//Max num of coalescent events = number of nodes to coalesce -1
         
         if (verbosity==5)
@@ -3216,21 +3259,21 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             if (w_lnode->conts==NULL) //There is no species tree
             {
                 if(names!=NULL)
-                    printf("\n\t\tLocus tree node %s_%d... ",w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\tLocus tree node %s_%d... ",w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
                 }
             }
             
@@ -3244,21 +3287,21 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             if (w_lnode->conts==NULL)
             {
                 if(names!=NULL)
-                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
+                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
+                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
+                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
+                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
                 }
             }
             
@@ -3298,7 +3341,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 if (verbosity==6)
                 {
-                    printf("\n\t\t\t %d extra lineages going deeper, max coalescent time %f, coalescent time %f",avail_leaves-1,min_ngen*gen_time,current_ngen*gen_time);
+                    printf("\n\t\t\t %d extra lineages going deeper, max coalescent time %f, coalescent time %f",avail_leaves-1,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -3347,11 +3390,11 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             anc_gnode->n_child+=2;
             
             //Branch lengths and times
-            anc_gnode->height=current_ngen;
-            off1->gen_length= off1->height - anc_gnode->height;
-            off1->bl+=((off1->height>w_lnode->n_gen?w_lnode->n_gen:off1->height)-anc_gnode->height)*p_mu; //The difference between the newly created anc_gnode (coalescence) and either the beginning of the locus branch (off1 height comes from shallower branches, so you only have to add this last step) or the node height (node present in this l_branch).
-            off2->gen_length= off2->height - anc_gnode->height;
-            off2->bl+=((off2->height>w_lnode->n_gen?w_lnode->n_gen:off2->height)-anc_gnode->height)*p_mu;
+            anc_gnode->n_gen=current_ngen;
+            off1->gen_length= off1->n_gen - anc_gnode->n_gen;
+            off1->bl+=((off1->n_gen>w_lnode->n_gen?w_lnode->n_gen:off1->n_gen)-anc_gnode->n_gen)*p_mu; //The difference between the newly created anc_gnode (coalescence) and either the beginning of the locus branch (off1 n_gen comes from shallower branches, so you only have to add this last step) or the node n_gen (node present in this l_branch).
+            off2->gen_length= off2->n_gen - anc_gnode->n_gen;
+            off2->bl+=((off2->n_gen>w_lnode->n_gen?w_lnode->n_gen:off2->n_gen)-anc_gnode->n_gen)*p_mu;
             
             //Info
             anc_gnode->paralog=w_lnode->paralog;
@@ -3370,14 +3413,14 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             {
                 if (w_lnode->anc_node==NULL)
                 {
-                    printf("\n\t\t\tNew coalescence, nodes %u and %u, coalescent time %f",off1->index,off2->index,current_ngen*gen_time);
+                    printf("\n\t\t\tNew coalescence, nodes %u and %u, coalescent time %f",off1->index,off2->index,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
                 }
                 else
                 {
-                    printf("\n\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen*gen_time,current_ngen*gen_time);
+                    printf("\n\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -3396,7 +3439,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             {
                 *(anc_lnode->g_nodes+n_anc_nodes+j)= *(w_gnodes_ptr+j); //Adding into the ancestor g_nodes
                 off1=*(w_gnodes_ptr+j);
-                off1->bl+=(off1->height>w_lnode->n_gen?w_lnode->gen_length:off1->height-min_ngen)*p_mu; //Addition of the branch length of this period, which can't be added at the end of the g_node branch due to the lineage especific substitution rates.
+                off1->bl+=(off1->n_gen>w_lnode->n_gen?w_lnode->gen_length:off1->n_gen-min_ngen)*p_mu; //Addition of the branch length of this period, which can't be added at the end of the g_node branch due to the lineage especific substitution rates.
                 ++anc_lnode->n_nodes;
             }
             
@@ -3550,21 +3593,21 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
             if (w_lnode->conts==NULL) //There is no species tree
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d... ",w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d... ",w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
                 }
             }
             
@@ -3578,21 +3621,21 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
             if (w_lnode->conts==NULL)
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),w_lnode->n_gen==0?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,w_lnode->n_gen==0?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
                 }
             }
             
@@ -3664,11 +3707,11 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
             anc_gnode->n_child+=2;
             
             //Branch lengths and times
-            anc_gnode->height=current_ngen;
-            off1->gen_length= off1->height - anc_gnode->height;
-            off1->bl+=((off1->height>w_lnode->n_gen?w_lnode->n_gen:off1->height)-anc_gnode->height)*p_mu;
-            off2->gen_length= off2->height - anc_gnode->height;
-            off2->bl+=((off2->height>w_lnode->n_gen?w_lnode->n_gen:off2->height)-anc_gnode->height)*p_mu;
+            anc_gnode->n_gen=current_ngen;
+            off1->gen_length= off1->n_gen - anc_gnode->n_gen;
+            off1->bl+=((off1->n_gen>w_lnode->n_gen?w_lnode->n_gen:off1->n_gen)-anc_gnode->n_gen)*p_mu;
+            off2->gen_length= off2->n_gen - anc_gnode->n_gen;
+            off2->bl+=((off2->n_gen>w_lnode->n_gen?w_lnode->n_gen:off2->n_gen)-anc_gnode->n_gen)*p_mu;
             
             //Info
             anc_gnode->paralog=w_lnode->paralog;
@@ -3687,14 +3730,14 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
             {
                 if (w_lnode->anc_node==NULL)
                 {
-                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, coalescent time %f",off1->index,off2->index,current_ngen*gen_time);
+                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, coalescent time %f",off1->index,off2->index,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
                 }
                 else
                 {
-                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen*gen_time,current_ngen*gen_time);
+                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -3721,7 +3764,7 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
             {
                 *(anc_lnode->g_nodes+n_anc_nodes+j)= *(w_gnodes_ptr+j); //Adding into the ancestor g_nodes
                 off1=*(w_gnodes_ptr+j);
-                off1->bl+=(off1->height>w_lnode->n_gen?w_lnode->gen_length:off1->height-min_ngen)*p_mu; //Addition of the branch length of this period, which can't be added at the end of the g_node branch due to the lineage especific substitution rates.
+                off1->bl+=(off1->n_gen>w_lnode->n_gen?w_lnode->gen_length:off1->n_gen-min_ngen)*p_mu; //Addition of the branch length of this period, which can't be added at the end of the g_node branch due to the lineage especific substitution rates.
                 ++anc_lnode->n_nodes;
             }
         }
@@ -4295,7 +4338,6 @@ l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 // *
                 /// Translates the buffer in a float number and asigns it as s_node::gen_length of the current node</dd></dl>
                 sscanf(bl_buffer,"%lf",&current_node->gen_length);
-                current_node->gen_length/=gen_time;
                 
                 break;
             case '*':
@@ -4322,6 +4364,31 @@ l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 sscanf(bl_buffer,"%lf",&current_node->mu_mult);
                 
                 break;
+                
+            case '~':
+                // **
+                /// <dl><dt>Lineage specific generation time multi (code="~").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                strcpy(bl_buffer,"");
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && (code>47 || code==46))
+                {
+                    *(bl_buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                --step;
+                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                // *
+                /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
+                sscanf(bl_buffer,"%lf",&current_node->gtime_mult);
+                break;
+                
             case '#':
                 // **
                 /// <dl><dt>New effective population size (Ne) (code="#").</dt><dd>
@@ -4442,7 +4509,7 @@ l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 strcpy(name_buffer,"");
                 n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_')
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_' && code != '~')
                 {
                     *(name_buffer+n_char)=code;
                     ++n_char;
@@ -4494,7 +4561,7 @@ l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, doubl
     // ***
     /// Refines the readed nodes by \ref RefineLNodes
     
-    RefineLNodes(root,n_gleaves,ind_persp);
+    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
     max_lname++; //One extra character for \0.
     
     // ***
@@ -4534,7 +4601,7 @@ l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, doubl
     return (tree);
 }
 
-g_tree * NewGTree (int n_nodes, int max_childs)
+g_tree * NewGTree (int n_nodes, int max_childs, double gen_time)
 {
     g_tree * tree=NULL;
     // **
@@ -4551,6 +4618,7 @@ g_tree * NewGTree (int n_nodes, int max_childs)
     tree->max_childs=max_childs;
     tree->species_tree=NULL;
     tree->locus_tree=NULL;
+    tree->gen_time=gen_time;
     
     // *
     /// Tree nodes allocation and initialization by \ref NewGNodes </dd></dl>
@@ -4634,6 +4702,7 @@ long int CopySTree (s_tree ** out_tree_ptr,s_tree * in_tree,int tree_struct, int
         w_output->n_replicas=w_input->n_replicas;
         w_output->Ne=w_input->Ne;
         w_output->n_gen=w_input->n_gen;
+        w_output->time=w_input->time;
         w_output->gen_length=w_input->gen_length;
         w_output->mu_mult=w_input->mu_mult;
         w_output->gtime_mult=w_input->gtime_mult;
@@ -4746,6 +4815,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         w_output->n_nodes=w_input->n_nodes;
         w_output->Ne=w_input->Ne;
         w_output->n_gen=w_input->n_gen;
+        w_output->time=w_input->time;
         w_output->gen_length=w_input->gen_length;
         w_output->conts=w_input->conts;
         w_output->mu_mult=w_input->mu_mult;
@@ -4817,6 +4887,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         w_output->n_nodes=w_input->n_nodes;
         w_output->Ne=w_input->Ne;
         w_output->n_gen=w_input->n_gen;
+        w_output->time=w_input->time;
         w_output->gen_length=w_input->gen_length;
         w_output->conts=w_input->conts;
         w_output->mu_mult=w_input->mu_mult;
@@ -4923,6 +4994,7 @@ inline long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
     /// Tree equivalence 
     if (sp_tree->m_node==NULL||sp_tree->max_childs!=locus_tree->max_childs||sp_tree->n_gleaves!=locus_tree->n_gleaves||sp_tree->n_leaves!=locus_tree->n_leaves||sp_tree->n_nodes!=locus_tree->n_nodes)
         return MEM_ERROR;
+
     // *
     /// Tree copy loop
     for (i=0;i<sp_tree->n_nodes;++i)
@@ -4934,11 +5006,14 @@ inline long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
         w_lnode->n_nodes=w_snode->n_replicas;
         w_lnode->Ne=w_snode->Ne;
         w_lnode->n_gen=w_snode->n_gen;
+        w_lnode->time=w_snode->time;
         w_lnode->gen_length=w_snode->gen_length;
         w_lnode->conts=w_snode;
         w_lnode->mu_mult=w_snode->mu_mult;
         w_lnode->gtime_mult=w_snode->gtime_mult;
-        
+        w_snode->n_lnodes=1;
+        w_snode->l_nodes=w_lnode;
+
         for (j=0;j<w_lnode->n_child; ++j)
         {
             *(w_lnode->childs+j)=(locus_tree->m_node+((*(w_snode->childs+j))->index));
@@ -4951,7 +5026,7 @@ inline long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
 
     // *
     /// Tree info copy </dd></dl>
-    locus_tree->root=locus_tree->m_node+locus_tree->n_nodes-1;
+    locus_tree->root=sp_tree->root->l_nodes;
     locus_tree->gen_time=sp_tree->gen_time;
     locus_tree->Ne=sp_tree->Ne;
     locus_tree->mu=sp_tree->mu;
@@ -4962,24 +5037,25 @@ inline long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
 }
 
 
-
-// ** Tree edition ** //
-
-long int CleanlossesLTree(l_tree *locus_tree)
-{
-    int n_deletions=0;
-    int n_leaves=0;
-    if (locus_tree->m_node!=NULL || locus_tree->root == NULL)
-        return MEM_ERROR;
-    
-    CleanlossesLNodes(locus_tree->root,&locus_tree->root,&n_deletions,&n_leaves);
-    
-    locus_tree->n_nodes-=n_deletions;
-    locus_tree->n_leaves=n_leaves;
-    
-    return NO_ERROR;
-}
-
+//\cond DOXYGEN_EXCLUDE
+//// ** Tree edition ** //
+//
+//long int CleanlossesLTree(l_tree *locus_tree)
+//{
+//    int n_deletions=0;
+//    int n_leaves=0;
+//    if (locus_tree->m_node!=NULL || locus_tree->root == NULL)
+//        return MEM_ERROR;
+//    
+//    CleanlossesLNodes(locus_tree->root,&locus_tree->root,&n_deletions,&n_leaves);
+//    
+//    locus_tree->n_nodes-=n_deletions;
+//    locus_tree->n_leaves=n_leaves;
+//    
+//    return NO_ERROR;
+//}
+//
+//\endcond
 // ** Tree reset ** //
 
 inline long int ResetSTreeSimL (s_tree *tree)
@@ -5017,7 +5093,7 @@ inline long int ResetGTree (g_tree *tree)
         w_node->sp_index=0;
         w_node->replica=0;
         w_node->paralog=0;
-        w_node->height=0;
+        w_node->n_gen=0;
         w_node->bl=0;
         w_node->gen_length=0.0;
         for (j=0;j<tree->max_childs;++j)
@@ -5185,7 +5261,7 @@ void FreeGTree(g_tree ** tree, int complete)
         (*tree)->root->sp_index=0;
         (*tree)->root->replica=0;
         (*tree)->root->paralog=0;
-        (*tree)->root->height=0;
+        (*tree)->root->n_gen=0;
         (*tree)->root->n_child=0;
         (*tree)->root->bl=0;
         (*tree)->root->gen_length=0.0;
@@ -5350,7 +5426,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                 w_gnode->contl=NULL;
                 w_gnode->n_child=0;
                 w_gnode->anc_node=NULL;
-                w_gnode->height=0.0;
+                w_gnode->n_gen=0.0;
                 w_gnode->bl=0.0;
                 w_gnode->gen_length=0.0;
             }
@@ -5397,6 +5473,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                     w_gnode->replica=j;
                     w_gnode->contl=w_lnode;
                     w_gnode->conts=w_lnode->conts;
+                    w_gnode->n_gen=w_lnode->n_gen;
                 }
                 break;
                 
@@ -5408,6 +5485,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     
     gene_tree->species_tree=locus_tree->species_tree;
     gene_tree->locus_tree=locus_tree;
+    gene_tree->gen_time=locus_tree->gen_time;
     locus_tree->gene_tree=gene_tree;
     
     return (NO_ERROR);
@@ -5459,7 +5537,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                 w_gnode->contl=NULL;
                 w_gnode->n_child=0;
                 w_gnode->anc_node=NULL;
-                w_gnode->height=0.0;
+                w_gnode->n_gen=0.0;
                 w_gnode->bl=0.0;
                 w_gnode->gen_length=0.0;
             }
@@ -5518,6 +5596,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                     w_gnode->replica=j;
                     w_gnode->contl=w_lnode;
                     w_gnode->conts=w_lnode->conts;
+                    w_gnode->n_gen=w_lnode->n_gen;
                 }
                 break;
                 
@@ -5529,6 +5608,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     
     gene_tree->species_tree=locus_tree->species_tree;
     gene_tree->locus_tree=locus_tree;
+    gene_tree->gen_time=locus_tree->gen_time;
     locus_tree->gene_tree=gene_tree;
     
     return (NO_ERROR);
@@ -5799,35 +5879,15 @@ long int CollapseGTree (g_tree * in_tree, int post_order, int relink)
 }
 // ** Gene tree branch length modification ** //
 
-long int Temporalize_GTree(g_tree *gene_tree,double gen_time)
+inline long int TemporalizeLTree(l_tree *tree)
 {
-    g_node *w_node;
-    int i=0;
+    unsigned int i=0;
     
-    // **
-    /// <dl><dt> Function structure </dt><dd>
-    
-    // *
-    /// Input tree root control
-    if (gene_tree->root == NULL && gene_tree->m_node == NULL)
-        return MEM_ERROR;
-    // *
-    /// Branch length conversion inside a loop (collapsed \ref g_tree ) or using a recursive function (\ref Temporalize_GNodes) </dd></dl>
-    else if (gene_tree->m_node!=NULL)
+    tree->root->time=0;
+    for (i=0; i<tree->root->n_child;++i)
     {
-        for (i=0; i<gene_tree->n_nodes;++i)
-        {
-            w_node=gene_tree->m_node+i;
-            w_node->bl*=gen_time;
-            w_node->height*=gen_time;
-            w_node->gen_length*=gen_time;
-        }
+        TemporalizeLNodes(*(tree->root->childs+i), tree->gen_time);
     }
-    else
-    {
-        Temporalize_GNodes(gene_tree->root, gen_time);
-    }
-
     return NO_ERROR;
 }
 
@@ -5920,85 +5980,6 @@ long int Rateheter_GTbranchspec(g_tree *tree, double alpha, gsl_rng *seed, FILE 
     return NO_ERROR;
 }
 
-
-//long int Mutate_GTree(g_tree *gene_tree,double mu)
-//{
-//    g_node *w_node;
-//    int i=0;
-//    
-//    // **
-//    /// <dl><dt> Function structure </dt><dd>
-//    
-//    // *
-//    /// Input tree control
-//    if (gene_tree->root==NULL || gene_tree->m_node == NULL)
-//        return MEM_ERROR;
-//    if (gene_tree->m_node->contl==NULL || gene_tree->m_node==gene_tree->root) //Pre-order
-//        return MEM_ERROR;
-//   
-//    // *
-//    /// Branch length conversion inside a post-order loop
-//
-//    for (i=0; i<gene_tree->n_nodes;++i)
-//    {
-//        w_node=gene_tree->m_node+i;
-//        w_node->bl*=w_node->contl->mu!=0?w_node->contl->mu:mu;
-//        w_node->height=0;
-//    }
-//    
-//    // * Height conversion inside an inverse post-order loop</dd></dl>
-//    ///
-//    
-//    (gene_tree->m_node+gene_tree->n_nodes-1)->height=0;
-//    
-//    for (i=gene_tree->n_nodes-1; i>0;--i)
-//    {
-//        w_node=gene_tree->m_node+i-1;
-//        w_node->height=w_node->anc_node->height-w_node->bl;
-//    }
-//
-//    return NO_ERROR;
-//}
-//
-//long int Evolve_GTree(g_tree *gene_tree,double gen_time, double mu)
-//{
-//    g_node *w_node;
-//    int i=0;
-//    
-//    // **
-//    /// <dl><dt> Function structure </dt><dd>
-//    
-//    // *
-//    /// Input tree control
-//    if (gene_tree->root==NULL || gene_tree->m_node == NULL)
-//        return MEM_ERROR;
-//    if (gene_tree->m_node->contl==NULL || gene_tree->m_node==gene_tree->root) //Pre-order
-//        return MEM_ERROR;
-//    
-//    // *
-//    /// Branch length conversion inside a post-order loop
-//    
-//    for (i=0; i<gene_tree->n_nodes;++i)
-//    {
-//        w_node=gene_tree->m_node+i;
-//        w_node->bl*=gen_time*(w_node->contl->mu!=0?w_node->contl->mu:mu);
-//        w_node->height=0;
-//    }
-//    
-//    // * Height conversion inside an inverse post-order loop</dd></dl>
-//    ///
-//    
-//    (gene_tree->m_node+gene_tree->n_nodes-1)->height=0;
-//    
-//    for (i=gene_tree->n_nodes-1; i>0;--i)
-//    {
-//        w_node=gene_tree->m_node+i-1;
-//        w_node->height=w_node->anc_node->height-w_node->bl;
-//    }
-//    
-//    return NO_ERROR;
-//}
-
 // *** Tree features obtention *** //
 
 long int Count_duplications(l_tree *tree, int *n_dup)
@@ -6072,7 +6053,7 @@ long int Measure_ST_height(s_tree *tree,long double *height, int unit)
     *height=0;
     
     // *
-    /// Recursive function selection depending on the height unit.</dd></dl>
+    /// Recursive function selection depending on the n_gen unit.</dd></dl>
     switch(unit)
     {
         case CU:
@@ -6133,7 +6114,7 @@ long int Measure_GT_height(g_tree *tree,long double *height,int unit)
     *height=0;
     
     // *
-    /// Recursive function selection depending on the height unit.</dd></dl>
+    /// Recursive function selection depending on the n_gen unit.</dd></dl>
     switch(unit)
     {
         case CU:
@@ -7682,7 +7663,7 @@ static long double Measure_s_node_gl_length(s_node *node)
 
 // ** Node modification ** //
 
-static void RefineSNodes(s_node * node, int ind_persp)
+static void RefineSNodes(s_node * node, int ind_persp, double gen_time)
 {
     int i=0;
     
@@ -7702,6 +7683,7 @@ static void RefineSNodes(s_node * node, int ind_persp)
                 
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
+                node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
                 if (node->n_replicas>0)
                 {
                     fprintf(stderr,"Number of replicas per taxa applied to internal branches are not allowed\n");
@@ -7719,12 +7701,12 @@ static void RefineSNodes(s_node * node, int ind_persp)
     /// Pre-order recursion (anc, childs)
     for (i=0;i<node->n_child;++i)
     {
-        RefineSNodes(*(node->childs+i),ind_persp);
+        RefineSNodes(*(node->childs+i),ind_persp,gen_time);
     }
     
 }
 
-static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp)
+static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time)
 {
     int i=0,j=0;
     
@@ -7743,6 +7725,7 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp)
                     node->n_nodes=ind_persp;
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
+                node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
                 break;
         }
     }
@@ -7764,108 +7747,107 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp)
     /// Pre-order recursion (anc,childs)
     for (i=0;i<node->n_child;++i)
     {
-        RefineLNodes(*(node->childs+i),n_gleaves, ind_persp);
+        RefineLNodes(*(node->childs+i),n_gleaves, ind_persp, gen_time);
     }
     
 }
-
-static void CleanlossesLNodes(l_node * node, l_node ** root, int *n_deletions, int *n_leaves)
-{
-    int i=0,j=0,n_child=node->n_child;
-    l_node *w_lnode=NULL;
-    
-    // ***
-    /// <dl><dt> Function structure </dt><dd>
-    
-    // **
-    /// Post-order recursion (childs,anc)
-    for (i=0;i<n_child;++i)
-    {
-        CleanlossesLNodes(*(node->childs+i),root,n_deletions,n_leaves);
-    }
-    
-    // **
-    ///<dl><dt>No proper internal node</dt><dd>
-    if(node->n_child<2)
-    {
-        // *
-        // If real leave, count it.
-        if(node->n_gen==0)
-        {
-            ++(*n_leaves);
-        }
-        else if (node->anc_node!=NULL)
-        {
-            w_lnode=node->anc_node;
-            // *
-            /// Deletion if the node has 0 childs and is not a real leaf (n_gen=0).
-            if (node->n_child==0)
-            {
-                for (j=0;j<w_lnode->n_child;++j)
-                {
-                    if (*(w_lnode->childs+j)==node)
-                        break;
-                }
-                *(w_lnode->childs+j)=*(w_lnode->childs+w_lnode->n_child-1);
-                --w_lnode->n_child;
-                FreeLNodes(node, 1);
-                ++(*n_deletions);
-            }
-            // *
-            /// Deletion and "by pass" if the node has 1 child
-            else if (node->n_child==1)
-            {
-                for (j=0;j<w_lnode->n_child;++j)
-                {
-                    if (*(w_lnode->childs+j)==node)
-                        break;
-                }
-                *(w_lnode->childs+j)=*node->childs;
-                w_lnode=*node->childs;
-                w_lnode->anc_node=node->anc_node;
-                w_lnode->gen_length=node->anc_node->n_gen-w_lnode->n_gen;
-                node->n_child=0; //To delete only this node
-                FreeLNodes(node, 1);
-                ++(*n_deletions);
-            }
-        }
-        // *
-        ///Change of the root of the tree if it should be deleted</dd></dl></dd></dl>
-        else
-        {
-            w_lnode=*node->childs;
-            *root=w_lnode;
-            (*root)->anc_node=NULL;
-            node->n_child=0; //To delete only this node
-            FreeLNodes(node, 1);
-            ++(*n_deletions);
-        }
-        
-    }
-    
-}
-
-static void Temporalize_GNodes(g_node * w_node,double gen_time)
-{
-    int i=0;
-    
-    w_node->bl*=gen_time;
-    w_node->gen_length*=gen_time;
-    w_node->height*=gen_time;
-    for(i=0; i<w_node->n_child; ++i)
-    {
-        Temporalize_GNodes(*(w_node->childs+i), gen_time);
-    }
-}
-
-static void AddConstantNgenSTree(s_node *node, double constant)
+//\cond DOXYGEN_EXCLUDE
+//static void CleanlossesLNodes(l_node * node, l_node ** root, int *n_deletions, int *n_leaves)
+//{
+//    int i=0,j=0,n_child=node->n_child;
+//    l_node *w_lnode=NULL;
+//    
+//    // ***
+//    /// <dl><dt> Function structure </dt><dd>
+//    
+//    // **
+//    /// Post-order recursion (childs,anc)
+//    for (i=0;i<n_child;++i)
+//    {
+//        CleanlossesLNodes(*(node->childs+i),root,n_deletions,n_leaves);
+//    }
+//    
+//    // **
+//    ///<dl><dt>No proper internal node</dt><dd>
+//    if(node->n_child<2)
+//    {
+//        // *
+//        // If real leave, count it.
+//        if(node->kind_node==SP)
+//        {
+//            ++(*n_leaves);
+//        }
+//        else if (node->anc_node!=NULL)
+//        {
+//            w_lnode=node->anc_node;
+//            // *
+//            /// Deletion if the node has 0 childs and is not a real leaf (SP).
+//            if (node->n_child==0)
+//            {
+//                for (j=0;j<w_lnode->n_child;++j)
+//                {
+//                    if (*(w_lnode->childs+j)==node)
+//                        break;
+//                }
+//                *(w_lnode->childs+j)=*(w_lnode->childs+w_lnode->n_child-1);
+//                --w_lnode->n_child;
+//                FreeLNodes(node, 1);
+//                ++(*n_deletions);
+//            }
+//            // *
+//            /// Deletion and "by pass" if the node has 1 child
+//            else if (node->n_child==1)
+//            {
+//                for (j=0;j<w_lnode->n_child;++j)
+//                {
+//                    if (*(w_lnode->childs+j)==node)
+//                        break;
+//                }
+//                *(w_lnode->childs+j)=*node->childs;
+//                w_lnode=*node->childs;
+//                w_lnode->anc_node=node->anc_node;
+//                w_lnode->gen_length=node->anc_node->n_gen-w_lnode->n_gen;
+//                node->n_child=0; //To delete only this node
+//                FreeLNodes(node, 1);
+//                ++(*n_deletions);
+//            }
+//        }
+//        // *
+//        ///Change of the root of the tree if it should be deleted</dd></dl></dd></dl>
+//        else
+//        {
+//            w_lnode=*node->childs;
+//            *root=w_lnode;
+//            (*root)->anc_node=NULL;
+//            node->n_child=0; //To delete only this node
+//            FreeLNodes(node, 1);
+//            ++(*n_deletions);
+//        }
+//        
+//    }
+//    
+//}
+//\endcond
+static void AddConstantNgenSNodes(s_node *node, double constant, double gen_time)
 {
     unsigned int i=0;
     
     node->n_gen+=constant;
+    node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
     for (i=0; i<node->n_child;++i)
     {
-        AddConstantNgenSTree(*(node->childs+i), constant);
+        AddConstantNgenSNodes(*(node->childs+i), constant, gen_time);
+    }
+}
+
+static void TemporalizeLNodes(l_node *node, double gen_time)
+{
+    unsigned int i=0;
+    
+    node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
+    for (i=0; i<node->n_child; ++i)
+    {
+        TemporalizeLNodes(*(node->childs+i), gen_time);
     }
 }
 
@@ -7887,9 +7869,9 @@ void WriteSNodes (s_node * p, name_c * names, double gen_time)
             // *
             /// Prints the node name and its branch length.</dd></dl>
             if (names==NULL)
-                printf("%d:%.8lf",p->sp_index,p->gen_length*gen_time);
+                printf("%d:%.8lf",p->sp_index,p->gen_length);
             else
-                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*gen_time);
+                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
 		else
         {
@@ -7910,7 +7892,7 @@ void WriteSNodes (s_node * p, name_c * names, double gen_time)
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
 			if (p->anc_node !=NULL)
-				printf("):%.8lf",p->gen_length*gen_time);
+				printf("):%.8lf",p->gen_length);
             else
                 printf(");");
         }
@@ -7934,9 +7916,9 @@ void WriteSNodesFile (FILE * file,s_node * p, name_c * names, double gen_time)
             // *
             /// Prints the node name and its branch length.</dd></dl>
             if (names==NULL)
-                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length*gen_time);
+                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length);
             else
-                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*gen_time);
+                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
 		else
         {
@@ -7957,7 +7939,7 @@ void WriteSNodesFile (FILE * file,s_node * p, name_c * names, double gen_time)
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
 			if (p->anc_node !=NULL)
-				fprintf(file,"):%.8lf",p->gen_length*gen_time);
+				fprintf(file,"):%.8lf",p->gen_length);
             else
                 fprintf(file,");\n");
         }
@@ -7986,39 +7968,39 @@ void WriteLNodes (l_node * p, name_c * names, double gen_time)
                         
                     default:
                         if (names==NULL)
-                            printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
+                            printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
                         else
-                            printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         break;
                         
                     case LOSS:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                         
@@ -8043,7 +8025,7 @@ void WriteLNodes (l_node * p, name_c * names, double gen_time)
                 // **
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
-                    printf("):%.8lf",p->gen_length*gen_time);
+                    printf("):%.8lf",p->gen_length);
                 else
                     printf(");");
                 break;
@@ -8072,38 +8054,38 @@ void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
                 {
                     default:
                         if (names==NULL)
-                            fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
                         else
-                            fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         break;
                     case LOSS:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time);
+                            fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                 }
@@ -8127,7 +8109,7 @@ void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
                 // **
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
-                    fprintf(file,"):%.8lf",p->gen_length*gen_time);
+                    fprintf(file,"):%.8lf",p->gen_length);
                 else
                     fprintf(file,");\n");
                 break;
@@ -8437,7 +8419,7 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     
     for (j=0; j<n_nodes; ++j) //Reset
     {
-        *(t_times+j)=0;
+        *(t_times+j)=-1;
     }
     memcpy(wl_pointers,l_pointers,sizeof(l_node *)*n_nodes);
     
@@ -8447,18 +8429,18 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
         next_t=1;
         for (j=0; j<n_nodes;++j)
         {
-            if (*(t_times+j)!=0) //We already have the time for this node. If all of them enter here, done==1, and the program continue, leaving the while loop.
+            if (*(t_times+j)!=-1) //We already have the time for this node. If all of them enter here, done==1, and the program continue, leaving the while loop.
                 continue;
             w_lnode=*(wl_pointers+j);
             done=0;
-            if ((w_lnode->n_gen<w_tnode->n_gen) && (w_lnode != w_tnode)) //We have to consider the ancestor of the receptor, but the t_node can still be a good choice (next_t=0)
+            if ((w_lnode->time>w_tnode->time) && (w_lnode != w_tnode)) //We have to consider the ancestor of the receptor, but the t_node can still be a good choice (next_t=0)
             {
                 *(wl_pointers+j)=w_lnode->anc_node;
                 next_t=0;
             }
-            else if (w_lnode==w_tnode) //Ancestor, we get the number of generations (This will be changed with non-ultrametric species trees)
+            else if (w_lnode==w_tnode)
             {
-                *(t_times+j)=w_lnode->n_gen;
+                *(t_times+j)=w_lnode->time;
             }
         }
         if (next_t==1 && done==0)
@@ -8470,11 +8452,15 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     
     for (j=0; j<n_nodes;++j) //Calculating the inverse of the distance and the total inverse distance
     {
-        if (*(t_times+j)-t_node->n_gen<DBL_EPSILON)
+        if (t_node->time==*(t_times+j))
             *(t_times+j)=0;
+        else if (fabs(t_node->time-*(t_times+j))<1)
+        {
+            printf("DBG!!!! PROBLEM!!!\n"); //\todo Remove this. It is just for some testing. I think the == is not problematic as the t_times are directly obtained from the times without any modification.
+        }
         else
         {
-            *(t_times+j)=1/(*(t_times+j)-t_node->n_gen);
+            *(t_times+j)=1/(t_node->time-*(t_times+j)); //Inverse distance
             t_prob+=*(t_times+j);
         }
     }

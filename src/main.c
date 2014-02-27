@@ -154,7 +154,6 @@ long int CheckSampledSettings(sampling_unit bds_leaves, sampling_unit bds_length
  * performance, so it is a bit long with less function calls than expected.
  *******************************************************************************/
 
-
 int main (int argc, char **argv)
 {
     
@@ -235,7 +234,6 @@ int main (int argc, char **argv)
     // ******
     /// Loop related variables</dd></dl>
     int curr_stree=1,curr_ltree=1,curr_gtree=1, i=0;
-    
     
     // *******
     /// <dl><dt>I/O variables</dt><dd></dd></dl>
@@ -552,7 +550,7 @@ int main (int argc, char **argv)
                 perror("Error opening stats.txt:");
                 ErrorReporter(IO_ERROR);
             }
-        fprintf(stat_outfile,"L_tree;N_losses;N_duplications;N_transfers;N_lt_totaltips;N_gt_presenttips;Mean_gt_height(cu);Mean_gt_height(ec);Mean_extra_lineages\n");
+            fprintf(stat_outfile,"L_tree;N_losses;N_duplications;N_transfers;N_lt_totaltips;N_gt_presenttips;Mean_gt_height(cu);Mean_gt_height(ec);Mean_extra_lineages\n");
             if (verbosity>4)
             {
                 printf("Done\n");
@@ -605,7 +603,7 @@ int main (int argc, char **argv)
         {
             if (verbosity>2)
             {
-                printf("\nObtaining the preseted locus tree (there is no birth-death process)... ");
+                printf("\nObtaining the preset locus tree (there is no birth-death process)... ");
 #ifdef DBG
                 fflush(stdout);
 #endif
@@ -614,6 +612,7 @@ int main (int argc, char **argv)
             /// Locus tree allocation and collapse-reallocation (post-order)
             locus_tree=ReadNewickLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
             CollapseLTree(locus_tree,1,0,0);//Memory reallocation in post-order
+            TemporalizeLTree(locus_tree);
             
             // ***
             /// Statistical measurements
@@ -626,7 +625,7 @@ int main (int argc, char **argv)
             
             // ****
             /// Gene tree allocation </dd></dl>
-            gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs);
+            gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs,locus_tree->gen_time);
             switch (verbosity)
             {
                 case 0:
@@ -701,7 +700,7 @@ int main (int argc, char **argv)
             }
             
             // *****
-            /// Species tree modification (substitution rate heterogeneity)
+            /// Species tree modification (substitution rate and generation time heterogeneities)
             if (get_sampling(alpha_s)!=0)
             {
                 if (verbosity>2)
@@ -719,7 +718,29 @@ int main (int argc, char **argv)
                     fflush(stdout);
 #endif
                 }
+                
             }
+                //\todo Implement lineage specific generation time heterogeneity
+            
+//            if (get_sampling(alpha_X)!=0)
+//            {
+//                if (verbosity>2)
+//                {
+//                    printf("\tGenerating lineage specific generation time heterogeneity...");
+//#ifdef DBG
+//                    fflush(stdout);
+//#endif
+//                }
+//                GenTimeheter_lineagespec(sp_tree, get_sampling(alpha_X?), r, weirdx?);
+//                if (verbosity>2)
+//                {
+//                    printf(" Done\n\t");
+//#ifdef DBG
+//                    fflush(stdout);
+//#endif
+//                }
+//
+//            }
             
             // *****
             /// <dl><dt>Species tree copy in a locus tree and working locus tree structures if there is no birth-death process</dt><dd>
@@ -732,7 +753,7 @@ int main (int argc, char **argv)
                 
                 // ****
                 /// Gene tree allocation
-                gene_tree=NewGTree((sp_tree->n_gleaves*2)-1,locus_tree->max_childs); //Gene tree does not allow polytomies.
+                gene_tree=NewGTree((sp_tree->n_gleaves*2)-1,locus_tree->max_childs, locus_tree->gen_time); //Gene tree does not allow polytomies.
                 
                 if (verbosity>2)
                 {
@@ -839,7 +860,8 @@ int main (int argc, char **argv)
 #ifdef DBG
                 fflush(stdout);
 #endif
-
+                if (curr_stree==44)
+                    printf("WTF");
                 // ******
                 /// Locus tree simulation
                 ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),t_kind,r, min_lleaves, min_lsleaves, get_sampling(gen_time), verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves));
@@ -853,6 +875,11 @@ int main (int argc, char **argv)
                 /// Reallocation of locus tree in post-order and reconciliation output (if necessary)
                 if (recon>1)
                     locus_tree->n_gleaves+=st_losses;
+                
+                if (curr_stree==36 && curr_ltree==2)
+                {
+                    printf("WTF");
+                }
                 
                 ErrorReporter(CollapseLTree(locus_tree,1,0,(st_dups==0 && st_transf==0 && st_gc==0)?0:1));
                 
@@ -885,7 +912,7 @@ int main (int argc, char **argv)
                 /// Gene tree allocation to perform its posterior simulation</dd></dl>
                 if (gene_tree!=NULL)
                     FreeGTree(&gene_tree, 1);
-                gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs); //Maximum number of nodes.
+                gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs, locus_tree->gen_time); //Maximum number of nodes.
                 
             }
             
@@ -1012,11 +1039,6 @@ int main (int argc, char **argv)
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>
-                
-                // *****
-                /// Transforms number of generations to time (if it is needed)
-                if (get_sampling(gen_time)!=1)
-                    ErrorReporter(Temporalize_GTree(gene_tree, get_sampling(gen_time)));
                 
                 // *****
                 /// Branch length heterogeneity generation</dd></dl>
@@ -1845,6 +1867,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                 fprintf(stderr,"\n\tWARNING!!! Reconciliation outputs will not be generated as there is no species tree when a fixed locus tree is provided\n");
                 recon=0;
             }
+            fprintf(stderr,"\n\tWARNING!!! Using a fixed user–specified locus tree is an advanced option, and it should not be used by general users. Some locus–tree–specific parameters may not be checked and could induce biologically senseless simulation scenarios. Examples: Different generation time for paralogs in the same species tree branch.\n");
         }
         
     }
@@ -1962,7 +1985,9 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
     /// <dl><dt> Line's loop </dt><dd>
     while (fgets(buffer,LENGTH,input_file)!=NULL && i<=MAX_IT)
     {
-        if (*buffer!='-' || ferror(input_file)!=0 || feof(input_file)!=0)
+        if (*buffer=='#' || (*buffer=='/' && *buffer=='/'))
+            continue;
+        else if (*buffer!='-' || ferror(input_file)!=0 || feof(input_file)!=0)
         {
             fprintf(stderr,"Error in the parameter: %s\n",buffer);
             return (SETTINGS_ERROR);
