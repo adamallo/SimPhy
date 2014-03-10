@@ -2918,10 +2918,10 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             if (n_avail_receptors>0)
                             {
+                                w_lnode=w_lnode2;
                                 switch (t_kind)
                                 {
                                     case 1:
-                                        w_lnode=w_lnode2;
                                         w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed));
                                         break;
                                     case 0:

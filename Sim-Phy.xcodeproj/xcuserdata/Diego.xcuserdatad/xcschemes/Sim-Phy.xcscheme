@@ -60,7 +60,7 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
-            argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/old_version_100gtime.txt"
+            argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/old_version_1gtime.ct.txt"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
