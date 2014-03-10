@@ -577,8 +577,6 @@ extern long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b
  *   Minimum number of locus tree leaves to consider the simulated tree as valid.
  * \param min_lsleaves
  *   Minimum number of gene tree leaves to consider the simulated locus tree as valid.
- * \param gen_time
- *   Generation time.
  * \param Ne
  *   Global effective population size.
  * \param verbosity
@@ -597,7 +595,7 @@ extern long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves);
+extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new locus tree taking into account GDL and HGT.
@@ -625,8 +623,6 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  *   Minimum number of locus tree leaves to consider the simulated tree as valid.
  * \param min_lsleaves
  *   Minimum number of gene tree leaves to consider the simulated locus tree as valid.
- * \param gen_time
- *   Generation time.
  * \param Ne
  *   Global effective population size.
  * \param verbosity
@@ -647,7 +643,7 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
+extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new gene tree under the multispecies coalescent process along a locus tree.

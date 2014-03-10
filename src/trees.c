@@ -1779,7 +1779,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
     return (NO_ERROR);
 }
 
-long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves)
+long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves)
 {
     
     // *******
@@ -1795,7 +1795,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0;
     int next_paralog=0,node_index=0,avail_leaves=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate,b_prob=(b_rate/(d_rate+b_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0;
+    double w_prob=d_rate+b_rate,b_prob=(b_rate/(d_rate+b_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, gen_time=wsp_tree->gen_time;
     
     // ******
     /// Loop related variables</dd></dl>
@@ -2257,7 +2257,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     
 }
 
-long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves)
+long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves)
 {
     // *******
     /// <dl><dt>Declarations</dt><dd>
@@ -2274,7 +2274,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
     int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0;
+    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0, gen_time=wsp_tree->gen_time;
     
     // ******
     /// Loop related variables</dd></dl>
@@ -2854,6 +2854,9 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr+*st_gc;//One extra node will be needed for each transfer/gc
             (*wlocus_tree)->n_gleaves=*st_gleaves;
             (*wlocus_tree)->species_tree=wsp_tree;
+            
+            //WriteLNodes((*wlocus_tree)->root, (name_c *) NULL, 0); /////DEBUG!!!!!!!
+            
             ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0)); //The root of this tree is going to be badly set due to the extra still not used nodes.
             
             //Variable initialization
@@ -3007,6 +3010,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed));
                                         break;
                                     case 0:
+                                        w_lnode=w_lnode2;
                                         w_lnode2=*(avail_receptors+gsl_rng_uniform_int(seed,n_avail_receptors));
                                         break;
                                     default:
@@ -3028,8 +3032,11 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 w_lnode3->gtime_mult=w_lnode2->gtime_mult;
                                 w_lnode3->Ne=w_lnode2->Ne;
                                 w_lnode3->time=w_lnode->time;
-                                w_lnode3->n_gen=anc_lnode->n_gen+ (w_lnode3->time-anc_lnode->time)/w_lnode3->gtime_mult/w_lnode3->gtime_mult; //gen_lenth=Time_length * (1/gen_time*gtime_mult)
+                                w_lnode3->n_gen=anc_lnode->n_gen+ (w_lnode3->time-anc_lnode->time)/w_lnode3->gtime_mult/gen_time; //gen_lenth=Time_length * (1/gen_time*gtime_mult)
                                 w_lnode3->gen_length=w_lnode3->n_gen-anc_lnode->n_gen;
+                                w_lnode3->sp_index=w_lnode3->conts->sp_index;
+                                //w_lnode3->n_child=0; Implicit.
+                                //w_lnode3->n_nodes=0;
                                 
                                 for (k=0; k<anc_lnode->n_child; ++k)
                                 {
@@ -3154,6 +3161,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
 
             FreePeriods(periods, n_periods);
             free(avail_receptors);
+            
             (*wlocus_tree)->root=((*wlocus_tree)->m_node+tn_nodes-1);
         }
         // ******
@@ -3651,7 +3659,7 @@ inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * na
         {
             // **
             /// Waiting time (coalescent time) sample, depending on the sampled counts (regular coalescence at the root)
-            if (min_ngen!=0)
+            if (w_lnode->gen_length!=0)
             {
                 sampled_ngen=SampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity);
                 if(sampled_ngen<=0 || current_ngen-sampled_ngen-epsilon_brent<=min_ngen)

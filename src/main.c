@@ -860,11 +860,13 @@ int main (int argc, char **argv)
 #ifdef DBG
                 fflush(stdout);
 #endif
-                if (curr_stree==44)
-                    printf("WTF");
+                if(curr_stree==3 && curr_ltree==1)
+                {
+                    printf("DBG");
+                }
                 // ******
                 /// Locus tree simulation
-                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),t_kind,r, min_lleaves, min_lsleaves, get_sampling(gen_time), verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves));
+                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves));
                 
                 // ******
                 /// Species tree reindexation in post-order
@@ -875,11 +877,6 @@ int main (int argc, char **argv)
                 /// Reallocation of locus tree in post-order and reconciliation output (if necessary)
                 if (recon>1)
                     locus_tree->n_gleaves+=st_losses;
-                
-                if (curr_stree==36 && curr_ltree==2)
-                {
-                    printf("WTF");
-                }
                 
                 ErrorReporter(CollapseLTree(locus_tree,1,0,(st_dups==0 && st_transf==0 && st_gc==0)?0:1));
                 
