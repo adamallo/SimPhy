@@ -656,8 +656,6 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  *  Pointer to the name container.
  * \param epsilon_brent
  *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
- * \param min_cu_bc
- *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
  * \param seed
  *   Seed for the random number generator.
  * \paran tn_lcoals
@@ -672,7 +670,7 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  *  Simulates a new gene tree under the multilocus coalescent process along a locus tree.
@@ -685,8 +683,6 @@ extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name
  *  Pointer to the name container.
  * \param epsilon_brent
  *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
- * \param min_cu_bc
- *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
  * \param seed
  *   Seed for the random number generator.
  * \paran tn_lcoals
@@ -701,7 +697,7 @@ extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+extern inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  * Creates a new l_tree, and initializes it.
@@ -1461,10 +1457,10 @@ extern long int CheckNewickLTree (char * tree);
 ///@{
 extern void PrintUsage(void);
 static void ErrorReporter(long int);
-
+l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num, int verbosity);
 ///@}
 
-l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num);
+
 /**
  * Detector of errors. 
  * This function writes info of errors in stderr and closes

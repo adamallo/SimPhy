@@ -399,23 +399,24 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time);
  *  Generation time.
  *******************************************************************************/
 static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time);
-
-/**
- * Deletes superfluous nodes due to losses.
- *
- * This function deletes superfluous nodes due to losses of a \ref l_tree after
- * their generation by a birth-death process.
- *
- * \param node
- *  Node to delete if it is a superfluous one.
- * \param root
- *  Point to the root of the tree, to change if it is deleted.
- * \param n_deletions
- *  Number of deleted nodes after the work of the function.
- * \param n_leaves
- *  Number of leaves after the work of the function.
- *******************************************************************************/
-static void CleanlossesLNodes(l_node * node, l_node ** root,int * n_deletions, int * n_leaves);
+//\cond DOXYGEN_EXCLUDE
+///**
+// * Deletes superfluous nodes due to losses.
+// *
+// * This function deletes superfluous nodes due to losses of a \ref l_tree after
+// * their generation by a birth-death process.
+// *
+// * \param node
+// *  Node to delete if it is a superfluous one.
+// * \param root
+// *  Point to the root of the tree, to change if it is deleted.
+// * \param n_deletions
+// *  Number of deleted nodes after the work of the function.
+// * \param n_leaves
+// *  Number of leaves after the work of the function.
+// *******************************************************************************/
+//\endcond
+//static void CleanlossesLNodes(l_node * node, l_node ** root,int * n_deletions, int * n_leaves);
 
 /**
  * Pre-order recursive addition of a constant number of generations and recalculation of times.
@@ -1281,8 +1282,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         for (j=0;j<(*out_tree)->n_nodes;++j)
         {
             *(node_ptrs+j)=(*out_tree)->m_node+j;
-            (*(node_ptrs+j))->n_gen=time+time*outgroup/2;
-            (*(node_ptrs+j))->time=(time+time*outgroup/2)*gen_time;//Here we still have ultrametric species trees even measured in number of generations, and therefore we can calculate times so easily.
+            (*(node_ptrs+j))->n_gen=(time+time*outgroup/2)/gen_time;
+            (*(node_ptrs+j))->time=time+time*outgroup/2;
         }
         
         n_leaves=leaves;
@@ -1356,9 +1357,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             *(anc_node->childs+1)=w_node2;
             w_node1->anc_node=anc_node;
             w_node2->anc_node=anc_node;
+            anc_node->time=time+time*outgroup/2-*(i_nodes+j);
             // * Branch lenghts and times * //
-            anc_node->n_gen=time+time*outgroup/2-*(i_nodes+j);
-            anc_node->time=anc_node->n_gen*gen_time; //Here we still have ultrametric species trees even measured in number of generations, and therefore we can calculate times so easily.
+            anc_node->n_gen=anc_node->time/gen_time;
             anc_node->n_child=2;
             w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
             w_node2->gen_length=w_node2->n_gen-anc_node->n_gen;
@@ -1386,11 +1387,13 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node2->n_gen=0;
             w_node2->time=0;
             w_node2->n_child=2;
-            (*out_tree)->root->gen_length=(outgroup*time/2);
+            (*out_tree)->root->gen_length=(outgroup*time/2)/gen_time;
             (*out_tree)->root->anc_node=w_node2;
-            w_node1->gen_length=time+outgroup*time/2;
-            w_node1->n_gen=time+outgroup*time/2;
-            w_node1->time=(time+outgroup*time/2)*gen_time;
+            
+            w_node1->time=time+outgroup*time/2;
+            w_node1->gen_length=w_node1->time/gen_time;
+            w_node1->n_gen=w_node1->gen_length;
+            
             w_node1->n_replicas=1;
             
             (*out_tree)->root=w_node2;
@@ -1545,7 +1548,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                     w_node1->anc_node=anc_node;
                     w_node2->anc_node=anc_node;
                     
-                    anc_node->n_gen=c_time+s_time;
+                    anc_node->time=c_time+s_time;
+                    anc_node->n_gen=anc_node->time/gen_time;
                     anc_node->gen_length=anc_node->n_gen-anc_node->anc_node->n_gen;
                     anc_node->n_child=2;
                     
@@ -1566,7 +1570,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                     }
                     else if (verbosity==6)
                     {
-                        printf("\n\t\t\tNew duplication, %.8lf generations",anc_node->n_gen);
+                        printf("\n\t\t\tNew duplication, %.8lf time units",anc_node->time);
 #ifdef DBG
                         fflush(stdout);
 #endif
@@ -1625,7 +1629,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                         else
                         {
                             // * Reconfiguring branches * //
-                            w_node1->n_gen=c_time+s_time;
+                            w_node1->time=c_time+s_time;
+                            w_node1->n_gen=w_node1->time/gen_time;
                             w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
                             
                             // * Setting the leaf as non avaliable * //
@@ -1690,8 +1695,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         for (j=0;j<avail_leaves;++j)
         {
             w_node1=*(node_ptrs+j);
-            w_node1->n_gen=time;
-            w_node1->gen_length=time-w_node1->anc_node->n_gen;
+            w_node1->time=time;
+            w_node1->n_gen=time/gen_time;
+            w_node1->gen_length=w_node1->n_gen-w_node1->anc_node->n_gen;
             w_node1->n_replicas=ind_per_sp;
             w_node1->sp_index=j+n_leaves+1-avail_leaves;
         }
@@ -1706,13 +1712,13 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node1->anc_node=(*out_tree)->root;
             (*out_tree)->root->n_gen=0;
             (*out_tree)->root->n_child=2;
-            (*(*out_tree)->root->childs)->gen_length=outgroup;
-            w_node1->gen_length=time+outgroup;
-            w_node1->time=(time+outgroup)*gen_time;
-            w_node1->n_gen=time+outgroup;
+            (*(*out_tree)->root->childs)->gen_length=outgroup/gen_time;
+            w_node1->time=time+outgroup;
+            w_node1->n_gen=w_node1->time/gen_time;
+            w_node1->gen_length=w_node1->n_gen;
             w_node1->n_replicas=1;
             
-            AddConstantNgenSNodes((*(*out_tree)->root->childs), outgroup,gen_time);
+            AddConstantNgenSNodes((*(*out_tree)->root->childs), outgroup/gen_time,gen_time);
   
             (*out_tree)->n_nodes=n_nodes+extra_nodes+2;
             (*out_tree)->n_leaves=avail_leaves+(extra_nodes/2)+1;
@@ -2974,6 +2980,23 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 
                 if (w_lnode2!=NULL)
                 {
+                    switch (verbosity)
+                    {
+                        case 0:
+                        case 1:
+                        case 2:
+                        case 3:
+                        case 4:
+                        case 5:
+                            break;
+                        default:
+                            printf("\n\t\t\t\t\t%s candidate node %d:\n\t\t\t\t\t\tCandidate receptors:",w_lnode2->kind_node==GC?"Gene conversion":"Transfer",w_lnode2->index);
+#ifdef DBG
+                            fflush(stdout);
+#endif
+                        break;
+                    }
+                    
                     switch (discarded_t)
                     {
                         case 0:
@@ -2987,6 +3010,22 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         {
                                             *(avail_receptors+n_avail_receptors)=w_lnode;
                                             ++n_avail_receptors;
+                                            switch (verbosity)
+                                            {
+                                                case 0:
+                                                case 1:
+                                                case 2:
+                                                case 3:
+                                                case 4:
+                                                case 5:
+                                                    break;
+                                                default:
+                                                    printf(" %u,", w_lnode->index);
+#ifdef DBG
+                                                    fflush(stdout);
+#endif
+                                                    break;
+                                            }
                                         }
                                         break;
                                     case GC:
@@ -2994,6 +3033,22 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         {
                                             *(avail_receptors+n_avail_receptors)=w_lnode;
                                             ++n_avail_receptors;
+                                            switch (verbosity)
+                                            {
+                                                case 0:
+                                                case 1:
+                                                case 2:
+                                                case 3:
+                                                case 4:
+                                                case 5:
+                                                    break;
+                                                default:
+                                                    printf(" %u,", w_lnode->index);
+#ifdef DBG
+                                                    fflush(stdout);
+#endif
+                                                    break;
+                                            }
                                         }
                                         break;
                                     default:
@@ -3003,11 +3058,27 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             if (n_avail_receptors>0)
                             {
+                                switch (verbosity)
+                                {
+                                    case 0:
+                                    case 1:
+                                    case 2:
+                                    case 3:
+                                    case 4:
+                                    case 5:
+                                        break;
+                                    default:
+                                        printf("\n\t\t\t\t\t\t%s selection between %u candidates", t_kind==1?"Inversely proportional to MRCA":"Random" ,n_avail_receptors);
+#ifdef DBG
+                                        fflush(stdout);
+#endif
+                                        break;
+                                }
                                 switch (t_kind)
                                 {
                                     case 1:
                                         w_lnode=w_lnode2;
-                                        w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed));
+                                        w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed),verbosity);
                                         break;
                                     case 0:
                                         w_lnode=w_lnode2;
@@ -3119,10 +3190,10 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 case 4:
                                     break;
                                 case 5:
-                                    printf("\n\t\t\t\t\t Discarded %s",w_lnode2->kind_node==TRFR?"transfer":"gene conversion");
+                                    printf("\n\t\t\t\t\t\t Discarded %s",w_lnode2->kind_node==TRFR?"transfer":"gene conversion");
                                     break;
                                 default:
-                                    printf("\n\t\t\t\t\tImpossible to perform the sampled %s from the node %u, as there is no candidate receptors. Discarded transfer\n",w_lnode2->kind_node==TRFR?"transfer":"gene conversion",w_lnode2->index);
+                                    printf("\n\t\t\t\t\t\tImpossible to perform the sampled %s from the node %u, as there is no candidate receptors. Discarded transfer\n",w_lnode2->kind_node==TRFR?"transfer":"gene conversion",w_lnode2->index);
                                     break;
                             }
                             
@@ -3187,7 +3258,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
 }
 
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time)
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -3480,7 +3551,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     return(NO_ERROR);
 }
 
-inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time)
+inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -6359,6 +6430,9 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                         case TRFR:
                             fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Transf",wl_node->conts->index);
                             break;
+                        case GC:
+                            fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->conts->index);
+                            break;
                         default:
                             return UNEXPECTED_VALUE;
                             break;
@@ -6379,6 +6453,9 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                             case TRFR:
                                 fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Transf",wl_node->sp_index);
                                 break;
+                            case GC:
+                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->sp_index);
+                                break;
                             default:
                                 return UNEXPECTED_VALUE;
                                 break;
@@ -6396,6 +6473,9 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                                 break;
                             case TRFR:
                                 fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Transf",(names->names+(wl_node->sp_index*names->max_lname)));
+                                break;
+                            case GC:
+                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Gconv",(names->names+(wl_node->sp_index*names->max_lname)));
                                 break;
                             default:
                                 return UNEXPECTED_VALUE;
@@ -7836,6 +7916,7 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
 //    
 //}
 //\endcond
+
 static void AddConstantNgenSNodes(s_node *node, double constant, double gen_time)
 {
     unsigned int i=0;
@@ -8417,7 +8498,7 @@ long int RelinkLGTrees(l_tree * wl_tree, g_node * m_node)
     return NO_ERROR;
 }
 
-l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num)
+l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num, int verbosity)
 {
     int i=0, j=0;
     int done=0, next_t=1;
@@ -8458,31 +8539,63 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
         ++i;
     }
     
+    if (verbosity>5)
+    {
+        printf("\n\t\t\t\t\t\tSampling receptor inversely proportional to MRCA time: (Node, inverse distance) ");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
     for (j=0; j<n_nodes;++j) //Calculating the inverse of the distance and the total inverse distance
     {
         if (t_node->time==*(t_times+j))
             *(t_times+j)=0;
-        else if (fabs(t_node->time-*(t_times+j))<1)
-        {
-            printf("DBG!!!! PROBLEM!!!\n"); //\todo Remove this. It is just for some testing. I think the == is not problematic as the t_times are directly obtained from the times without any modification.
-        }
         else
         {
             *(t_times+j)=1/(t_node->time-*(t_times+j)); //Inverse distance
             t_prob+=*(t_times+j);
         }
+        if (verbosity>5)
+        {
+            printf("%u %lf, ", (*(l_pointers+j))->index, *(t_times+j));
+#ifdef DBG
+            fflush(stdout);
+#endif
+        }
     }
     
     w_lnode=NULL;
+    
+    if (verbosity>5)
+    {
+        printf("\n\t\t\t\t\t\tSampled probability %lf, relative probabilities (Node, relative probability, cumulative probability): ",u_num);
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
     
     for (j=0; j<n_nodes;++j) //Samples the probabilities
     {
         if (u_num>c_prob+(*(t_times+j)/t_prob))
         {
             c_prob+=(*(t_times+j)/t_prob);
+            if (verbosity>5)
+            {
+                printf("%u %lf %lf, ", (*(l_pointers+j))->index, (*(t_times+j)/t_prob), c_prob);
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
         }
         else
         {
+            if (verbosity>5)
+            {
+                printf("Selected: %u %lf %lf, ", (*(l_pointers+j))->index, (*(t_times+j)/t_prob), c_prob+(*(t_times+j)/t_prob));
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
             w_lnode=*(l_pointers+j);
             break;
         }
