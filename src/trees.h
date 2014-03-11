@@ -162,9 +162,9 @@ struct g_node
     
     /** \name Data **/
     /// @{
-    double height; ///< Number of generations of this node (from the current time).
+    double n_gen; ///< Number of generations of this node (from the root).
     double gen_length;///< Number of generations from this node to the ancestor.
-    double bl; ///< Branch length (substitutions per site)
+    double bl; ///< Branch length (substitutions per site per generation)
     /// @}
     
     /** \name Node pointers
@@ -188,6 +188,7 @@ struct g_tree
 {
     int n_nodes;///< Number of nodes
     int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the g_node::childs allocated memory.
+    double gen_time;///< Global generation time
     g_node * m_node; ///< Memory block of nodes
     g_node * root; ///< Pointer to the root of the tree
     l_tree *locus_tree; ///< Pointer to the locus tree.
@@ -225,9 +226,11 @@ struct l_node
     /** \name Data **/
     /// @{
     int Ne; ///< Branch specific effective population size (0=> the global one).
-    double n_gen; ///< Number of generations of this node (from the current time).
+    double n_gen; ///< Number of generations of this node (from the root).
+    double time; ///< Time of this node (from the root)
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific substitution rate multi.
+    double gtime_mult; ///< Branch specific generation time multi. This parameter is species_tree branch dependent, but I'm replicating it at locus_tree level in order to allow fixed user-specified locus trees as input.
     /// @}
     
     /** \name Pointers **/
@@ -259,7 +262,7 @@ struct l_tree
     int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the l_node::childs allocated memory.
     int n_leaves; ///< Number of leaves of the l_tree. It is necessary due to allowing polytomy.
     int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
-    double gen_time;///< Generation time
+    double gen_time;///< Global generation time
     int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
@@ -301,9 +304,11 @@ struct s_node
     /** \name Data **/
     /// @{
     int Ne; ///< Branch specific effective population size (0=> the global one).
-    double n_gen; ///< Number of generations of this node (from the current time).
+    double n_gen; ///< Number of generations of this node (from the root).
+    double time; ///< Time of this node (from the root)
     double gen_length;///< Number of generations from this node to the ancestor.
     double mu_mult; ///< Branch specific effective substitution rate multi.
+    double gtime_mult; ///< Branch specific generation time multi.
     /// @}
     
     /** \name Pointers **/
@@ -330,7 +335,7 @@ struct s_tree
     int max_childs; ///< Max number of children in each node. This variable is used to know (and/or modify) the length of the s_node::childs allocated memory.
     int n_leaves; ///< Number of leaves of the s_tree. It is necessary due to allowing polytomy.
     int n_gleaves; ///< Number of leaves of the asociated gene tree. It is necessary due to allowing more than one replicate (g_node leaf) per taxa (l_node leaf).
-    double gen_time;///< Generation time
+    double gen_time;///< Global generation time
     int Ne; ///< Global effective population size.
     double mu; ///< Global substitution rate
     /// @}
@@ -456,8 +461,7 @@ period * NewPeriods(int n_periods, int max_nodes);
  * \param max_childs
  *   Number of max childs per node.
  * \param gen_time
- *  Gen time is going to be used to convert time in generations (1 if the newick tree
- *  has been already given in number of generations).
+ *  Generation time.
  * \param Ne
  *   Global effective population size.
  * \param mu
@@ -486,8 +490,7 @@ extern s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_chil
  * \param verbosity
  *  Code of the amount of communication with the user.
  * \param gen_time
- *  Gen time is going to be used to convert time in generations (1 if the newick tree
- *  has been already given in number of generations).
+ *  Generation time.
  * \param Ne
  *   Global effective population size.
  * \param mu
@@ -526,8 +529,7 @@ extern s_tree * ReadNewickSTree(char* newick,name_c ** names,int verbosity, doub
  * \param d_rate
  *   Death rate (death per generation).
  * \param gen_time
- *  Gen time is going to be used to convert time (rates given in time) in generations (1 if the rates
- *  have been already given in number of generations).
+ *  Generation time.
  * \param Ne
  *   Global effective population size.
  * \param mu
@@ -575,8 +577,6 @@ extern long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b
  *   Minimum number of locus tree leaves to consider the simulated tree as valid.
  * \param min_lsleaves
  *   Minimum number of gene tree leaves to consider the simulated locus tree as valid.
- * \param gen_time
- *   Generation time.
  * \param Ne
  *   Global effective population size.
  * \param verbosity
@@ -595,7 +595,7 @@ extern long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves);
+extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate,gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new locus tree taking into account GDL and HGT.
@@ -623,8 +623,6 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  *   Minimum number of locus tree leaves to consider the simulated tree as valid.
  * \param min_lsleaves
  *   Minimum number of gene tree leaves to consider the simulated locus tree as valid.
- * \param gen_time
- *   Generation time.
  * \param Ne
  *   Global effective population size.
  * \param verbosity
@@ -645,7 +643,7 @@ extern long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, double gen_time, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
+extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
 
 /**
  *  Simulates a new gene tree under the multispecies coalescent process along a locus tree.
@@ -658,8 +656,6 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  *  Pointer to the name container.
  * \param epsilon_brent
  *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
- * \param min_cu_bc
- *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
  * \param seed
  *   Seed for the random number generator.
  * \paran tn_lcoals
@@ -674,7 +670,7 @@ extern long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  *  Simulates a new gene tree under the multilocus coalescent process along a locus tree.
@@ -687,8 +683,6 @@ extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name
  *  Pointer to the name container.
  * \param epsilon_brent
  *  Epsilon of the convergence of the brent method for sampling Bounded multispecies coalescent
- * \param min_cu_bc
- *  Minimum number of coalescent units to the bound to use a politomy instead of sampling the bounded coalescent.
  * \param seed
  *   Seed for the random number generator.
  * \paran tn_lcoals
@@ -703,7 +697,7 @@ extern inline long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-extern inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,float min_cu_bc,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+extern inline long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
 
 /**
  * Creates a new l_tree, and initializes it.
@@ -782,10 +776,12 @@ extern l_tree * ReadNewickLTree(char* newick,name_c ** names,int verbosity, doub
  *  Number of desired nodes.
  * \param max_childs
  *  Number of maximum childs in each node. It is used to allocate s_node::childs.
+ * \param gen_time
+ *  Generation time.
  * \return Pointer to the new allocated g_tree.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-extern g_tree * NewGTree (int n_nodes, int max_childs);
+extern g_tree * NewGTree (int n_nodes, int max_childs, double gen_time);
 
 // ** Tree copy ** //
 
@@ -849,21 +845,21 @@ extern long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_stru
  *  ocurrs.
  *******************************************************************************/
 extern inline long int CopyStoLTree(s_tree *species_tree, l_tree *locus_tree);
-
-// ** Tree edition ** //
-
-/**
- * Deletes superfluous nodes due to losses.
- *
- * This function deletes superfluous nodes due to losses of a \ref l_tree after
- * their generation by a birth-death process. It needs an spread \ref l_tree .
- * \param locus_tree
- *  Tree to clean.
- * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
- *  ocurrs.
- *******************************************************************************/
-extern long int CleanlossesLTree(l_tree *locus_tree);
-
+//\cond DOXYGEN_EXCLUDE
+//// ** Tree edition ** //
+//
+///**
+// * Deletes superfluous nodes due to losses.
+// *
+// * This function deletes superfluous nodes due to losses of a \ref l_tree after
+// * their generation by a birth-death process. It needs an spread \ref l_tree .
+// * \param locus_tree
+// *  Tree to clean.
+// * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+// *  ocurrs.
+// *******************************************************************************/
+//extern long int CleanlossesLTree(l_tree *locus_tree);
+//\endcon
 // ** Tree reset ** //
 
 /**
@@ -1077,18 +1073,16 @@ extern long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int
  *******************************************************************************/
 extern long int CollapseGTree (g_tree * in_tree, int post_order, int relink);
 
-// ** Gene tree branch length modification ** //
+// ** Branch length modification ** //
 /**
- * Transforms the branch lenghts of a gene tree from number of generations to time
+ * Recursively (pre-order) updates the l_node::time of a bunch/tree of l_nodes.
  *
- * \param gene_tree
- *  Input g_tree.
- * \param gen_time
- *  Generation time.
+ * \param tree
+ *  Tree to work with.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-extern long int Temporalize_GTree(g_tree *gene_tree,double gen_time);
+extern inline long int TemporalizeLTree(l_tree *tree);
 
 /**
  * Modifies the branch specific substitution rate multiplier of species tree branches, creating lineage specific rate heterogeneity.
@@ -1463,10 +1457,10 @@ extern long int CheckNewickLTree (char * tree);
 ///@{
 extern void PrintUsage(void);
 static void ErrorReporter(long int);
-
+l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num, int verbosity);
 ///@}
 
-l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num);
+
 /**
  * Detector of errors. 
  * This function writes info of errors in stderr and closes
