@@ -3058,11 +3058,27 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             }
                             if (n_avail_receptors>0)
                             {
-                                w_lnode=w_lnode2;
+                                switch (verbosity)
+                                {
+                                    case 0:
+                                    case 1:
+                                    case 2:
+                                    case 3:
+                                    case 4:
+                                    case 5:
+                                        break;
+                                    default:
+                                        printf("\n\t\t\t\t\t\t%s selection between %u candidates", t_kind==1?"Inversely proportional to MRCA":"Random" ,n_avail_receptors);
+#ifdef DBG
+                                        fflush(stdout);
+#endif
+                                        break;
+                                }
                                 switch (t_kind)
                                 {
                                     case 1:
-                                        w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed));
+                                        w_lnode=w_lnode2;
+                                        w_lnode2=ChooseLNodePeriod(avail_receptors,n_avail_receptors,w_lnode2,gsl_rng_uniform_pos(seed),verbosity);
                                         break;
                                     case 0:
                                         w_lnode=w_lnode2;
@@ -5617,7 +5633,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     {
         w_lnode=locus_tree->m_node+i;
         
-        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC ) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
+        if (w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *w_lnode->anc_node->childs==w_lnode) // IS_BOUNDED
         {
             w_lnode->n_olin=1;
             *(w_lnode->o_probs+1)=1;
