@@ -251,7 +251,7 @@ extern int Compare_DBL (const void * n1, const void *n2);
 extern int Compare_periods (const void * n1, const void *n2);
 
 
-extern inline size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed);
+extern size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed);
 ///@}
 ///@}
 

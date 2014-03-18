@@ -657,7 +657,7 @@ int Compare_periods (const void * n1, const void *n2)
     }
 }
 
-inline size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed)
+size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed)
 {
     size_t i=0;
     double sum=0, value=0;

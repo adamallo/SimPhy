@@ -123,6 +123,7 @@ int MAX_CHILDS=100;
 int MAX_LEAVES=1000;
 
 #define DBG
+
 #undef NO_VAR ///< If NO_VAR is defined, the random number generator allways leads the same numbers.
 
 #ifdef DBG
@@ -242,7 +243,17 @@ int main (int argc, char **argv)
     FILE *s_outfile=NULL,*l_outfile=NULL,*g_outfile=NULL,*stat_outfile=NULL, *params_outfile=NULL, *command_outfile=NULL, *weirds_outfile=NULL, *weirdg_outfile=NULL;
     sqlite3 *database;
     int n_sdigits=0, n_ldigits=0, n_gdigits=0, error=0;
-    
+
+#ifdef SORTHOLOGS
+    //Sorthologs
+    int sorthologs_test=1;
+    char *sorthologs_outname=NULL, sorthologs_prefix[7]="g_tree", sorthologs_midfix[7]="l_tree", sorthologs_sufix[12]=".sorthologs";;
+    long double t_ddup=0,t_dgc=0, t_dtrfr=0;
+    unsigned long long t_ndup=0, t_ngc=0, t_ntrfr=0;
+    FILE *sorthologs_outfile=NULL;
+    double *dupdistances=NULL,*gcdistances=NULL,*trfrdistances=NULL;
+    //
+#endif
     // *******
     /// <dl><dt>Statistical variables</dt><dd></dd></dl></dd></dl>
     long double t_height_cu=0,t_height_bl=0,height_cu=0,height_bl=0,st_height=0,st_length=0,length_bl=0;
@@ -454,7 +465,19 @@ int main (int argc, char **argv)
         n_ldigits=(int)count_intdigits((long)get_sampling(nl_trees),0);
         n_gdigits=(int)count_intdigits((long)ng_trees,0);
         
-        
+#ifndef NO_OUT
+#ifdef SORTHOLOGS
+        //Sorthologs
+        sorthologs_outname=realloc(sorthologs_outname,(strlen(sorthologs_prefix)+n_gdigits+strlen(sorthologs_midfix)+n_ldigits+strlen(sorthologs_sufix)+1)*sizeof(char));
+        t_ndup=0;
+        t_ngc=0;
+        t_ntrfr=0;
+        t_ddup=0;
+        t_dgc=0;
+        t_dtrfr=0;
+        //
+#endif
+#endif
         // ******
         /// Initialization of file-I/O variables and s_tree output opening</dd></dl>
 #ifndef NO_OUT
@@ -591,6 +614,8 @@ int main (int argc, char **argv)
             weirdg_outname=malloc((strlen(g_prefix)+n_ldigits+strlen(weirdg_sufix)+1)*sizeof(char));
         }
         
+        
+        
 #endif
         
         
@@ -611,7 +636,7 @@ int main (int argc, char **argv)
             // ***
             /// Locus tree allocation and collapse-reallocation (post-order)
             locus_tree=ReadNewickLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
-            CollapseLTree(locus_tree,1,0,0);//Memory reallocation in post-order
+            CollapseLTree(locus_tree,1,0,1);//Memory reallocation in post-order
             TemporalizeLTree(locus_tree);
             
             // ***
@@ -625,7 +650,7 @@ int main (int argc, char **argv)
             
             // ****
             /// Gene tree allocation </dd></dl>
-            gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs,locus_tree->gen_time);
+            gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_children,locus_tree->gen_time);
             switch (verbosity)
             {
                 case 0:
@@ -749,11 +774,11 @@ int main (int argc, char **argv)
                 
                 // ****
                 /// Locus tree and working locus tree allocation
-                locus_tree=NewLTree(sp_tree->n_nodes, sp_tree->n_leaves, sp_tree->n_gleaves, sp_tree->max_childs,sp_tree->gen_time, sp_tree->Ne, sp_tree->mu,0);
+                locus_tree=NewLTree(sp_tree->n_nodes, sp_tree->n_leaves, sp_tree->n_gleaves, sp_tree->max_children,sp_tree->gen_time, sp_tree->Ne, sp_tree->mu,0);
                 
                 // ****
                 /// Gene tree allocation
-                gene_tree=NewGTree((sp_tree->n_gleaves*2)-1,locus_tree->max_childs, locus_tree->gen_time); //Gene tree does not allow polytomies.
+                gene_tree=NewGTree((sp_tree->n_gleaves*2)-1,locus_tree->max_children, locus_tree->gen_time); //Gene tree does not allow polytomies.
                 
                 if (verbosity>2)
                 {
@@ -833,7 +858,7 @@ int main (int argc, char **argv)
         {
             Measure_ST_height(sp_tree, &st_height, CU);
             Measure_ST_length(sp_tree, &st_length, CU);
-            ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,(*sp_tree->root->childs)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time)));
+            ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,(*sp_tree->root->children)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time)));
         }
 #endif
         
@@ -909,7 +934,7 @@ int main (int argc, char **argv)
                 /// Gene tree allocation to perform its posterior simulation</dd></dl>
                 if (gene_tree!=NULL)
                     FreeGTree(&gene_tree, 1);
-                gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_childs, locus_tree->gen_time); //Maximum number of nodes.
+                gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_children, locus_tree->gen_time); //Maximum number of nodes.
                 
             }
             
@@ -939,8 +964,9 @@ int main (int argc, char **argv)
             
             // *******
             // Locus tree output
-            WriteLTreeFile(l_outfile,locus_tree,names,locus_tree->gen_time>0?1:0);
 #ifndef NO_OUT
+            WriteLTreeFile(l_outfile,locus_tree,names,locus_tree->gen_time>0?1:0);
+
             if (db>0)
             {
                 ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),locus_tree->n_leaves, st_dups, st_losses,st_transf,st_gc,gamma_l));
@@ -1095,12 +1121,80 @@ int main (int argc, char **argv)
                 {
                     if (recon!=2)
                         ErrorReporter(WriteReconLG(gene_tree, names, reconlg_outname));
-                    //if (recon!=1)
-                        //ErrorReporter(WriteReconLosses(sp_tree, gene_tree, names, recon_outname));
                 }
 #endif
                 // ****
                 /// Statistical measurements</dd></dl></dd></dl>
+                
+#ifdef SORTHOLOGS
+                //This function is not intended for general usage.
+                if (sorthologs_test==1)
+                {
+#ifndef NO_OUT
+                    sprintf(sorthologs_outname,"%s%.*d%s%.*d%s",sorthologs_prefix,n_gdigits,curr_gtree,sorthologs_midfix,n_ldigits,curr_ltree,sorthologs_sufix);
+
+                    if ((sorthologs_outfile=fopen(sorthologs_outname, "w"))==NULL)
+                    {
+                        perror("Error opening sorthologs file:");
+                        ErrorReporter(IO_ERROR);
+                    }
+#endif
+                    if (st_dups>0)
+                    {
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, st_dups, GL));
+
+                        for (i=0; i<st_dups; ++i)
+                        {
+#ifndef NO_OUT
+                            fprintf(sorthologs_outfile,"DUP\t%lf\n",*(dupdistances+i));
+#endif
+                            if (*(dupdistances+i)!=-1)
+                            {
+                                t_ddup+=*(dupdistances+i);
+                                ++t_ndup;
+                            }
+                        }
+                    }
+                    if (st_gc>0)
+                    {
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,GC,&gcdistances, st_gc, GL));
+
+                        for (i=0; i<st_gc; ++i)
+                        {
+#ifndef NO_OUT
+                            fprintf(sorthologs_outfile,"GC\t%lf\n",*(gcdistances+i));
+#endif
+                            if (*(gcdistances+i)!=-1)
+                            {
+                                t_dgc+=*(gcdistances+i);
+                                ++t_ngc;
+                            }
+                        }
+
+                    }
+                    if (st_transf>0)
+                    {
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,TRFR,&trfrdistances, st_transf, GL));
+
+                        for (i=0; i<st_transf; ++i)
+                        {
+#ifndef NO_OUT
+                            fprintf(sorthologs_outfile,"TRFR\t%lf\n",*(trfrdistances+i));
+#endif
+                            if (*(trfrdistances+i)!=-1)
+                            {
+                                t_dtrfr+=*(trfrdistances+i);
+                                ++t_ntrfr;
+                            }
+                        }
+
+                    }
+#ifndef NO_OUT
+                    fclose(sorthologs_outfile);
+#endif
+
+                }
+#endif
                 if (db>0 || stats>0)
                 {
                     Measure_GT_height(gene_tree,&height_cu,CU);
@@ -1154,7 +1248,11 @@ int main (int argc, char **argv)
             }
         }
         
-        
+#ifdef SORTHOLOGS
+        //Sorthologs
+        printf("\n\nSorthologs' paper related statistics: Duplication %Lf, Tranfers %Lf, Gene conversions %Lf\n", t_ddup/t_ndup, t_dtrfr/t_ntrfr, t_dgc/t_ngc);
+        //
+#endif
         error=chdir("..");
         if(error!=0)
         {
@@ -1234,7 +1332,16 @@ int main (int argc, char **argv)
         free(db_outname);
     if (db>0)
         ErrorReporter(CloseDB(&database));
-    
+#ifdef SORTHOLOGS
+    if (dupdistances!=NULL)
+        free(dupdistances);
+    if (gcdistances!=NULL)
+        free(gcdistances);
+    if (trfrdistances!=NULL)
+        free(trfrdistances);
+    if (sorthologs_outname!=NULL)
+        free(sorthologs_outname);
+#endif
     
     gsl_rng_free (r);
     

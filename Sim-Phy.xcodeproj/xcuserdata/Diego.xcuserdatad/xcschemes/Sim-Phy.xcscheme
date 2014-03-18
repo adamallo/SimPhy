@@ -64,6 +64,10 @@
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-l (A_0:1000,A_1:1000)%1; -P f100000 -rg 10000000 -rs 1 -os 1 -v 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-sb f0.000001 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -rs 10 -rl f2 -rg 2 -o test1 -p f10000 -sl f3 -os 1 -or 1 -v 6 -od 1 -cs 22"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -86,17 +90,17 @@
       </CommandLineArguments>
       <AdditionalOptions>
          <AdditionalOption
-            key = "MallocScribble"
-            value = ""
-            isEnabled = "YES">
-         </AdditionalOption>
-         <AdditionalOption
             key = "DYLD_INSERT_LIBRARIES"
             value = "/usr/lib/libgmalloc.dylib"
             isEnabled = "YES">
          </AdditionalOption>
          <AdditionalOption
             key = "MallocGuardEdges"
+            value = ""
+            isEnabled = "YES">
+         </AdditionalOption>
+         <AdditionalOption
+            key = "MallocScribble"
             value = ""
             isEnabled = "YES">
          </AdditionalOption>
