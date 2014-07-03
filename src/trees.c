@@ -16,7 +16,7 @@
 
 // **** Prototipes of private functions **** //
 
-/** \name Recursive functions **/
+/** \name Recursive functions **/ 
 ///@{
 
 // ** Node deletion ** //
@@ -326,6 +326,24 @@ static long double Measure_s_node_cu_length(s_node *node, int g_Ne);
 static long double Measure_s_node_gl_length(s_node *node);
 
 /**
+ * Checks the ultrametricity of the tree in time units.
+ *
+ * \param node
+ *  l_node to analyze.
+ * \return Time if the tree is ultrametric, -1 if it is not ultrametric.
+ *******************************************************************************/
+static double CheckUltrametricityLNodes(l_node *node);
+
+/**
+ * Checks the ultrametricity of the tree in time units.
+ *
+ * \param node
+ *  s_node to analyze.
+ * \return Time if the tree is ultrametric, -1 if it is not ultrametric.
+ *******************************************************************************/
+static double CheckUltrametricitySNodes(s_node *node);
+
+/**
  * Gets the n_gen of the tree in coalescent units (n_gen/Ne).
  *
  * \param node
@@ -399,6 +417,7 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time);
  *  Generation time.
  *******************************************************************************/
 static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time);
+
 //\cond DOXYGEN_EXCLUDE
 ///**
 // * Deletes superfluous nodes due to losses.
@@ -475,16 +494,41 @@ static void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbos
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in
- * stdout.
+ * stdout, with branchs given in number of generations.
+ *
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteSNodesGen (s_node * root, name_c * names);
+
+/**
+ * Writes a given group of s_nodes with tree structure in Newick format in
+ * stdout, with branchs given in time units.
  *
  * \param root
  *  s_node to print (root in the first call).
  * \param names
  *  Names (name_c *).
  * \param gen_time
- *  Generation time (1 if everything is working in generations)
+ *  Generation time
  *******************************************************************************/
-static void WriteSNodes (s_node * root, name_c * names, double gen_time);
+static void WriteSNodesTime (s_node * root, name_c * names, double gen_time);
+
+/**
+ * Writes a given group of s_nodes with tree structure in Newick format in a
+ * file, with branch lengths given in number of generations.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteSNodesFileGen (FILE * file, s_node * root, name_c * names);
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in a
@@ -497,27 +541,52 @@ static void WriteSNodes (s_node * root, name_c * names, double gen_time);
  * \param names
  *  Names (name_c *).
  * \param gen_time
- *  Generation time (1 if everything is working in generations)
+ *  Generation time
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
-static void WriteSNodesFile (FILE * file, s_node * root, name_c * names, double gen_time);
+static void WriteSNodesFileTime (FILE * file, s_node * root, name_c * names, double gen_time);
 
 /**
  * Writes a given group of l_nodes with tree structure in Newick format in
- * stdout.
+ * stdout, with branch length given in number of generations.
+ *
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteLNodesGen (l_node * root, name_c * names);
+
+/**
+ * Writes a given group of l_nodes with tree structure in Newick format in
+ * stdout, with branch lengths given in time.
  *
  * \param root
  *  l_node to print (root in the first call).
  * \param names
  *  Names (name_c *).
  * \param gen_time
- *  Generation time (1 if everything is working in generations)
+ *  Generation time
  *******************************************************************************/
-static void WriteLNodes (l_node * root, name_c * names, double gen_time);
+static void WriteLNodesTime (l_node * root, name_c * names, double gen_time);
 
 /**
  * Writes a given group of l_nodes with tree structure in Newick format in a
- * file.
+ * file, with branch lengths given in number of generations.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteLNodesFileGen (FILE * file, l_node * root, name_c * names);
+
+/**
+ * Writes a given group of l_nodes with tree structure in Newick format in a
+ * file, with branch lengths given in time units.
  *
  * \param file
  *  Output opened file.
@@ -526,10 +595,10 @@ static void WriteLNodes (l_node * root, name_c * names, double gen_time);
  * \param names
  *  Names (name_c *).
  * \param gen_time
- *  Generation time (1 if everything is working in generations)
+ *  Generation time.
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
-static void WriteLNodesFile (FILE * file, l_node * root, name_c * names, double gen_time);
+static void WriteLNodesFileTime (FILE * file, l_node * root, name_c * names, double gen_time);
 
 /**
  * Writes a given group of g_nodes with tree structure in Newick format in stdout.
@@ -601,6 +670,19 @@ static long int RelinkLGTrees(l_tree * wl_tree, g_node * m_node);
  * \return Selected node pointer.
  *******************************************************************************/
 static l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, double u_num, int verbosity);
+
+/**
+ * Returns the position of the next no-blank character in a given string.
+ *
+ * \param string
+ *  char pointer to the string to analyze.
+ * \return Position of the first no-blank character.
+ *******************************************************************************/
+static int firstnoblank(char *string);
+
+static long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char);
+
+static long int GetLnodeParamsFromNexusComments(char *string,l_node *node,int *n_char);
 
 ///@}
 ///@}
@@ -836,58 +918,486 @@ period * NewPeriods(int n_periods, int max_nodes)
     return periods;
 }
 
-
-// *** Tree memory manage *** //
-
-// ** Tree creation ** //
-
-s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu)
+long double NNexusTrees(FILE *ifile, int *n_trees)
 {
-    s_tree * tree=NULL;
+    int i=0,in_trees=0,j=0;
+    unsigned int LENGTH=IO_BUFFER;
+    char *buffer=NULL; //BEL
     
-    // **
+    // ******
     /// <dl><dt> Function structure </dt><dd>
     
-    // *
-    /// Tree memory allocation
-    tree=calloc(1,sizeof(s_tree));
-    ErrorReporter((long int)tree);
+    *n_trees=0;
+    buffer=calloc(LENGTH,sizeof(char));
+    *(buffer+LENGTH-2)=TEST_CHAR;
     
-    // *
-    /// Tree initialization
+    rewind(ifile);
+    
+    if (fgets(buffer,LENGTH,ifile)==NULL || strcmp(buffer,"#NEXUS\n")!=0)
+    {
+        fprintf(stderr,"Improper Nexus trees input file\n");
+        return SETTINGS_ERROR;
+        
+    }
+    
+    // *****
+    /// <dl><dt> Line's loop </dt><dd></dd></dl></dd></dl>
+    while (fgets(buffer,LENGTH,ifile)!=NULL && i<=MAX_IT)
+    {
+        if (ferror(ifile)!=0 || feof(ifile)!=0)
+        {
+            fprintf(stderr,"Error in line: %s\n",buffer);
+            return (SETTINGS_ERROR);
+        }
+        
+        if (in_trees==1)
+        {
+            if (strcmp(strtok(buffer,"\n"),"End;")==0 || strcmp(strtok(buffer,"\n"),"END;")==0 || strcmp(strtok(buffer,"\n"),"end;")==0)
+                break;
+            else
+            {
+                if(strcmp(strtok((buffer+firstnoblank(buffer))," "),"tree")==0)
+                    ++*n_trees;
+                else
+                {
+                    fprintf(stderr,"Error in line: %s\n",buffer);
+                    return (IO_ERROR);
+                }
+                
+            }
+        }
+        else
+        {
+            for (j=0; j<16;++j) // BEGIN TREES length
+            {
+                if (*(buffer+j)=='\0')
+                    break;
+                *(buffer+j)=toupper(*(buffer+j));
+            }
+            
+            if (strcmp(buffer,"BEGIN TREES;\n")==0)
+                in_trees=1;
+        }
+        
+        if (*(buffer+LENGTH-2)!=TEST_CHAR) // It reached the buffer's limit
+        {
+            
+#ifdef DBG
+            fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Using a bigger size\n");
+            fflush(stderr);
+#endif
+            LENGTH*=10;
+            buffer=realloc(buffer, LENGTH*sizeof(char));
+            *(buffer+LENGTH-2)=TEST_CHAR;
+            rewind(ifile);
+            *n_trees=0;
+            in_trees=0;
+            continue;
+        }
+        ++i;
+    }
+    
+    free(buffer);
+    return NO_ERROR;
+}
+
+long double InitNexusParser(FILE *ifile)
+{
+    int i=0,j=0;
+    unsigned int LENGTH=IO_BUFFER;
+    char *buffer=NULL; //BEL
+    
+    // ******
+    /// <dl><dt> Function structure </dt><dd>
+    
+    buffer=calloc(LENGTH,sizeof(char));
+    *(buffer+LENGTH-2)=TEST_CHAR;
+    
+    rewind(ifile);
+    
+    // *****
+    /// <dl><dt> Line's loop </dt><dd></dd></dl></dd></dl>
+    while (fgets(buffer,LENGTH,ifile)!=NULL && i<=MAX_IT)
+    {
+        if (ferror(ifile)!=0 || feof(ifile)!=0)
+        {
+            fprintf(stderr,"Error in line: %s\n",buffer);
+            return (IO_ERROR);
+        }
+        
+        for (j=0; j<LENGTH-1;++j)
+        {
+            if (*(buffer+j)=='\0')
+                break;
+            *(buffer+j)=toupper(*(buffer+j));
+        }
+        
+        if (strcmp(buffer,"BEGIN TREES;\n")==0)
+        {
+            free(buffer);
+            return NO_ERROR;
+        }
+        
+        if (*(buffer+LENGTH-2)!=TEST_CHAR) // It reached the buffer's limit
+        {
+            
+#ifdef DBG
+            fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Using a bigger size\n");
+            fflush(stderr);
+#endif
+            LENGTH*=10;
+            buffer=realloc(buffer, LENGTH*sizeof(char));
+            *(buffer+LENGTH-2)=TEST_CHAR;
+            rewind(ifile);
+            continue;
+        }
+        
+        ++i;
+    }
+    
+    free(buffer);
+    return IO_ERROR;
+}
+
+long double NextNexusTree(FILE *ifile,char **tree_str)
+{
+    int i=1,j;
+    unsigned int LENGTH=IO_BUFFER;
+    char *buffer=NULL, *big_buffer=NULL, *p=NULL;
+    
+    big_buffer=calloc(LENGTH, sizeof(char));
+    buffer=calloc(LENGTH,sizeof(char));
+    *(buffer+LENGTH-2)=TEST_CHAR;
+    
+    if(fgets(buffer,LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
+    {
+        fprintf(stderr,"Error getting next NEXUS tree, line: %s\n",buffer);
+        return (IO_ERROR);
+    }
+    
+    while(*(buffer+LENGTH-2)!=TEST_CHAR && i<=MAX_IT)
+    {
+        ++i;
+        
+#ifdef DBG
+        fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Concatenating more reads\n");
+        fflush(stderr);
+#endif
+        big_buffer=realloc(big_buffer,LENGTH*i*sizeof(char));
+        strncat(big_buffer,buffer,LENGTH);
+        *(buffer+LENGTH-2)=TEST_CHAR;
+        if(fgets(buffer,LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
+        {
+            fprintf(stderr,"Error getting next NEXUS tree, line: %s\n",buffer);
+            return (IO_ERROR);
+        }
+    }
+    if (i>=MAX_IT)
+    {
+        free(buffer);
+        free(big_buffer);
+        return LOOP_ERROR;
+    }
+    strncat(big_buffer,buffer,LENGTH);
+    *tree_str=realloc(*tree_str,LENGTH*i*sizeof(char));
+    
+    j=0;
+    p=(big_buffer);
+    while(*p!='(' && j<=MAX_IT && j<i*LENGTH)
+    {
+        p=(big_buffer+j);
+        ++j;
+    }
+    
+    strncpy(*tree_str,big_buffer+j-1,LENGTH*i-j);
+    *tree_str=strtok(*tree_str,"\n");
+    free(buffer);
+    free(big_buffer);
+    if (j>=MAX_IT || j>i*LENGTH)
+    {
+        fprintf(stderr,"Error parsing Nexus tree, no parenthesis present!!!\n");
+        return LOOP_ERROR;
+    }
+    
+    return NO_ERROR;
+}
+
+s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+{
+    s_node *current_node=NULL, *anc_node=NULL,*root=NULL;
+    s_tree *tree=NULL;
+    name_c * names=NULL;
+    char code=' ';
+    int step=0, in_coment=0;
+    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
+    char *buffer=NULL;
+    char name_buffer[MAX_NAME];
+    size_t tbuffer=NUM_BUFFER;
+    
+    // ****
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // ***
+    /// Test of the nexus tree string by \ref ChecknexusSTree
+    
+    ErrorReporter(CheckNexusTree(nexus));
+    
+    // ***
+    /// Error control
+    
+    if (gen_time==0)
+        ErrorReporter(UNEXPECTED_VALUE);
+    
+    // ***
+    /// Buffer allocation and initialization
+    
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer,tbuffer);
+    
+    // ***
+    /// First read of the Nexus tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(")).
+    while (*(nexus+step)!=';')
+    {
+        switch (in_coment)
+        {
+            case 0:
+                if((*(nexus+step)=='(' ||*(nexus+step)==',' )&&*(nexus+step+1)!='(')
+                    ++n_leaves;
+                else if(*(nexus+step)==')')
+                    ++n_inodes;
+                else if(*(nexus+step)=='[')
+                {
+                    in_coment=1;
+                    ++step;
+                }
+                break;
+            case 1:
+                switch (*(nexus+step))
+            {
+                case ']':
+                    in_coment=0;
+                    break;
+            }
+                break;
+                
+            default:
+                ErrorReporter(UNEXPECTED_VALUE);
+                break;
+        }
+        ++step;
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+    }
+    n_nodes=n_leaves+n_inodes;
+    
+    // ***
+    /// Name container allocation by \ref NewNames
+    *names_ptr=NewNames(n_leaves,0);
+    names=*names_ptr;
+    
+    // ***
+    /// <dl><dt>Second read of the nexus tree (main loop)</dt><dd>
+    
+    step=0; //Reset
+    code=*(nexus+step); //First char
+    
+    while (code!=';') //End of the nexus tree
+    {
+        switch (code) {
+            case '(':
+                // **
+                /// <dl><dt>New s_node (code="(").</dt><dd>
+                if (iteration!=0) //New normal node
+                {
+                    anc_node=current_node;
+                    // *
+                    /// New s_node by \ref NewSNodes
+                    current_node=NewSNodes(1,max_children);
+                    // *
+                    /// Points the pointers of this new node and its ancestor
+                    *(anc_node->children+anc_node->n_child)=current_node;
+                    ++anc_node->n_child;
+                    current_node->anc_node=anc_node;
+                    // *
+                    /// Searches for the maximum number of children in the tree.</dd></dl>
+                    if(max_children<anc_node->n_child)
+                    {
+                        max_children=anc_node->n_child;
+                    }
+                    
+                }
+                else //New root node
+                {
+                    current_node=NewSNodes(1,max_children);
+                    root=current_node;
+                }
+                
+                break;
+            case ',':
+            case ')':
+                // **
+                /// Goes down one tree node (code=", or )")
+                current_node=current_node->anc_node;
+                anc_node=current_node->anc_node;
+                break;
+            case ':':
+                // **
+                /// <dl><dt>New branch length (code=":").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                ResetBuffer(buffer,tbuffer);
+                n_char=0;
+                ++step;
+                code=*(nexus+step);
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(nexus+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gen_length converted in number of generations of the current node</dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gen_length);
+                }
+
+                break;
+            case '[':
+                step+=2;
+                ErrorReporter(GetSnodeParamsFromNexusComments(nexus,current_node,&step));
+                if (current_node->n_replicas>1 && current_node->n_child!=0)
+                {
+                    PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
+                    ErrorReporter(SETTINGS_ERROR);
+                }
+                if (current_node->n_replicas>1)
+                    n_gleaves+=current_node->n_replicas-1;
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>New leaf(code!= former ones).</dt><dd>
+                
+                // *
+                /// Reads the name of the leaf in a buffer
+                
+                strcpy(name_buffer,"");
+                n_char=0;
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[')
+                {
+                    *(name_buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(nexus+step);
+                }
+                *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                
+                // *
+                /// Searches for the maximum number of characters in a name.
+                if (max_lname<n_char)
+                    max_lname=n_char;
+                
+                // *
+                /// Asigns the new name to the name_c::names
+                strncpy(names->names+(ffree_codename*names->max_lname), name_buffer, names->max_lname);
+                --step;
+                
+                // *
+                /// New s_node by \ref NewSNodes
+                anc_node=current_node;
+                current_node=NewSNodes(1,max_children);
+                ++n_gleaves;
+                // *
+                /// Points the pointers of this new node and its ancestor
+                *(anc_node->children+anc_node->n_child)=current_node;
+                ++anc_node->n_child;
+                current_node->anc_node=anc_node;
+                // *
+                /// Asigns the new name code (position) to the current node (s_node::sp_index)
+                current_node->sp_index=ffree_codename;
+                ++ffree_codename;
+                // *
+                /// Searches for the maximum number of children in the tree.</dd></dl></dd></dl>
+                if(max_children<anc_node->n_child)
+                {
+                    max_children=anc_node->n_child;
+                }
+                
+                break;
+        }
+        
+        ++step;
+        code=*(nexus+step);
+        ++iteration;
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        
+    }
+    
+    // ***
+    /// Refines the readed nodes by \ref RefineSNodes
+    
+    RefineSNodes(root,ind_persp,gen_time);
+    max_lname++; //One extra character for \0.
+    
+    // ***
+    /// Reallocates the name_c memory by \ref ReallocNames
+    ReallocNames(names,max_lname);
+    
+    // ***
+    /// Allocates memory for the readed tree and completes it.
+    
+    tree=NewSTree(0, n_leaves, n_gleaves, max_children,gen_time,Ne,mu); //Nodes have already been allocated.
+    tree->root=root;
     tree->n_nodes=n_nodes;
-    tree->n_leaves=n_leaves;
-    tree->n_gleaves=n_gleaves;
-    tree->max_children=max_children;
-    tree->gen_time=gen_time;
-    tree->Ne=Ne;
-    tree->mu=mu;
     tree->locus_tree=NULL;
     tree->gene_tree=NULL;
     
-    // *
-    /// Tree nodes allocation and initialization by \ref NewSNodes </dd></dl>
+    // ***
+    /// Fills the node indexes following a post_order.
+    PostReorderSNodes(tree->root,&index);
     
-    if (n_nodes>1)
+    // ***
+    /// Checks ultrametricity when measuring the species tree in time units.
+    
+    if(CheckUltrametricitySTree(tree)==-1)
     {
-        tree->m_node=NewSNodes(n_nodes,max_children);
-        tree->root=NULL;
+        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
     }
-    else if (n_nodes==1)
+    
+    // ***
+    /// Frees dynamic memory (buffers)</dd></dl>
+    free(buffer);
+    buffer=NULL;
+    
+    if (verbosity>2)
     {
-        tree->root=NewSNodes(n_nodes, max_children);
-        tree->m_node=NULL;
-    }
-    else
-    {
-        tree->root=NULL;
-        tree->m_node=NULL;
+        printf("\n\t%d-node species tree correctly built",(n_leaves*2)-1);
+        if (verbosity>3)
+        {
+            printf(": ");
+            WriteSNodesGen(root,names);
+        }
+        printf("\n");
+        
     }
     
     return (tree);
 }
 
-s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
 {
     s_node *current_node=NULL, *anc_node=NULL,*root=NULL;
     s_tree *tree=NULL;
@@ -895,9 +1405,11 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
     char code=' ';
     int step=0;
     int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, n_priv_ngleaves=0;
-    char bl_buffer[DBL_DIG+3]=""; //DBL_DIG= precission of double, + 3 positions (0 separator and \0)
-    char * ui_buffer;
+    char *buffer=NULL;
     char name_buffer[MAX_NAME];
+    size_t tbuffer=NUM_BUFFER;
+    
+    /// \todo To debug. Changes on buffer managing applied like in Nexus parsers but without posterior testting.
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -914,10 +1426,10 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
         ErrorReporter(UNEXPECTED_VALUE);
     
     // ***
-    /// Integer buffer allocation and initialization
+    /// Buffer allocation and initialization
     
-    ui_buffer=calloc((int)log10(UINT_MAX)+2,sizeof(char)); // An string of the max number of digits of an int + 1 (\0)
-    strcpy(ui_buffer, "");
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer, tbuffer);
     
     // ***
     /// First read of the Newick tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(") and s_tree::n_gleaves (s_tree::n_leaves + (replicas "/" -1 for each node)).
@@ -928,24 +1440,33 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
         if(*(newick+step)=='/')
         {
             // * Reseting variables * //
-            strcpy(ui_buffer,"");
+            ResetBuffer(buffer,tbuffer);
             n_replica=0;
             n_char=0;
             ++step;
             code=*(newick+step);
             // * Reading replicas digits * //
-            while (code<58 && code>47) // Int numbers
+            while (code<58 && code>47 && n_char<tbuffer) // Int numbers or maxbuffer
             {
-                *(ui_buffer+n_char)=code;
+                *(buffer+n_char)=code;
                 ++n_char;
                 ++step;
                 code=*(newick+step);
             }
-            --step;
-            // * Translating * //
-            sscanf(ui_buffer,"%ui",&n_replica);
-            n_gleaves+=n_replica;
-            ++n_priv_ngleaves;
+            if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+            {
+                step-=n_char+2;
+                reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+            }
+            else
+            {
+                --step;
+                // * Translating * //
+                sscanf(buffer,"%ui",&n_replica);
+                n_gleaves+=n_replica;
+                ++n_priv_ngleaves;
+            }
+
         }
         ++step;
         if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
@@ -1009,22 +1530,30 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 // *
                 /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
+                ResetBuffer(buffer, tbuffer);
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
                 {
-                    *(bl_buffer+n_char)=code;
+                    *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as s_node::gen_length converted in number of generations of the current node</dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->gen_length);
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gen_length converted in number of generations of the current node</dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gen_length);
+                }
                 
                 break;
             case '*':
@@ -1033,22 +1562,30 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 // *
                 /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
+                ResetBuffer(buffer, tbuffer);
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
+                while (code<58 && (code>47 || code==46)&& n_char<tbuffer)
                 {
-                    *(bl_buffer+n_char)=code;
+                    *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as s_node::mu_mult </dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->mu_mult);
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::mu_mult </dd></dl>
+                    sscanf(buffer,"%lf",&current_node->mu_mult);
+                }
                 
                 break;
             case '~':
@@ -1057,22 +1594,30 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 // *
                 /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
+                ResetBuffer(buffer, tbuffer);
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
                 {
-                    *(bl_buffer+n_char)=code;
+                    *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->gtime_mult);
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gtime_mult);
+                }
                 break;
             case '#':
                 // **
@@ -1080,25 +1625,32 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 // *
                 /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
+                ResetBuffer(buffer, tbuffer);
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47)
+                while (code<58 && code>47 && n_char<tbuffer)
                 {
-                    *(ui_buffer+n_char)=code;
+                    *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as s_node::Ne of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&current_node->Ne);
-                if (current_node->Ne==0)
-                    ErrorReporter(SETTINGS_ERROR);
-                
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as s_node::Ne of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&current_node->Ne);
+                    if (current_node->Ne==0)
+                        ErrorReporter(SETTINGS_ERROR);
+                }
                 break;
             case '/':
                 // **
@@ -1106,26 +1658,34 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
                 
                 // *
                 /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
+                ResetBuffer(buffer, tbuffer);
                 n_replica=0;
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47)
+                while (code<58 && code>47 && n_char<tbuffer)
                 {
-                    *(ui_buffer+n_char)=code;
+                    *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as s_node::n_nodes of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&n_replica);
-                if (n_replica==0)
-                    ErrorReporter(SETTINGS_ERROR);
-                current_node->n_replicas=n_replica;
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as s_node::n_nodes of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&n_replica);
+                    if (n_replica==0)
+                        ErrorReporter(SETTINGS_ERROR);
+                    current_node->n_replicas=n_replica;
+                }
                 break;
                 
             default:
@@ -1210,9 +1770,21 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
     PostReorderSNodes(tree->root,&index);
     
     // ***
+    /// Checks ultrametricity when measuring the species tree in time units.
+    
+    if(CheckUltrametricitySTree(tree)==-1)
+    {
+        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
+    }
+    
+    // ***
     /// Frees dynamic memory (buffers)</dd></dl>
-    free(ui_buffer);
-    ui_buffer=NULL;
+    free(buffer);
+    buffer=NULL;
     
     if (verbosity>2)
     {
@@ -1220,10 +1792,814 @@ s_tree * ReadNewickSTree (char * newick,name_c **names_ptr, int verbosity, doubl
         if (verbosity>3)
         {
             printf(": ");
-            WriteSNodes(root,names,gen_time);
+            WriteSNodesGen(root,names);
         }
         printf("\n");
         
+    }
+    
+    return (tree);
+}
+
+l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+{
+    l_node *current_node=NULL, *anc_node=NULL,*root=NULL;
+    l_tree *tree=NULL;
+    name_c * names=NULL;
+    char code=' ';
+    int step=0, in_coment=0;
+    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
+    char *buffer=NULL;
+    size_t tbuffer=NUM_BUFFER;
+    char name_buffer[MAX_NAME];
+    
+    // ****
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // ***
+    /// Test of the nexus tree string by \ref ChecknexusSTree
+    
+    ErrorReporter(CheckNexusTree(nexus));
+    
+    // ***
+    /// Error control
+    
+    if (gen_time==0)
+        ErrorReporter(UNEXPECTED_VALUE);
+    
+    // ***
+    /// Buffer allocation and initialization
+    
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer,tbuffer);
+    
+    // ***
+    /// First read of the Nexus tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(")).
+    while (*(nexus+step)!=';')
+    {
+        switch (in_coment)
+        {
+            case 0:
+                if((*(nexus+step)=='(' ||*(nexus+step)==',' )&&*(nexus+step+1)!='(')
+                    ++n_leaves;
+                else if(*(nexus+step)==')')
+                    ++n_inodes;
+                else if(*(nexus+step)=='[')
+                {
+                    in_coment=1;
+                    ++step;
+                }
+                break;
+            case 1:
+                switch (*(nexus+step))
+            {
+                case ']':
+                    in_coment=0;
+                    break;
+            }
+                break;
+                
+            default:
+                ErrorReporter(UNEXPECTED_VALUE);
+                break;
+        }
+        ++step;
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+    }
+    n_nodes=n_leaves+n_inodes;
+    
+    // ***
+    /// Name container allocation by \ref NewNames
+    *names_ptr=NewNames(n_leaves,0);
+    names=*names_ptr;
+    
+    // ***
+    /// <dl><dt>Second read of the nexus tree (main loop)</dt><dd>
+    
+    step=0; //Reset
+    code=*(nexus+step); //First char
+    
+    while (code!=';') //End of the nexus tree
+    {
+        switch (code) {
+            case '(':
+                // **
+                /// <dl><dt>New s_node (code="(").</dt><dd>
+                if (iteration!=0) //New normal node
+                {
+                    anc_node=current_node;
+                    // *
+                    /// New s_node by \ref NewSNodes
+                    current_node=NewLNodes(1,0,max_children,0);
+                    // *
+                    /// Points the pointers of this new node and its ancestor
+                    *(anc_node->children+anc_node->n_child)=current_node;
+                    ++anc_node->n_child;
+                    current_node->anc_node=anc_node;
+                    // *
+                    /// Searches for the maximum number of children in the tree.</dd></dl>
+                    if(max_children<anc_node->n_child)
+                    {
+                        max_children=anc_node->n_child;
+                    }
+                    
+                }
+                else //New root node
+                {
+                    current_node=NewLNodes(1,0,max_children,0);
+                    root=current_node;
+                }
+                
+                break;
+            case ',':
+            case ')':
+                // **
+                /// Goes down one tree node (code=", or )")
+                current_node=current_node->anc_node;
+                anc_node=current_node->anc_node;
+                break;
+            case ':':
+                // **
+                /// <dl><dt>New branch length (code=":").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_char=0;
+                ++step;
+                code=*(nexus+step);
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(nexus+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gen_length converted in number of generations of the current node</dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gen_length);
+                }
+                
+                break;
+            case '[':
+                step+=2;
+                ErrorReporter(GetLnodeParamsFromNexusComments(nexus,current_node,&step));
+                if (current_node->n_nodes>1 && current_node->n_child!=0)
+                {
+                    PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
+                    ErrorReporter(SETTINGS_ERROR);
+                }
+                if (current_node->n_nodes>1)
+                    n_gleaves+=current_node->n_nodes-1;
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>New leaf(code!= former ones).</dt><dd>
+                
+                // *
+                /// Reads the name of the leaf in a buffer
+                
+                strcpy(name_buffer,"");
+                n_char=0;
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[')
+                {
+                    *(name_buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(nexus+step);
+                }
+                *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                
+                // *
+                /// Searches for the maximum number of characters in a name.
+                if (max_lname<n_char)
+                    max_lname=n_char;
+                
+                // *
+                /// Asigns the new name to the name_c::names
+                strncpy(names->names+(ffree_codename*names->max_lname), name_buffer, names->max_lname);
+                --step;
+                
+                // *
+                /// New s_node by \ref NewSNodes
+                anc_node=current_node;
+                current_node=NewLNodes(1,0,max_children,0);
+                ++n_gleaves;
+                // *
+                /// Points the pointers of this new node and its ancestor
+                *(anc_node->children+anc_node->n_child)=current_node;
+                ++anc_node->n_child;
+                current_node->anc_node=anc_node;
+                // *
+                /// Asigns the new name code (position) to the current node (s_node::sp_index)
+                current_node->sp_index=ffree_codename;
+                ++ffree_codename;
+                // *
+                /// Searches for the maximum number of children in the tree.</dd></dl></dd></dl>
+                if(max_children<anc_node->n_child)
+                {
+                    max_children=anc_node->n_child;
+                }
+                
+                break;
+        }
+        
+        ++step;
+        code=*(nexus+step);
+        ++iteration;
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        
+    }
+    
+    // ***
+    /// Refines the readed nodes by \ref RefineLNodes
+    
+    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
+    max_lname++; //One extra character for \0.
+    
+    // ***
+    /// Reallocates the name_c memory by \ref ReallocNames
+    ReallocNames(names,max_lname);
+    
+    // ***
+    /// Allocates memory for the readed tree and completes it.
+    
+    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu,0); //Nodes have already been allocated.
+    tree->root=root;
+    tree->n_nodes=n_nodes;
+    tree->species_tree=NULL;
+    tree->gene_tree=NULL;
+    
+    // ***
+    /// Fills the node indexes following a post_order.
+    PostReorderLNodes(tree->root,&index);
+    
+    // ***
+    /// Checks ultrametricity when measuring the species tree in time units.
+    
+    if(CheckUltrametricityLTree(tree)==-1)
+    {
+        fprintf(stderr,"The locus tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
+    }
+    
+    // ***
+    /// Frees dynamic memory (buffers)</dd></dl>
+    free(buffer);
+    buffer=NULL;
+    
+    if (verbosity>2)
+    {
+        printf("\n\t%d-node locus tree correctly built",(n_leaves*2)-1);
+        if (verbosity>3)
+        {
+            printf(": ");
+            WriteLNodesGen(root,names);
+        }
+        printf("\n");
+        
+    }
+    
+    return (tree);
+}
+
+l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+{
+    l_node *current_node=NULL, *anc_node=NULL,*root=NULL;
+    l_tree *tree=NULL;
+    name_c * names=NULL;
+    char code=' ';
+    int register step=0;
+    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, is_dup=0, n_paralog=0, n_priv_ngleaves=0;
+    char *buffer=NULL;
+    size_t tbuffer=NUM_BUFFER;
+    char name_buffer[MAX_NAME];
+    
+    /// \todo To debug. Changes on buffer managing applied like in Nexus parsers but without posterior testting.
+    
+    // ****
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // ***
+    /// Test of the newick tree string by \ref CheckNewickLTree
+    
+    ErrorReporter(CheckNewickLTree(newick));
+    
+    // ***
+    /// Error control
+    
+    if (gen_time==0)
+        ErrorReporter(UNEXPECTED_VALUE);
+    
+    // ***
+    /// Buffer allocation and initialization
+    
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer,tbuffer);
+    
+    // ***
+    /// First read of the Newick tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(") and s_tree::n_gleaves (s_tree::n_leaves + (replicas "/" -1 for each node)).
+    while (*(newick+step)!=';')
+    {
+        if((*(newick+step)=='(' ||*(newick+step)==',' )&&*(newick+step+1)!='(') ++n_leaves;
+        if(*(newick+step)==')') ++n_inodes;
+        if(*(newick+step)=='/')
+        {
+            // * Reseting variables * //
+            ResetBuffer(buffer, tbuffer);
+            n_replica=0;
+            n_char=0;
+            ++step;
+            code=*(newick+step);
+            // * Reading replicas digits * //
+            while (code<58 && code>47 && n_char<tbuffer) // Int numbers
+            {
+                *(buffer+n_char)=code;
+                ++n_char;
+                ++step;
+                code=*(newick+step);
+            }
+            if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+            {
+                step-=n_char+2;
+                reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+            }
+            else
+            {
+                --step;
+                // * Translating * //
+                sscanf(buffer,"%ui",&n_replica);
+                n_gleaves+=n_replica;
+                ++n_priv_ngleaves;
+            }
+        }
+        ++step;
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+    }
+    n_nodes=n_leaves+n_inodes;
+    n_gleaves+=(n_leaves-n_priv_ngleaves)*ind_persp; //Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
+    
+    // ***
+    /// Name container allocation by \ref NewNames
+    *names_ptr=NewNames(n_leaves,0);
+    names=*names_ptr;
+    
+    // ***
+    /// <dl><dt>Second read of the Newick tree (main loop)</dt><dd>
+    
+    step=0; //Reset
+    code=*(newick+step); //First char
+    
+    while (code!=';') //End of the Newick tree
+    {
+        switch (code) {
+            case '(':
+                // **
+                /// <dl><dt>New l_node (code="(").</dt><dd>
+                if (iteration!=0) //New normal node
+                {
+                    anc_node=current_node;
+                    // *
+                    /// New l_node by \ref NewLNodes
+                    current_node=NewLNodes(1, 0, max_children,0);
+                    // *
+                    /// Points the pointers of this new node and its ancestor
+                    *(anc_node->children+anc_node->n_child)=current_node;
+                    ++anc_node->n_child;
+                    current_node->anc_node=anc_node;
+                    // *
+                    /// Searches for the maximum number of children in the tree.</dd></dl>
+                    if(max_children<anc_node->n_child)
+                    {
+                        max_children=anc_node->n_child;
+                    }
+                    
+                }
+                else //New root node
+                {
+                    current_node=NewLNodes(1,0,max_children,0);
+                    root=current_node;
+                }
+                
+                break;
+            case ',':
+            case ')':
+                // **
+                /// Goes down one tree node (code=", or )")
+                current_node=current_node->anc_node;
+                anc_node=current_node->anc_node;
+                break;
+            case ':':
+                // **
+                /// <dl><dt>New branch length (code=":").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gen_length of the current node</dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gen_length);
+                }
+                
+                break;
+            case '*':
+                // **
+                /// <dl><dt>Lineage specific substitution rate multi(code="*").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as l_node::mu_mult </dd></dl>
+                    sscanf(buffer,"%lf",&current_node->mu_mult);
+                }
+                break;
+                
+            case '~':
+                // **
+                /// <dl><dt>Lineage specific generation time multi (code="~").</dt><dd>
+                
+                // *
+                /// Reads all the following integers and . in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
+                    sscanf(buffer,"%lf",&current_node->gtime_mult);
+                }
+                break;
+                
+            case '#':
+                // **
+                /// <dl><dt>New effective population size (Ne) (code="#").</dt><dd>
+                
+                // *
+                /// Reads all the following integers in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && code>47 && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as l_node::Ne of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&current_node->Ne);
+                    if (current_node->Ne==0)
+                        ErrorReporter(SETTINGS_ERROR);
+                }
+                
+                break;
+            case '/':
+                // **
+                /// <dl><dt>New number of replicas (code="/").</dt><dd>
+                
+                // *
+                /// Reads all the following integers in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_replica=0;
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && code>47 && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as l_node::n_nodes of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&n_replica);
+                    if (n_replica==0)
+                        ErrorReporter(SETTINGS_ERROR);
+                    current_node->n_nodes=n_replica;
+                }
+                break;
+            case '%':
+                // **
+                /// <dl><dt>New duplication info (code="%").</dt><dd>
+                
+                // *
+                /// Reads all the following integers in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_replica=0;
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && code>47 && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as l_node::kind_node of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&is_dup);
+                    if (is_dup!=DUP)
+                    {
+                        //DBG
+                        fprintf(stderr,"WARNING!!!: The user is setting private values to the l_node event info\n");
+                        //ErrorReporter(SETTINGS_ERROR);
+                    }
+                    current_node->kind_node=is_dup;
+                }
+                break;
+            case '_':
+                
+                // **
+                /// <dl><dt>New paralog info (code="_").</dt><dd>
+                
+                // *
+                /// Reads all the following integers in a buffer
+                ResetBuffer(buffer, tbuffer);
+                n_paralog=0;
+                n_char=0;
+                ++step;
+                code=*(newick+step);
+                while (code<58 && code>47 && n_char<tbuffer)
+                {
+                    *(buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                {
+                    step-=n_char+2;
+                    reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+                }
+                else
+                {
+                    --step;
+                    *(buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                    // *
+                    /// Translates the buffer in a integer number and asigns it as l_node::paralog of the current node</dd></dl>
+                    sscanf(buffer,"%ui",&n_paralog);
+                    current_node->paralog=n_paralog;
+                }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>New leaf(code!= former ones).</dt><dd>
+                
+                // *
+                /// Reads the name of the leaf in a buffer
+                
+                strcpy(name_buffer,"");
+                n_char=0;
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_' && code != '~')
+                {
+                    *(name_buffer+n_char)=code;
+                    ++n_char;
+                    ++step;
+                    code=*(newick+step);
+                }
+                *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
+                
+                // *
+                /// Searches for the maximum number of characters in a name.
+                if (max_lname<n_char)
+                    max_lname=n_char;
+                
+                // *
+                /// Asigns the new name to the name_c::names
+                strncpy(names->names+(ffree_codename*names->max_lname), name_buffer, names->max_lname);
+                --step;
+                
+                // *
+                /// New l_node by \ref NewLNodes
+                anc_node=current_node;
+                current_node=NewLNodes(1,0,max_children,0);
+                // *
+                /// Points the pointers of this new node and its ancestor
+                *(anc_node->children+anc_node->n_child)=current_node;
+                ++anc_node->n_child;
+                current_node->anc_node=anc_node;
+                // *
+                /// Asigns the new name code (position) to the current node (l_node::lp_index)
+                current_node->sp_index=ffree_codename;
+                ++ffree_codename;
+                // *
+                /// Searches for the maximum number of children in the tree.</dd></dl></dd></dl>
+                if(max_children<anc_node->n_child)
+                {
+                    max_children=anc_node->n_child;
+                }
+                
+                break;
+        }
+        
+        ++step;
+        code=*(newick+step);
+        ++iteration;
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        
+    }
+    
+    // ***
+    /// Refines the readed nodes by \ref RefineLNodes
+    
+    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
+    max_lname++; //One extra character for \0.
+    
+    // ***
+    /// Reallocates the name_c memory by \ref ReallocNames
+    ReallocNames(names,max_lname);
+    
+    // ***
+    /// Allocates memory for the readed tree and completes it.
+    
+    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu,0);//Nodes have already been allocated.
+    tree->root=root;
+    tree->n_nodes=n_nodes;
+    tree->species_tree=NULL;
+    tree->gene_tree=NULL;
+    
+    // ***
+    /// Fills the node indexes following a post_order.
+    PostReorderLNodes(tree->root,&index);
+    
+    // ***
+    /// Checks ultrametricity when measuring the species tree in time units.
+    
+    if(CheckUltrametricityLTree(tree)==-1)
+    {
+        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        ErrorReporter(UNEXPECTED_VALUE);
+    }
+    
+    // ***
+    /// Frees dynamic memory (buffers)</dd></dl>
+    free(buffer);
+    buffer=NULL;
+    
+    if (verbosity>2)
+    {
+        printf("\n\t\t %d-node locus tree correctly built",(n_leaves*2)-1);
+        if (verbosity>3)
+        {
+            printf(": ");
+            WriteLNodesGen(root,names);
+        }
+        printf("\n");
+        
+    }
+    
+    return (tree);
+}
+
+
+// *** Tree memory manage *** //
+
+// ** Tree creation ** //
+
+s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu)
+{
+    s_tree * tree=NULL;
+    
+    // **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Tree memory allocation
+    tree=calloc(1,sizeof(s_tree));
+    ErrorReporter((long int)tree);
+    
+    // *
+    /// Tree initialization
+    tree->n_nodes=n_nodes;
+    tree->n_leaves=n_leaves;
+    tree->n_gleaves=n_gleaves;
+    tree->max_children=max_children;
+    tree->gen_time=gen_time;
+    tree->Ne=Ne;
+    tree->mu=mu;
+    tree->locus_tree=NULL;
+    tree->gene_tree=NULL;
+    
+    // *
+    /// Tree nodes allocation and initialization by \ref NewSNodes </dd></dl>
+    
+    if (n_nodes>1)
+    {
+        tree->m_node=NewSNodes(n_nodes,max_children);
+        tree->root=NULL;
+    }
+    else if (n_nodes==1)
+    {
+        tree->root=NewSNodes(n_nodes, max_children);
+        tree->m_node=NULL;
+    }
+    else
+    {
+        tree->root=NULL;
+        tree->m_node=NULL;
     }
     
     return (tree);
@@ -1820,7 +3196,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             break;
         default:
             printf("\n\t\t%d-node species tree correctly simulated: ",(*out_tree)->n_nodes);
-            WriteSTree((*out_tree),(name_c *)NULL,(*out_tree)->gen_time!=1?1:0);
+            WriteSTree((*out_tree),(name_c *)NULL,0);
             printf("\n");
             break;
     }
@@ -3470,7 +4846,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 if (verbosity==6)
                 {
-                    printf("\n\t\t\t %d extra lineages going deeper, max coalescent time %f, coalescent time %f",avail_leaves-1,min_ngen,current_ngen);
+                    printf("\n\t\t\t %d extra lineages going deeper, max coalescent time %f, proposed coalescent time %f",avail_leaves-1,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -4343,407 +5719,6 @@ l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     return (tree);
 }
 
-l_tree * ReadNewickLTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
-{
-    l_node *current_node=NULL, *anc_node=NULL,*root=NULL;
-    l_tree *tree=NULL;
-    name_c * names=NULL;
-    char code=' ';
-    int register step=0;
-    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, is_dup=0, n_paralog=0, n_priv_ngleaves=0;
-    char bl_buffer[DBL_DIG+3]=""; //DBL_DIG= precission of double, + 3 positions (0 separator and \0)
-    char * ui_buffer;
-    char name_buffer[MAX_NAME];
-    
-    // ****
-    /// <dl><dt> Function structure </dt><dd>
-    
-    // ***
-    /// Test of the newick tree string by \ref CheckNewickLTree
-    
-    ErrorReporter(CheckNewickLTree(newick));
-    
-    // ***
-    /// Error control
-    
-    if (gen_time==0)
-        ErrorReporter(UNEXPECTED_VALUE);
-    
-    // ***
-    /// Integer buffer allocation and initialization
-    
-    ui_buffer=calloc((int)log10(UINT_MAX)+2,sizeof(char)); // An string of the max number of digits of an int + 1 (\0)
-    strcpy(ui_buffer, "");
-    
-    // ***
-    /// First read of the Newick tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(") and s_tree::n_gleaves (s_tree::n_leaves + (replicas "/" -1 for each node)).
-    while (*(newick+step)!=';')
-    {
-        if((*(newick+step)=='(' ||*(newick+step)==',' )&&*(newick+step+1)!='(') ++n_leaves;
-        if(*(newick+step)==')') ++n_inodes;
-        if(*(newick+step)=='/')
-        {
-            // * Reseting variables * //
-            strcpy(ui_buffer,"");
-            n_replica=0;
-            n_char=0;
-            ++step;
-            code=*(newick+step);
-            // * Reading replicas digits * //
-            while (code<58 && code>47) // Int numbers
-            {
-                *(ui_buffer+n_char)=code;
-                ++n_char;
-                ++step;
-                code=*(newick+step);
-            }
-            --step;
-            // * Translating * //
-            sscanf(ui_buffer,"%ui",&n_replica);
-            n_gleaves+=n_replica;
-            ++n_priv_ngleaves;
-        }
-        ++step;
-        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
-    }
-    n_nodes=n_leaves+n_inodes;
-    n_gleaves+=(n_leaves-n_priv_ngleaves)*ind_persp; //Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
-    
-    // ***
-    /// Name container allocation by \ref NewNames
-    *names_ptr=NewNames(n_leaves,0);
-    names=*names_ptr;
-    
-    // ***
-    /// <dl><dt>Second read of the Newick tree (main loop)</dt><dd>
-    
-    step=0; //Reset
-    code=*(newick+step); //First char
-    
-    while (code!=';') //End of the Newick tree
-    {
-        switch (code) {
-            case '(':
-                // **
-                /// <dl><dt>New l_node (code="(").</dt><dd>
-                if (iteration!=0) //New normal node
-                {
-                    anc_node=current_node;
-                    // *
-                    /// New l_node by \ref NewLNodes
-                    current_node=NewLNodes(1, 0, max_children,0);
-                    // *
-                    /// Points the pointers of this new node and its ancestor
-                    *(anc_node->children+anc_node->n_child)=current_node;
-                    ++anc_node->n_child;
-                    current_node->anc_node=anc_node;
-                    // *
-                    /// Searches for the maximum number of children in the tree.</dd></dl>
-                    if(max_children<anc_node->n_child)
-                    {
-                        max_children=anc_node->n_child;
-                    }
-                    
-                }
-                else //New root node
-                {
-                    current_node=NewLNodes(1,0,max_children,0);
-                    root=current_node;
-                }
-                
-                break;
-            case ',':
-            case ')':
-                // **
-                /// Goes down one tree node (code=", or )")
-                current_node=current_node->anc_node;
-                anc_node=current_node->anc_node;
-                break;
-            case ':':
-                // **
-                /// <dl><dt>New branch length (code=":").</dt><dd>
-                
-                // *
-                /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
-                {
-                    *(bl_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as s_node::gen_length of the current node</dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->gen_length);
-                
-                break;
-            case '*':
-                // **
-                /// <dl><dt>Lineage specific substitution rate multi(code="*").</dt><dd>
-                
-                // *
-                /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
-                {
-                    *(bl_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as l_node::mu_mult </dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->mu_mult);
-                
-                break;
-                
-            case '~':
-                // **
-                /// <dl><dt>Lineage specific generation time multi (code="~").</dt><dd>
-                
-                // *
-                /// Reads all the following integers and . in a buffer
-                strcpy(bl_buffer,"");
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && (code>47 || code==46))
-                {
-                    *(bl_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(bl_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a float number and asigns it as s_node::gtime_mult </dd></dl>
-                sscanf(bl_buffer,"%lf",&current_node->gtime_mult);
-                break;
-                
-            case '#':
-                // **
-                /// <dl><dt>New effective population size (Ne) (code="#").</dt><dd>
-                
-                // *
-                /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && code>47)
-                {
-                    *(ui_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as l_node::Ne of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&current_node->Ne);
-                if (current_node->Ne==0)
-                    ErrorReporter(SETTINGS_ERROR);
-                
-                break;
-            case '/':
-                // **
-                /// <dl><dt>New number of replicas (code="/").</dt><dd>
-                
-                // *
-                /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
-                n_replica=0;
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && code>47)
-                {
-                    *(ui_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as l_node::n_nodes of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&n_replica);
-                if (n_replica==0)
-                    ErrorReporter(SETTINGS_ERROR);
-                current_node->n_nodes=n_replica;
-                break;
-            case '%':
-                // **
-                /// <dl><dt>New duplication info (code="%").</dt><dd>
-                
-                // *
-                /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
-                n_replica=0;
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && code>47)
-                {
-                    *(ui_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as l_node::kind_node of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&is_dup);
-                if (is_dup!=DUP)
-                {
-                    //DBG
-                    fprintf(stderr,"WARNING!!!: The user is setting private values to the l_node event info\n");
-                    //ErrorReporter(SETTINGS_ERROR);
-                }
-                current_node->kind_node=is_dup;
-                break;
-            case '_':
-                
-                // **
-                /// <dl><dt>New paralog info (code="_").</dt><dd>
-                
-                // *
-                /// Reads all the following integers in a buffer
-                strcpy(ui_buffer,"");
-                n_paralog=0;
-                n_char=0;
-                ++step;
-                code=*(newick+step);
-                while (code<58 && code>47)
-                {
-                    *(ui_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                --step;
-                *(ui_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                // *
-                /// Translates the buffer in a integer number and asigns it as l_node::paralog of the current node</dd></dl>
-                sscanf(ui_buffer,"%ui",&n_paralog);
-                current_node->paralog=n_paralog;
-                break;
-                
-            default:
-                // **
-                /// <dl><dt>New leaf(code!= former ones).</dt><dd>
-                
-                // *
-                /// Reads the name of the leaf in a buffer
-                
-                strcpy(name_buffer,"");
-                n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_' && code != '~')
-                {
-                    *(name_buffer+n_char)=code;
-                    ++n_char;
-                    ++step;
-                    code=*(newick+step);
-                }
-                *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
-                
-                // *
-                /// Searches for the maximum number of characters in a name.
-                if (max_lname<n_char)
-                    max_lname=n_char;
-                
-                // *
-                /// Asigns the new name to the name_c::names
-                strncpy(names->names+(ffree_codename*names->max_lname), name_buffer, names->max_lname);
-                --step;
-                
-                // *
-                /// New l_node by \ref NewLNodes
-                anc_node=current_node;
-                current_node=NewLNodes(1,0,max_children,0);
-                // *
-                /// Points the pointers of this new node and its ancestor
-                *(anc_node->children+anc_node->n_child)=current_node;
-                ++anc_node->n_child;
-                current_node->anc_node=anc_node;
-                // *
-                /// Asigns the new name code (position) to the current node (l_node::lp_index)
-                current_node->sp_index=ffree_codename;
-                ++ffree_codename;
-                // *
-                /// Searches for the maximum number of children in the tree.</dd></dl></dd></dl>
-                if(max_children<anc_node->n_child)
-                {
-                    max_children=anc_node->n_child;
-                }
-                
-                break;
-        }
-        
-        ++step;
-        code=*(newick+step);
-        ++iteration;
-        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
-        
-    }
-    
-    // ***
-    /// Refines the readed nodes by \ref RefineLNodes
-    
-    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
-    max_lname++; //One extra character for \0.
-    
-    // ***
-    /// Reallocates the name_c memory by \ref ReallocNames
-    ReallocNames(names,max_lname);
-    
-    // ***
-    /// Allocates memory for the readed tree and completes it.
-    
-    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu,0);//Nodes have already been allocated.
-    tree->root=root;
-    tree->n_nodes=n_nodes;
-    tree->species_tree=NULL;
-    tree->gene_tree=NULL;
-    
-    // ***
-    /// Fills the node indexes following a post_order.
-    PostReorderLNodes(tree->root,&index);
-    
-    // ***
-    /// Frees dynamic memory (buffers)</dd></dl>
-    free(ui_buffer);
-    ui_buffer=NULL;
-    
-    if (verbosity>2)
-    {
-        printf("\n\t\t %d-node locus tree correctly built",(n_leaves*2)-1);
-        if (verbosity>3)
-        {
-            printf(": ");
-            WriteLNodes(root,names,gen_time);
-        }
-        printf("\n");
-        
-    }
-    
-    return (tree);
-}
-
 g_tree * NewGTree (int n_nodes, int max_children, double gen_time)
 {
     g_tree * tree=NULL;
@@ -5594,14 +6569,15 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
             case 0:
                 // *
                 /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
-                if (w_lnode->conts!=NULL)
-                    w_lnode->n_nodes=w_lnode->conts->n_replicas;
-                switch (w_lnode->kind_node) //Losses
+                switch (w_lnode->kind_node)
                 {
                     case LOSS:
                     case RTRFR:
                     case RGC:
                         w_lnode->n_nodes=includelosses;
+                        break;
+                    default:
+                        w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of input lineages in the same way as conts->n_replicas
                         break;
                 }
                 // *
@@ -5729,9 +6705,9 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                         *(w_lnode->i_probs+includelosses)=1;
                         break;
                     default:
-                        w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_nodes; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of nodes in the same way as conts->n_replicas
-                        w_lnode->n_ilin=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_nodes;
-                        *(w_lnode->i_probs+(w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_nodes))=1;
+                        w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of input lineages in the same way as conts->n_replicas
+                        w_lnode->n_ilin=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin;
+                        *(w_lnode->i_probs+(w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin))=1;
                         break;
                 }
                 
@@ -6437,6 +7413,86 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
     return NO_ERROR;
 }
 
+long int CheckUltrametricitySTree(s_tree *tree)
+{
+    int i=0, is_set=0, n_leaves=0;
+    double time=0;
+    
+    if (tree->m_node==NULL)
+    {
+        return CheckUltrametricitySNodes(tree->root);
+    }
+    
+    for (i=0; i<tree->n_nodes;++i)
+    {
+        if (n_leaves==tree->n_leaves)
+            break;
+        switch ((tree->m_node+i)->n_child)
+        {
+            case 0:
+                switch (is_set)
+            {
+                case 0:
+                    is_set=1;
+                    time=(tree->m_node+i)->time;
+                    break;
+                    
+                default:
+                    if (fabs((tree->m_node+i)->time-time)>DBL_EPSILON)
+                        return UNEXPECTED_VALUE;
+                    
+                    break;
+            }
+                ++n_leaves;
+                break;
+        }
+    }
+    return NO_ERROR;
+    
+}
+
+long int CheckUltrametricityLTree(l_tree *tree)
+{
+    int i=0, is_set=0, n_leaves=0;
+    double time=0;
+    
+    if (tree->m_node==NULL)
+    {
+        return CheckUltrametricityLNodes(tree->root);
+    }
+    
+    for (i=0; i<tree->n_nodes;++i)
+    {
+        if (n_leaves==tree->n_leaves)
+            break;
+        if ((tree->m_node+i)->n_child==0)
+        {
+            ++n_leaves;
+            switch ((tree->m_node+i)->kind_node)
+            {
+                case SP:
+                    switch (is_set)
+                {
+                    case 0:
+                        is_set=1;
+                        time=(tree->m_node+i)->time;
+                        break;
+                        
+                    default:
+                        if (fabs((tree->m_node+i)->time-time)>DBL_EPSILON)
+                            return UNEXPECTED_VALUE;
+                        
+                        break;
+                }
+                    
+                    break;
+            }
+        }
+    }
+    return NO_ERROR;
+    
+}
+
 
 // *** Tree I/O *** //
 
@@ -6455,16 +7511,17 @@ long int WriteSTree (s_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteSNodes(in_tree->root,names,in_tree->gen_time);
+        WriteSNodesTime(in_tree->root,names,in_tree->gen_time);
         return(NO_ERROR);
     }
     else
     {
-        WriteSNodes(in_tree->root,names,1);
+        WriteSNodesGen(in_tree->root,names);
         return(NO_ERROR);
     }
     
 }
+
 long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time)
 {
     // **
@@ -6480,12 +7537,12 @@ long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteSNodesFile(file,in_tree->root,names,in_tree->gen_time);
+        WriteSNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
         return(NO_ERROR);
     }
     else
     {
-        WriteSNodesFile(file,in_tree->root,names,1);
+        WriteSNodesFileGen(file,in_tree->root,names);
         return(NO_ERROR);
     }
     
@@ -6506,12 +7563,12 @@ long int WriteLTree (l_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteLNodes(in_tree->root,names,in_tree->gen_time);
+        WriteLNodesTime(in_tree->root,names,in_tree->gen_time);
         return(NO_ERROR);
     }
     else
     {
-        WriteLNodes(in_tree->root,names,1);
+        WriteLNodesGen(in_tree->root,names);
         return(NO_ERROR);
     }
     
@@ -6532,12 +7589,12 @@ long int WriteLTreeFile (FILE *file,l_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteLNodesFile(file,in_tree->root,names,in_tree->gen_time);
+        WriteLNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
         return(NO_ERROR);
     }
     else
     {
-        WriteLNodesFile(file,in_tree->root,names,1);
+        WriteLNodesFileGen(file,in_tree->root,names);
         return(NO_ERROR);
     }
     
@@ -6793,6 +7850,155 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
     
     fclose(reconlg_outfile);
     return (NO_ERROR);
+}
+
+long int CheckNexusTree (char * tree)
+{
+	int i=0;
+    int k=0,error=0,n_left=0,n_right=0,n_branches=0,n_nodes=0,node=0,f_leaf=0,leaf=0,comment=0;
+    long int r_value=NO_ERROR;
+    char current=0,previous='(',next=0;
+    
+	// **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // **
+    /// Initial tests
+    if ((*tree)!='(')
+    {
+        error=1;
+    }
+    
+    // **
+    /// <dl><dt>Parsing loop, taking into account 3 characters (actual, pervious, next). It takes into account format problems, as well as structure problems:</dt><dd>
+    
+    
+	for (i=0;i<strlen(tree);++i)
+    {
+        if (error == 1 || f_leaf==1)
+        {
+            // *
+            /// Clade with only one leaf
+            if (f_leaf==1)
+            {
+                fprintf(stderr,"\nERROR: This internal node does not have more than one leaf, Is there a missed comma?\n");
+                f_leaf=0;
+            }
+            else
+            {
+                fprintf (stderr,"\nERROR: There is something wrong in the tree\n");
+                error=0;
+                
+            }
+            
+			
+			for (k=0; k<=i-1; k++)
+				fprintf (stderr,"%c", tree[k]);
+            
+			fprintf (stderr," <- HERE");
+            fflush(stderr);
+            
+            r_value=SETTINGS_ERROR;
+            
+        }
+        
+        switch (comment)
+        {
+            case 1:
+                if (*(tree+i)==']')
+                    comment=0;
+                continue;
+        }
+        
+        current=*(tree+i);
+        previous=*(tree+(i-1>0?i-1:0));
+        next=*(tree+i+1);
+        
+        switch (current)
+        {
+            case '(':
+                if (!(previous == '(' || previous == ',')) /// "(" following something different to a "(" or ","
+                    error=1;
+                if (next!='(')
+                {
+                    ++n_nodes;
+                    leaf=1;
+                    if (isalnum(next)==0) /// "(" followed by alphanumeric.
+                        error=1;
+                }
+                ++n_left;
+                node=0;
+                break;
+                
+            case ')':
+                if (!(previous == ')' || previous == ']'|| isalnum(previous)!=0)) /// ")" following something different to ")", "]" or alphanumerics.
+                    error=1;
+                if (!(next == ')' || next== ',' || next== ':' || next== '[')) /// ")" followed by something different to a branch length, a comma or a comment
+                    error=1;
+                if (next==';' && i==strlen(tree)-2) /// Allowing the final ";"
+                    error=0;
+                ++n_right;
+                ++n_nodes;
+                if (node==0 && leaf==1)
+                {
+                    f_leaf=1;
+                }
+                leaf=0;
+                node=0;
+                break;
+                
+            case ',':
+                if (!(previous == ')' || previous == ']' || isalnum(previous)!=0)) /// "," following something different to ")", "]" or alphanumerics.
+                    error=1;
+                if (next!='(') /// "," followed by something different than alphanumerics.
+                {
+                    ++n_nodes;
+                    leaf=1;
+                    if (isalnum(next)==0)
+                        error=1;
+                }
+                node=1;
+                break;
+                
+            case ':':
+                ++n_branches;
+                if (!(previous == ')' || previous == ']' || isalnum(previous)!=0))
+                    error=1; /// ":" following something different than alphanumerics
+                if (isdigit(next)==0)
+                    error=1; /// ":" followed by something different to numbers
+                break;
+                
+            case '[':
+                if(!(previous == ')' || isalnum(previous)!=0))
+                    error=1;
+                if (next!='&')
+                    error=1;
+                comment=1;
+                break;
+            case '&':
+                break;
+            default:
+                break;
+        }
+    }
+    
+    if (current!=';') ///Lake of final ";"
+    {
+		fprintf (stderr, "\n\tTree is not finished with ;");
+        r_value=SETTINGS_ERROR;
+    }
+    if (n_branches!=n_nodes-1) ///Discordant number of branches and nodes
+    {
+        fprintf(stderr, "\n\tThere are %s of nodes related with the number of branches. Maybe there are a missed comma, or the root node have branch length (it must not have it)\n",n_branches>n_nodes-1?"a defect":"an excess");
+        r_value=SETTINGS_ERROR;
+    }
+	if (n_left != n_right) ///Diferent number of "(" and ")" </dd></dl></dd></dl>
+    {
+		fprintf (stderr, "\n\tTree seems unbalanced (%d left and %d right parentheses)", n_left, n_right);
+        r_value=SETTINGS_ERROR;
+    }
+    
+    return r_value;
 }
 
 long int CheckNewickSTree (char * tree)
@@ -7078,6 +8284,31 @@ long int CheckNewickLTree (char * tree)
     }
     
     return r_value;
+}
+
+void PrintXCharError(char *string, int x, char * errormsg1, char *errormsg)
+{
+    int i;
+    printf("%s", errormsg1);
+    for (i=1; i<x; ++i)
+    {
+        printf("%c", *(string+i));
+    }
+    printf(" %s \n", errormsg);
+    fflush(stdout);
+    
+}
+
+extern inline void ResetBuffer(char *buffer,size_t size)
+{
+    *buffer='\0';
+    *(buffer+size-2)=TEST_CHAR;
+}
+
+extern inline void reallocBuffer(char **buffer,size_t *size, size_t newsize)
+{
+    *size=newsize;
+    *buffer=(char *)realloc(*buffer, newsize*sizeof(char));
 }
 
 ///@}
@@ -7965,10 +9196,9 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time)
             case 0:
                 if (node->n_replicas==0)
                     node->n_replicas=ind_persp;
+                break;
                 
             default:
-                node->n_gen=node->anc_node->n_gen+node->gen_length;
-                node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
                 if (node->n_replicas>0)
                 {
                     fprintf(stderr,"Number of replicas per taxa applied to internal branches are not allowed\n");
@@ -7976,6 +9206,8 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time)
                 }
                 break;
         }
+        node->n_gen=node->anc_node->n_gen+node->gen_length;
+        node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
     }
     /*else //Implicit
     {
@@ -8007,7 +9239,10 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
         {
             case 0:
                 if (node->n_nodes==0)
+                {
                     node->n_nodes=ind_persp;
+                    node->n_ilin=ind_persp;
+                }
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
                 node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
@@ -8139,7 +9374,7 @@ static void TemporalizeLNodes(l_node *node, double gen_time)
 
 // *** Tree I/O *** //
 
-void WriteSNodes (s_node * p, name_c * names, double gen_time)
+void WriteSNodesGen (s_node * p, name_c * names)
 {
     int i=0;
     
@@ -8170,10 +9405,10 @@ void WriteSNodes (s_node * p, name_c * names, double gen_time)
             {
                 // *
                 /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteSNodes(*(p->children+i),names,gen_time);
+                WriteSNodesGen(*(p->children+i),names);
                 printf(",");
             }
-			WriteSNodes (*(p->children+i), names,gen_time);
+			WriteSNodesGen(*(p->children+i), names);
             
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
@@ -8186,7 +9421,101 @@ void WriteSNodes (s_node * p, name_c * names, double gen_time)
 	
 }
 
-void WriteSNodesFile (FILE * file,s_node * p, name_c * names, double gen_time)
+void WriteSNodesTime (s_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+
+    if (p != NULL)
+    {
+		if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                printf("%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
+            else
+                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+        }
+		else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+			printf("(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesTime(*(p->children+i),names,gen_time);
+                printf(",");
+            }
+			WriteSNodesTime(*(p->children+i), names,gen_time);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+			if (p->anc_node !=NULL)
+				printf("):%.8lf",p->gen_length*p->gtime_mult*gen_time);
+            else
+                printf(");");
+        }
+    }
+	
+}
+
+//void WriteSNodesNexus (s_node * p, name_c * names, double gen_time)
+//{
+//    int i=0;
+//    
+//    // ***
+//    /// <dl><dt> Function structure </dt><dd>
+//    
+//    if (p != NULL)
+//    {
+//		if (p->n_child==0)
+//        {
+//            // **
+//            /// <dl><dt>If the node is a leaf:</dt><dd>
+//            // *
+//            /// Prints the node name and its branch length.</dd></dl>
+//            if (names==NULL)
+//                printf("%d[&t_length=%.8lf]:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time,p->gen_length);
+//            else
+//                printf("%s[&t_length=%.8lf]:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time,p->gen_length);
+//        }
+//		else
+//        {
+//            // **
+//            /// <dl><dt>Else (internal node):</dt><dd>
+//            // *
+//            /// Prints "(" and starts the post-order recursion (child loop)
+//			printf("(");
+//            for (i=0;i<p->n_child-1;++i)
+//            {
+//                // *
+//                /// Calls itself using each different child. After each call (except last child) prints ","
+//                WriteSNodesNexus(*(p->children+i),names,gen_time);
+//                printf(",");
+//            }
+//			WriteSNodesNexus(*(p->children+i), names,gen_time);
+//            
+//            // **
+//            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+//			if (p->anc_node !=NULL)
+//				printf(")[&t_length=%.8lf]:%.8lf",p->gen_length*p->gtime_mult*gen_time,p->gen_length);
+//            else
+//                printf(");");
+//        }
+//    }
+//	
+//}
+
+void WriteSNodesFileGen(FILE * file,s_node * p, name_c * names)
 {
     int i=0;
     
@@ -8217,10 +9546,10 @@ void WriteSNodesFile (FILE * file,s_node * p, name_c * names, double gen_time)
             {
                 // *
                 /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteSNodesFile(file,*(p->children+i),names,gen_time);
+                WriteSNodesFileGen(file,*(p->children+i),names);
                 fprintf(file,",");
             }
-			WriteSNodesFile (file,*(p->children+i), names,gen_time);
+			WriteSNodesFileGen(file,*(p->children+i), names);
             
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
@@ -8233,7 +9562,54 @@ void WriteSNodesFile (FILE * file,s_node * p, name_c * names, double gen_time)
 	
 }
 
-void WriteLNodes (l_node * p, name_c * names, double gen_time)
+void WriteSNodesFileTime (FILE * file,s_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+		if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
+            else
+                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+        }
+		else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+			fprintf(file,"(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesFileTime(file,*(p->children+i),names,gen_time);
+                fprintf(file,",");
+            }
+			WriteSNodesFileTime(file,*(p->children+i), names,gen_time);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+			if (p->anc_node !=NULL)
+				fprintf(file,"):%.8lf",p->gen_length*p->gtime_mult*gen_time);
+            else
+                fprintf(file,");\n");
+        }
+    }
+	
+}
+
+void WriteLNodesGen (l_node * p, name_c * names)
 {
     int i=0;
     
@@ -8303,10 +9679,10 @@ void WriteLNodes (l_node * p, name_c * names, double gen_time)
                 {
                     // *
                     /// Calls itself using each different child. After each call (except last child) prints ","
-                    WriteLNodes(*(p->children+i),names,gen_time);
+                    WriteLNodesGen(*(p->children+i),names);
                     printf(",");
                 }
-                WriteLNodes (*(p->children+i), names,gen_time);
+                WriteLNodesGen (*(p->children+i), names);
                 
                 // **
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
@@ -8319,7 +9695,93 @@ void WriteLNodes (l_node * p, name_c * names, double gen_time)
     }
 }
 
-void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
+void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->kind_node)
+            {
+                    
+                default:
+                    if (names==NULL)
+                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    else
+                        printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    break;
+                    
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                    
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesTime(*(p->children+i),names,gen_time);
+                    printf(",");
+                }
+                WriteLNodesTime(*(p->children+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf("):%.8lf",p->gen_length*gen_time*p->gtime_mult);
+                else
+                    printf(");");
+                break;
+        }
+    }
+}
+
+void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
 {
     int i=0;
     
@@ -8387,15 +9849,99 @@ void WriteLNodesFile (FILE * file,l_node * p, name_c * names, double gen_time)
                 {
                     // *
                     /// Calls itself using each different child. After each call (except last child) prints ","
-                    WriteLNodesFile(file,*(p->children+i),names,gen_time);
+                    WriteLNodesFileGen(file,*(p->children+i),names);
                     fprintf(file,",");
                 }
-                WriteLNodesFile (file,*(p->children+i), names,gen_time);
+                WriteLNodesFileGen(file,*(p->children+i), names);
                 
                 // **
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
                     fprintf(file,"):%.8lf",p->gen_length);
+                else
+                    fprintf(file,");\n");
+                break;
+        }
+    }
+}
+
+void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                
+                switch (p->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    else
+                        fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    break;
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesFileTime(file,*(p->children+i),names,gen_time);
+                    fprintf(file,",");
+                }
+                WriteLNodesFileTime(file,*(p->children+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,"):%.8lf",p->gen_length*gen_time*p->gtime_mult);
                 else
                     fprintf(file,");\n");
                 break;
@@ -8805,4 +10351,316 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
         ErrorReporter(UNEXPECTED_VALUE);
     
     return w_lnode;
+}
+
+int firstnoblank(char *string)
+{
+    char i=1;
+    int it=0;
+    
+    while (i!='\0' && it<MAX_IT)
+    {
+        i=*(string+it);
+        if (isblank(i)==0)
+            break;
+        ++it;
+    }
+    if (it>=MAX_IT)
+    {
+        ErrorReporter(LOOP_ERROR);
+        return 0;
+    }
+    else
+    {
+        return it;
+    }
+}
+
+long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
+{
+    int i=0,j=0,c_param,out_param=1, step=0;
+    const int n_params=4;
+    const char *params[4]={"pop_size","n_ind","u_mult","g_mult"};
+    const int s_params[4]={8,5,6,6};
+    char code, *buffer=NULL;
+    size_t tbuffer=NUM_BUFFER;
+    
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer, tbuffer);
+    
+    while (*(string+*n_char)!=']' && i<=MAX_IT)
+    {
+        if (out_param==1)
+        {
+            c_param=-1;
+            for (j=0; j<n_params;++j)
+            {
+                if (strncmp(params[j], string+*n_char, s_params[j])==0)
+                {
+                    c_param=j;
+                }
+            }
+            if (c_param==-1)
+            {
+                PrintXCharError(string, *n_char+8, "\nNEWICK PARSING ERROR\n", "|<- Unvalid param, please, revisit the manual to check the proper parameter spelling\n"); //+8, maximum parameter width
+                return SETTINGS_ERROR;
+            }
+            else if (*(string+*n_char+s_params[c_param])=='=')
+            {
+                out_param=0;
+                *n_char+=s_params[c_param]+1;
+            }
+        }
+        else
+        {
+            ResetBuffer(buffer, tbuffer);
+            step=0;
+            code=*(string+*n_char);
+            j=0;
+            while (code<58 && (code>47 || code==46) && j<=MAX_IT && step<tbuffer)
+            {
+                *(buffer+step)=code;
+                ++*n_char;
+                ++step;
+                code=*(string+*n_char);
+                ++j;
+            }
+            if (j>=MAX_IT)
+            {
+                PrintXCharError(string, *n_char-step, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                return LOOP_ERROR;
+            }
+            else if (*(buffer+tbuffer-2)!=TEST_CHAR || step>=tbuffer)
+            {
+                *n_char-=step;
+                reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+            }
+            else
+            {
+                *(buffer+step)=0;
+                switch (c_param)
+                {
+                    case 0:
+                        if(sscanf(buffer,"%d",&node->Ne)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 1:
+                        if(sscanf(buffer,"%d",&node->n_replicas)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 2:
+                        if(sscanf(buffer,"%lf",&node->mu_mult)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 3:
+                        if(sscanf(buffer,"%lf",&node->gtime_mult)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        
+                    default:
+                        return SETTINGS_ERROR;
+                        break;
+                }
+                if (*(string+*n_char)==',')
+                    ++*n_char;
+                out_param=1;
+            }
+        }
+        
+        ++i;
+    }
+    if(i>=MAX_IT)
+        return LOOP_ERROR;
+    
+    free(buffer);
+    return NO_ERROR;
+}
+
+long int GetLnodeParamsFromNexusComments(char *string,l_node *node, int *n_char)
+{
+    int i=0,j=0,c_param,out_param=1, step=0;
+    const int n_params=6;
+    const char *params[6]={"pop_size","kind_n","paralog","n_ind","u_mult","g_mult"};
+    const int s_params[6]={8,6,7,5,6,6};
+    char code, *buffer=NULL;
+    size_t tbuffer=NUM_BUFFER;
+    
+    buffer=calloc(tbuffer,sizeof(char));
+    ResetBuffer(buffer, tbuffer);
+    
+    while (*(string+*n_char)!=']' && i<=MAX_IT)
+    {
+        if (out_param==1)
+        {
+            c_param=-1;
+            for (j=0; j<n_params;++j)
+            {
+                if (strncmp(params[j], string+*n_char, s_params[j])==0)
+                {
+                    c_param=j;
+                }
+            }
+            if (c_param==-1)
+            {
+                PrintXCharError(string, *n_char+8, "\nNEWICK PARSING ERROR\n", "|<- Unvalid param, please, revisit the manual to check the proper parameter spelling\n"); //+8, maximum parameter width
+                return SETTINGS_ERROR;
+            }
+            else if (*(string+*n_char+s_params[c_param])=='=')
+            {
+                out_param=0;
+                *n_char+=s_params[c_param]+1;
+            }
+        }
+        else
+        {
+            ResetBuffer(buffer, tbuffer);
+            step=0;
+            code=*(string+*n_char);
+            j=0;
+            while (code<58 && (code>47 || code==46) && j<=MAX_IT && step<tbuffer)
+            {
+                *(buffer+step)=code;
+                ++*n_char;
+                ++step;
+                code=*(string+*n_char);
+                ++j;
+            }
+            if (j>=MAX_IT)
+            {
+                PrintXCharError(string, *n_char-step, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                return LOOP_ERROR;
+            }
+            else if (*(buffer+tbuffer-2)!=TEST_CHAR || step>=tbuffer)
+            {
+                *n_char-=step;
+                reallocBuffer(&buffer, &tbuffer, tbuffer*10);
+            }
+            else
+            {
+                *(buffer+step)=0;
+                switch (c_param)
+                {
+                    case 0:
+                        if(sscanf(buffer,"%d",&node->Ne)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 1:
+                        if(sscanf(buffer,"%d",&node->kind_node)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 2:
+                        if(sscanf(buffer,"%d",&node->paralog)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 3:
+                        if(sscanf(buffer,"%d",&node->n_nodes)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        node->n_ilin=node->n_nodes;
+                        break;
+                    case 4:
+                        if(sscanf(buffer,"%lf",&node->mu_mult)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                    case 5:
+                        if(sscanf(buffer,"%lf",&node->gtime_mult)!=1)
+                        {
+                            PrintXCharError(string, *n_char, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        
+                    default:
+                        return SETTINGS_ERROR;
+                        break;
+                }
+                if (*(string+*n_char)==',')
+                    ++*n_char;
+                out_param=1;
+            }
+        }
+        
+        ++i;
+    }
+    if(i>=MAX_IT)
+        return LOOP_ERROR;
+    
+    free(buffer);
+    return NO_ERROR;
+}
+
+double CheckUltrametricitySNodes(s_node *node)
+{
+    int i=0;
+    double time=0, n_time=0;
+    
+    if (node->n_child!=0)
+    {
+        time=CheckUltrametricitySNodes(*(node->children));
+        if (time==-1)
+            return -1;
+        else
+            for (i=1; i<node->n_child; ++i)
+            {
+                n_time=CheckUltrametricitySNodes(*(node->children+i));
+                if(n_time == -1 || fabs(time-n_time)>DBL_EPSILON)
+                    return -1;
+            }
+        return time;
+    }
+    else
+    {
+        return node->time;
+    }
+}
+
+double CheckUltrametricityLNodes(l_node *node)
+{
+    int i=0;
+    double time=0, n_time=0;
+    
+    if (node->n_child!=0)
+    {
+        time=CheckUltrametricityLNodes(*(node->children));
+        if (time==-1)
+            return -1;
+        else
+            for (i=1; i<node->n_child; ++i)
+            {
+                n_time=CheckUltrametricityLNodes(*(node->children+i));
+                if(n_time == -1 || fabs(time-n_time)>DBL_EPSILON)
+                    return -1;
+            }
+        return time;
+    }
+    else
+    {
+        return node->time;
+    }
 }

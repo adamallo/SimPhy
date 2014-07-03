@@ -70,7 +70,7 @@ extern int MAX_LEAVES;
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...);
+double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...);
 
 ///@}
 
@@ -95,7 +95,7 @@ extern double brent_root (double (*f)(double value, int n, va_list ap), double a
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time);
+double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time);
 
 /**
  * Sampler of a bounded coalescent process.
@@ -117,7 +117,7 @@ extern double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, d
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double sample_bounded_coalescent(double w_time, double density, int n_leaves, int pop_size, double bound_time, int precision);
+double sample_bounded_coalescent(double w_time, double density, int n_leaves, int pop_size, double bound_time, int precision);
 
 /**
  * Arbitrary-precision CDF function of a bounded coalescent process.
@@ -137,13 +137,13 @@ extern double sample_bounded_coalescent(double w_time, double density, int n_lea
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision);
+long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision);
 
-extern double ProbCoalFromXtoYLineages(int i_lineages,int o_lineages,double bound_time,int pop_size);
+double ProbCoalFromXtoYLineages(int i_lineages,int o_lineages,double bound_time,int pop_size);
 
-extern double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity);
+double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity);
 
-extern double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap);
+double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap);
 
 ///@}
 /**
@@ -165,7 +165,7 @@ extern double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double RndGamma (double s, long int *seed);
+double RndGamma (double s, long int *seed);
 
 /**
  * Random sampling of a Gamma distribution with expected mean 1
@@ -181,7 +181,7 @@ extern double RndGamma (double s, long int *seed);
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-extern double RndGammaE1 (double s, long int *seed);
+double RndGammaE1 (double s, long int *seed);
 
 ///@}
 
@@ -205,7 +205,7 @@ extern double RndGammaE1 (double s, long int *seed);
  *  Seed to generate numbers.
  * \return Pseudorandom number from 0 to 1.
  *******************************************************************************/
-extern double RandomNumber (long int *seed);
+double RandomNumber (long int *seed);
 
 /**
  * Function to obtain the number of digits of a int, taking or not into account the sign.
@@ -219,7 +219,7 @@ extern double RandomNumber (long int *seed);
  * \note The int should be cast to long, to avoid the exception if val=int_max
  *******************************************************************************/
 
-extern long count_intdigits(long val, int sign);
+long count_intdigits(long val, int sign);
 
 /**
  * Function to compare doubles.
@@ -234,7 +234,7 @@ extern long count_intdigits(long val, int sign);
  * \return 0 if the numbers are equal (difference less than DBL_EPSILON), 1 if
  *  n1>n2 and -1 if n1<n2.
  *******************************************************************************/
-extern int Compare_DBL (const void * n1, const void *n2);
+int Compare_DBL (const void * n1, const void *n2);
 
 /**
  * Function to compare period::r_bound.
@@ -248,10 +248,10 @@ extern int Compare_DBL (const void * n1, const void *n2);
  * \return 0 if the numbers are equal (difference less than DBL_EPSILON), 1 if
  *  n1>n2 and -1 if n1<n2.
  *******************************************************************************/
-extern int Compare_periods (const void * n1, const void *n2);
+int Compare_periods (const void * n1, const void *n2);
 
 
-extern size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed);
+size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed);
 ///@}
 ///@}
 

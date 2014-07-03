@@ -182,25 +182,25 @@ void Print_Sampling(sampling_unit sample, char * buffer)
     switch (sample.distribution_code)
     {
         case FIXED:
-            sample.vtype==UI?sprintf(buffer,"Fixed %u",(int)sample.params[0]):sprintf(buffer,"Fixed %lf",sample.params[0]);
+            sample.vtype==UI?sprintf(buffer,"Fixed %u",(int)sample.params[0]):sprintf(buffer,"Fixed %e",sample.params[0]);
             break;
         case UNIFORM:
-            sprintf(buffer,"Uniform [%lf,%lf)",sample.params[0],sample.params[1]);
+            sprintf(buffer,"Uniform [%e,%e)",sample.params[0],sample.params[1]);
             break;
         case NORMAL:
-            sprintf(buffer,"Normal (%lf,%lf)",sample.params[0],sample.params[1]);
+            sprintf(buffer,"Normal (%e,%e)",sample.params[0],sample.params[1]);
             break;
         case EXPONENTIAL:
-            sprintf(buffer,"Exp (%lf)",sample.params[0]);
+            sprintf(buffer,"Exp (%e)",sample.params[0]);
             break;
         case GAMMA:
-            sprintf(buffer,"Gamma (%lf,%lf)",sample.params[0],sample.params[1]);
+            sprintf(buffer,"Gamma (%e,%e)",sample.params[0],sample.params[1]);
             break;
         case LOGNORMAL:
-            sprintf(buffer,"LogN(%lf,%lf)",sample.params[0],sample.params[1]);
+            sprintf(buffer,"LogN(%e,%e)",sample.params[0],sample.params[1]);
             break;
         case LOGNORMAL_MULT:
-            sprintf(buffer,"LogN(%lf,%lf)*%lf",sample.params[0],sample.params[1],sample.params[2]);
+            sprintf(buffer,"LogN(%e,%e)*%e",sample.params[0],sample.params[1],sample.params[2]);
             break;
         default:
             break;
