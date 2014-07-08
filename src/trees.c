@@ -801,8 +801,11 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         if (n_gleaves!=0 && probs!=0)
         {
             w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
+            ErrorReporter((long int)w_node->g_nodes);
             w_node->i_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
+            ErrorReporter((long int)w_node->i_probs);
             w_node->o_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
+            ErrorReporter((long int)w_node->o_probs);
             
             for (j=0; j<n_gleaves; ++j)
             {
@@ -814,6 +817,7 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         else if (n_gleaves!=0)
         {
             w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
+            ErrorReporter((long int)w_node->g_nodes);
             w_node->i_probs=NULL;
             w_node->o_probs=NULL;
             
@@ -825,7 +829,9 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         else if (probs!=0)
         {
             w_node->i_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
+            ErrorReporter((long int)w_node->i_probs);
             w_node->o_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
+            ErrorReporter((long int)w_node->o_probs);
             w_node->g_nodes=NULL;
             
             for (j=0; j<n_gleaves; ++j)
@@ -907,12 +913,14 @@ period * NewPeriods(int n_periods, int max_nodes)
     int i=0;
     
     periods=calloc(n_periods, sizeof(struct period));
+    ErrorReporter((long int)periods);
     
     for (i=0; i<n_periods; ++i)
     {
         w_period=periods+i;
         w_period->r_bound=0;
         w_period->l_nodes=calloc(max_nodes,sizeof(l_node *));
+        ErrorReporter((long int)w_period->l_nodes);
         w_period->n_lnodes=0;
     }
     return periods;
@@ -921,19 +929,18 @@ period * NewPeriods(int n_periods, int max_nodes)
 long double NNexusTrees(FILE *ifile, int *n_trees)
 {
     int i=0,in_trees=0,j=0;
-    unsigned int LENGTH=IO_BUFFER;
+    size_t LENGTH=IO_BUFFER;
     char *buffer=NULL; //BEL
     
     // ******
     /// <dl><dt> Function structure </dt><dd>
     
     *n_trees=0;
-    buffer=calloc(LENGTH,sizeof(char));
-    *(buffer+LENGTH-2)=TEST_CHAR;
-    
+    reallocBuffer(&buffer, &LENGTH, LENGTH);
+    ResetBuffer(buffer, LENGTH);
     rewind(ifile);
     
-    if (fgets(buffer,LENGTH,ifile)==NULL || strcmp(buffer,"#NEXUS\n")!=0)
+    if (fgets(buffer,(int)LENGTH,ifile)==NULL || strcmp(buffer,"#NEXUS\n")!=0)
     {
         fprintf(stderr,"Improper Nexus trees input file\n");
         return SETTINGS_ERROR;
@@ -942,7 +949,7 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
     
     // *****
     /// <dl><dt> Line's loop </dt><dd></dd></dl></dd></dl>
-    while (fgets(buffer,LENGTH,ifile)!=NULL && i<=MAX_IT)
+    while (fgets(buffer,(int)LENGTH,ifile)!=NULL && i<=MAX_IT)
     {
         if (ferror(ifile)!=0 || feof(ifile)!=0)
         {
@@ -986,9 +993,8 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
             fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Using a bigger size\n");
             fflush(stderr);
 #endif
-            LENGTH*=10;
-            buffer=realloc(buffer, LENGTH*sizeof(char));
-            *(buffer+LENGTH-2)=TEST_CHAR;
+            reallocBuffer(&buffer,&LENGTH, LENGTH*10);
+            ResetBuffer(buffer, LENGTH);
             rewind(ifile);
             *n_trees=0;
             in_trees=0;
@@ -996,6 +1002,7 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
         }
         ++i;
     }
+    if (i>MAX_IT) return LOOP_ERROR; // Avoids ininite loops
     
     free(buffer);
     return NO_ERROR;
@@ -1004,20 +1011,20 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
 long double InitNexusParser(FILE *ifile)
 {
     int i=0,j=0;
-    unsigned int LENGTH=IO_BUFFER;
+    size_t LENGTH=IO_BUFFER;
     char *buffer=NULL; //BEL
     
     // ******
     /// <dl><dt> Function structure </dt><dd>
     
-    buffer=calloc(LENGTH,sizeof(char));
-    *(buffer+LENGTH-2)=TEST_CHAR;
+    reallocBuffer(&buffer, &LENGTH, LENGTH);
+    ResetBuffer(buffer, LENGTH);
     
     rewind(ifile);
     
     // *****
     /// <dl><dt> Line's loop </dt><dd></dd></dl></dd></dl>
-    while (fgets(buffer,LENGTH,ifile)!=NULL && i<=MAX_IT)
+    while (fgets(buffer,(int)LENGTH,ifile)!=NULL && i<=MAX_IT)
     {
         if (ferror(ifile)!=0 || feof(ifile)!=0)
         {
@@ -1045,9 +1052,8 @@ long double InitNexusParser(FILE *ifile)
             fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Using a bigger size\n");
             fflush(stderr);
 #endif
-            LENGTH*=10;
-            buffer=realloc(buffer, LENGTH*sizeof(char));
-            *(buffer+LENGTH-2)=TEST_CHAR;
+            reallocBuffer(&buffer, &LENGTH,LENGTH*10);
+            ResetBuffer(buffer, LENGTH);
             rewind(ifile);
             continue;
         }
@@ -1062,14 +1068,15 @@ long double InitNexusParser(FILE *ifile)
 long double NextNexusTree(FILE *ifile,char **tree_str)
 {
     int i=1,j;
-    unsigned int LENGTH=IO_BUFFER;
+    size_t LENGTH=IO_BUFFER;
+    size_t BLENGTH=IO_BUFFER;
     char *buffer=NULL, *big_buffer=NULL, *p=NULL;
     
-    big_buffer=calloc(LENGTH, sizeof(char));
-    buffer=calloc(LENGTH,sizeof(char));
-    *(buffer+LENGTH-2)=TEST_CHAR;
-    
-    if(fgets(buffer,LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
+    reallocBuffer(&big_buffer, &BLENGTH, BLENGTH);
+    reallocBuffer(&buffer, &LENGTH, LENGTH);
+    ResetBuffer(buffer, LENGTH);
+                
+    if(fgets(buffer,(int)LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
     {
         fprintf(stderr,"Error getting next NEXUS tree, line: %s\n",buffer);
         return (IO_ERROR);
@@ -1083,10 +1090,10 @@ long double NextNexusTree(FILE *ifile,char **tree_str)
         fprintf(stderr,"\n\tWARNING, the buffer used reading the parameters file is not enough. Concatenating more reads\n");
         fflush(stderr);
 #endif
-        big_buffer=realloc(big_buffer,LENGTH*i*sizeof(char));
+        reallocBuffer(&big_buffer, &BLENGTH, IO_BUFFER*i);
         strncat(big_buffer,buffer,LENGTH);
-        *(buffer+LENGTH-2)=TEST_CHAR;
-        if(fgets(buffer,LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
+        ResetBuffer(buffer, LENGTH);
+        if(fgets(buffer,(int)LENGTH,ifile)==NULL || ferror(ifile)!=0 || feof(ifile)!=0)
         {
             fprintf(stderr,"Error getting next NEXUS tree, line: %s\n",buffer);
             return (IO_ERROR);
@@ -1100,6 +1107,8 @@ long double NextNexusTree(FILE *ifile,char **tree_str)
     }
     strncat(big_buffer,buffer,LENGTH);
     *tree_str=realloc(*tree_str,LENGTH*i*sizeof(char));
+    if (*tree_str==NULL)
+        return MEM_ERROR;
     
     j=0;
     p=(big_buffer);
@@ -1150,8 +1159,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     
     // ***
     /// Buffer allocation and initialization
-    
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer, &tbuffer, tbuffer);
     ResetBuffer(buffer,tbuffer);
     
     // ***
@@ -1249,14 +1257,15 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                 n_char=0;
                 ++step;
                 code=*(nexus+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(nexus+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1289,16 +1298,30 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                 
                 // *
                 /// Reads the name of the leaf in a buffer
-                
-                strcpy(name_buffer,"");
+                ResetBuffer(name_buffer, MAX_NAME);
                 n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[')
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[' && n_char<MAX_NAME && n_char<MAX_IT)
                 {
                     *(name_buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(nexus+step);
                 }
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==MAX_NAME)
+                {
+                    fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
+#ifdef DEBUG
+                    fflush(stderr);
+#endif
+                    while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[')
+                    {
+                        ++step;
+                        code=*(nexus+step);
+                    }
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                }
+                
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
                 // *
@@ -1409,7 +1432,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     char name_buffer[MAX_NAME];
     size_t tbuffer=NUM_BUFFER;
     
-    /// \todo To debug. Changes on buffer managing applied like in Nexus parsers but without posterior testting.
+    /// \attention Changes on buffer managing applied like in Nexus parsers but without posterior testting.
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -1428,7 +1451,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Buffer allocation and initialization
     
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer, tbuffer);
     
     // ***
@@ -1446,14 +1469,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
             ++step;
             code=*(newick+step);
             // * Reading replicas digits * //
-            while (code<58 && code>47 && n_char<tbuffer) // Int numbers or maxbuffer
+            while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT) // Int numbers or maxbuffer
             {
                 *(buffer+n_char)=code;
                 ++n_char;
                 ++step;
                 code=*(newick+step);
             }
-            if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+            else if (n_char==tbuffer)
             {
                 step-=n_char+2;
                 reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1534,14 +1558,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1566,14 +1591,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46)&& n_char<tbuffer)
+                while (code<58 && (code>47 || code==46)&& n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1598,14 +1624,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1629,14 +1656,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1663,14 +1691,15 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1694,15 +1723,28 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 
                 // *
                 /// Reads the name of the leaf in a buffer
-                
-                strcpy(name_buffer,"");
+                ResetBuffer(name_buffer, MAX_NAME);
                 n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' & code != '~')
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code != '~' && n_char<MAX_NAME && n_char<MAX_IT)
                 {
                     *(name_buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
+                }
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==MAX_NAME)
+                {
+                    fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
+#ifdef DEBUG
+                    fflush(stderr);
+#endif
+                    while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[' && n_char<MAX_IT)
+                    {
+                        ++step;
+                        code=*(newick+step);
+                    }
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
@@ -1830,7 +1872,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Buffer allocation and initialization
     
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer,tbuffer);
     
     // ***
@@ -1928,14 +1970,15 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 n_char=0;
                 ++step;
                 code=*(nexus+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(nexus+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -1969,14 +2012,28 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 // *
                 /// Reads the name of the leaf in a buffer
                 
-                strcpy(name_buffer,"");
+                ResetBuffer(name_buffer, MAX_NAME);
                 n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[')
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[' && n_char<MAX_NAME && n_char<MAX_IT)
                 {
                     *(name_buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(nexus+step);
+                }
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==MAX_NAME)
+                {
+                    fprintf(stderr,"\nSpecies names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
+#ifdef DEBUG
+                    fflush(stderr);
+#endif
+                    while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[' && n_char<MAX_IT)
+                    {
+                        ++step;
+                        code=*(nexus+step);
+                    }
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
@@ -2088,7 +2145,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     size_t tbuffer=NUM_BUFFER;
     char name_buffer[MAX_NAME];
     
-    /// \todo To debug. Changes on buffer managing applied like in Nexus parsers but without posterior testting.
+    /// \attention Changes on buffer managing applied like in Nexus parsers but without posterior testting.
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -2107,7 +2164,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Buffer allocation and initialization
     
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer,tbuffer);
     
     // ***
@@ -2125,14 +2182,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
             ++step;
             code=*(newick+step);
             // * Reading replicas digits * //
-            while (code<58 && code>47 && n_char<tbuffer) // Int numbers
+            while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT) // Int numbers
             {
                 *(buffer+n_char)=code;
                 ++n_char;
                 ++step;
                 code=*(newick+step);
             }
-            if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+            else if (n_char==tbuffer)
             {
                 step-=n_char+2;
                 reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2212,14 +2270,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2244,14 +2303,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2276,14 +2336,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && (code>47 || code==46) && n_char<tbuffer)
+                while (code<58 && (code>47 || code==46) && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2308,14 +2369,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2343,14 +2405,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2378,14 +2441,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2418,14 +2482,15 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 n_char=0;
                 ++step;
                 code=*(newick+step);
-                while (code<58 && code>47 && n_char<tbuffer)
+                while (code<58 && code>47 && n_char<tbuffer && n_char<MAX_IT)
                 {
                     *(buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
                 }
-                if (*(buffer+tbuffer-2)!=TEST_CHAR || n_char>=tbuffer)
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
                     reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -2448,14 +2513,29 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 // *
                 /// Reads the name of the leaf in a buffer
                 
-                strcpy(name_buffer,"");
+                ResetBuffer(name_buffer, MAX_NAME);
                 n_char=0;
-                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_' && code != '~')
+                while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '_' && code != '~' && n_char<MAX_NAME && n_char<MAX_IT)
                 {
                     *(name_buffer+n_char)=code;
                     ++n_char;
                     ++step;
                     code=*(newick+step);
+                }
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                else if (n_char==MAX_NAME)
+                {
+                    fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
+#ifdef DEBUG
+                    fflush(stderr);
+#endif
+                    while (code!='(' && code!=')' && code!= ',' && code!= ';' && code!= ':' && code!= '[' && n_char<MAX_IT)
+                    {
+                        ++step;
+                        code=*(newick+step);
+                    }
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
@@ -4295,12 +4375,16 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             
             //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra for loop
             periods=calloc(n_periods, sizeof(struct period));
+            if (periods==NULL)
+                return MEM_ERROR;
             periods->r_bound=max_time;
             periods->l_nodes=NULL;
             periods->n_lnodes=0;
             j=1;
             
             avail_receptors=calloc(*st_leaves,sizeof(l_node *));
+            if (avail_receptors==NULL)
+                return MEM_ERROR;
             
             if (verbosity>4)
             {
@@ -4317,6 +4401,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     continue;
                 w_period=periods+j;
                 w_period->l_nodes=calloc(*st_leaves, sizeof(l_node *)); //The maximum number of lineages in a period is the number of leaves (star tree)
+                if (w_period->l_nodes==NULL)
+                    return MEM_ERROR;
                 w_period->n_lnodes=w_lnode->n_child;
                 for (k=0; k<w_lnode->n_child; ++k)
                 {
@@ -4712,7 +4798,11 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     // ******
     /// Initialization of other general variables</dd></dl>
     if (verbosity>4)
+    {
         iobuffer=calloc(count_intdigits((long)UINT_MAX, 0), sizeof(char));
+        if (iobuffer==NULL)
+            return MEM_ERROR;
+    }
     
     // ****
     /// Association between locus tree and gene tree and gene tree reset
@@ -5006,7 +5096,11 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     // ******
     /// Initialization of other general variables</dd></dl>
     if (verbosity>4)
+    {
         iobuffer=calloc(count_intdigits((long)UINT_MAX, 0), sizeof(char));
+        if (iobuffer==NULL)
+            return MEM_ERROR;
+    }
     
     // ****
     /// Association between locus tree and gene tree and gene tree reset
@@ -5083,6 +5177,8 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         if (pn_ilin!=w_lnode->n_ilin)
         {
             w_gnodes_ptr=realloc(w_gnodes_ptr, sizeof(g_node *)*w_lnode->n_ilin);
+            if (w_gnodes_ptr==NULL)
+                return MEM_ERROR;
         }
         
         pn_ilin=w_lnode->n_ilin;
@@ -5324,6 +5420,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
     if (node->n_child>0)
     {
         max_nlin=calloc(node->n_child,sizeof(int));
+        ErrorReporter((long int)max_nlin);
         
         for (i=0; i<node->n_child; ++i)
         {
@@ -5944,6 +6041,8 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         if (w_input->i_probs!=NULL)
         {
             w_output->i_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            if (w_output->i_probs==NULL)
+                return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
             {
                 *(w_output->i_probs+j)=*(w_input->i_probs+j);
@@ -5952,6 +6051,8 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         if (w_input->o_probs!=NULL)
         {
             w_output->o_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            if (w_output->o_probs==NULL)
+                return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
             {
                 *(w_output->o_probs+j)=*(w_input->o_probs+j);
@@ -6018,6 +6119,8 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         if (w_input->i_probs!=NULL)
         {
             w_output->i_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            if (w_output->i_probs==NULL)
+                return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
             {
                 *(w_output->i_probs+j)=*(w_input->i_probs+j);
@@ -6026,6 +6129,8 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         if (w_input->o_probs!=NULL)
         {
             w_output->o_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            if (w_output->o_probs==NULL)
+                return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
             {
                 *(w_output->o_probs+j)=*(w_input->o_probs+j);
@@ -7294,6 +7399,8 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
     g_node * w_gnode=NULL, *b_gnode=NULL, **wg_pointers=NULL;
     int i=0, j=0, it=0, pn_nodes=0,j_bgnode=0, next_b=0,d=0,done=0;
     *distances=realloc(*distances,n_dup*sizeof(double));
+    if (*distances==NULL)
+        return MEM_ERROR;
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -7328,7 +7435,11 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
         // **
         /// Memory realocation if necessary
         if (pn_nodes!=w_lnode->n_ilin)
+        {
             wg_pointers=realloc(wg_pointers, sizeof(g_node*)*w_lnode->n_ilin);
+            if (wg_pointers==NULL)
+                return MEM_ERROR;
+        }
         
         memcpy(wg_pointers, w_lnode->g_nodes, sizeof(g_node*)*w_lnode->n_ilin);
         pn_nodes=w_lnode->n_ilin;
@@ -8309,6 +8420,7 @@ extern inline void reallocBuffer(char **buffer,size_t *size, size_t newsize)
 {
     *size=newsize;
     *buffer=(char *)realloc(*buffer, newsize*sizeof(char));
+    ErrorReporter((long int) *buffer);
 }
 
 ///@}
@@ -9255,7 +9367,7 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
     if (node->g_nodes==NULL)
     {
         node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
-        
+        ErrorReporter((long int)node->g_nodes);
         for (j=0; j<n_gleaves; ++j)
         {
             *(node->g_nodes+j)=NULL;
@@ -10249,6 +10361,9 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     double t_prob=0, c_prob=0;
     l_node *w_lnode=NULL,*w_tnode=t_node, **wl_pointers=calloc(n_nodes,sizeof(l_node *));
     
+    if (t_times==NULL || *wl_pointers==NULL)
+        ErrorReporter(MEM_ERROR);
+    
     for (j=0; j<n_nodes; ++j) //Reset
     {
         *(t_times+j)=-1;
@@ -10378,26 +10493,26 @@ int firstnoblank(char *string)
 
 long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
 {
-    int i=0,j=0,c_param,out_param=1, step=0;
+    int i=0,c_param,out_param=1, step=0;
     const int n_params=4;
     const char *params[4]={"pop_size","n_ind","u_mult","g_mult"};
     const int s_params[4]={8,5,6,6};
     char code, *buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer, tbuffer);
     
-    while (*(string+*n_char)!=']' && i<=MAX_IT)
+    while (*(string+*n_char)!=']' && i<MAX_IT)
     {
         if (out_param==1)
         {
             c_param=-1;
-            for (j=0; j<n_params;++j)
+            for (step=0; step<n_params;++step)
             {
-                if (strncmp(params[j], string+*n_char, s_params[j])==0)
+                if (strncmp(params[step], string+*n_char, s_params[step])==0)
                 {
-                    c_param=j;
+                    c_param=step;
                 }
             }
             if (c_param==-1)
@@ -10416,21 +10531,19 @@ long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
             ResetBuffer(buffer, tbuffer);
             step=0;
             code=*(string+*n_char);
-            j=0;
-            while (code<58 && (code>47 || code==46) && j<=MAX_IT && step<tbuffer)
+            while (code<58 && (code>47 || code==46) && step<MAX_IT && step<tbuffer)
             {
                 *(buffer+step)=code;
                 ++*n_char;
                 ++step;
                 code=*(string+*n_char);
-                ++j;
             }
-            if (j>=MAX_IT)
+            if (step==MAX_IT)
             {
                 PrintXCharError(string, *n_char-step, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
                 return LOOP_ERROR;
             }
-            else if (*(buffer+tbuffer-2)!=TEST_CHAR || step>=tbuffer)
+            else if (step==tbuffer)
             {
                 *n_char-=step;
                 reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -10481,7 +10594,7 @@ long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
         
         ++i;
     }
-    if(i>=MAX_IT)
+    if(i==MAX_IT)
         return LOOP_ERROR;
     
     free(buffer);
@@ -10490,14 +10603,14 @@ long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
 
 long int GetLnodeParamsFromNexusComments(char *string,l_node *node, int *n_char)
 {
-    int i=0,j=0,c_param,out_param=1, step=0;
+    int i=0,c_param,out_param=1, step=0;
     const int n_params=6;
     const char *params[6]={"pop_size","kind_n","paralog","n_ind","u_mult","g_mult"};
     const int s_params[6]={8,6,7,5,6,6};
     char code, *buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
-    buffer=calloc(tbuffer,sizeof(char));
+    reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer, tbuffer);
     
     while (*(string+*n_char)!=']' && i<=MAX_IT)
@@ -10505,11 +10618,11 @@ long int GetLnodeParamsFromNexusComments(char *string,l_node *node, int *n_char)
         if (out_param==1)
         {
             c_param=-1;
-            for (j=0; j<n_params;++j)
+            for (step=0; step<n_params;++step)
             {
-                if (strncmp(params[j], string+*n_char, s_params[j])==0)
+                if (strncmp(params[step], string+*n_char, s_params[step])==0)
                 {
-                    c_param=j;
+                    c_param=step;
                 }
             }
             if (c_param==-1)
@@ -10528,21 +10641,19 @@ long int GetLnodeParamsFromNexusComments(char *string,l_node *node, int *n_char)
             ResetBuffer(buffer, tbuffer);
             step=0;
             code=*(string+*n_char);
-            j=0;
-            while (code<58 && (code>47 || code==46) && j<=MAX_IT && step<tbuffer)
+            while (code<58 && (code>47 || code==46) && step<MAX_IT && step<tbuffer)
             {
                 *(buffer+step)=code;
                 ++*n_char;
                 ++step;
                 code=*(string+*n_char);
-                ++j;
             }
-            if (j>=MAX_IT)
+            if (step==MAX_IT)
             {
                 PrintXCharError(string, *n_char-step, "\nNEWICK PARSING ERROR\n", "|<- Unvalid value, please, check the NEXUS file\n");
                 return LOOP_ERROR;
             }
-            else if (*(buffer+tbuffer-2)!=TEST_CHAR || step>=tbuffer)
+            else if (step==tbuffer)
             {
                 *n_char-=step;
                 reallocBuffer(&buffer, &tbuffer, tbuffer*10);
@@ -10608,7 +10719,7 @@ long int GetLnodeParamsFromNexusComments(char *string,l_node *node, int *n_char)
         
         ++i;
     }
-    if(i>=MAX_IT)
+    if(i>MAX_IT)
         return LOOP_ERROR;
     
     free(buffer);

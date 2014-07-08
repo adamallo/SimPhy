@@ -3,7 +3,7 @@
 /**
  *
  * \mainpage SimPhy
- * Gene tree simulator from given a species tree,
+ * Gene tree simulator from a given species tree,
  * taking into account ILS,GDL and HGT.
  * \author Mallo D.
  * \date October-2013/...
@@ -84,7 +84,6 @@
  * * : Lineage (branch) specific substitution rate multiplier.\n
  *\note The species tree conditioned birth-death (fixed number of leaves) requires a birth rate equal or bigger than the death rate.
  *\todo Include in the manual a detailed explanation on the epsilon values.
- *\todo Change some if-else for switch to improve performance.
  *******************************************************************************/
 
 /**
