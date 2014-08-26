@@ -27,11 +27,6 @@
 #include "trees.h"
 #endif
 
-extern int MAX_IT;
-extern int MAX_NAME;
-extern int MAX_CHILDS;
-extern int MAX_LEAVES;
-
 // *********************** Prototype of functions ******************************* //
 
 /** \name Sampling variables managing **/

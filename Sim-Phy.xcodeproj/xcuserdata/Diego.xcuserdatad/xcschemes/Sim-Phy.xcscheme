@@ -61,7 +61,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/itrees.txt"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-rs 1 -rl f1 -sr /Users/Diego/Desktop/dlcoal_sim/stree.tree.nex -lb f0.05 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 6 -cs 22"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-rs 100 -rl U10-100 -sb f0.000001 -sl U20-50 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 6 -cs 22"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-l (A_0:1000,A_1:1000)%1; -P f100000 -rg 10000000 -rs 1 -os 1 -v 1"

@@ -22,7 +22,7 @@
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-double RndGamma1 (double s, long int *seed);
+static double RndGamma1 (double s, long int *seed);
 
 /**
  * Random sampling of a Gamma distribution with scale = 1 and big (>1) normal shapes.
@@ -38,7 +38,9 @@ double RndGamma1 (double s, long int *seed);
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-double RndGamma2 (double s, long int *seed);
+static double RndGamma2 (double s, long int *seed);
+
+static double MPFRValOvFact(double sum, int o_lin);
 
 // **** Declarations of public functions **** //
 
@@ -316,11 +318,15 @@ double ProbCoalFromXtoYLineages(int i_lin,int o_lin,double bound_time,int Ne)
     double C=1, sum=0;
     int i=0, pi=0;
     
+    
     for (i=0;i<o_lin;++i)
     {
         C*=(o_lin+i)*(i_lin-i)/(double)(i_lin+i);
     }
-    
+    if ((o_lin<170 || i_lin < 170) && C==INFINITY)
+    {
+        printf("debug");
+    }
     sum=exp(-o_lin*(o_lin-1)*bound_time/2/Ne)*C;
     
     for (i=o_lin+1; i<=i_lin;++i)
@@ -330,16 +336,26 @@ double ProbCoalFromXtoYLineages(int i_lin,int o_lin,double bound_time,int Ne)
         sum+=exp(-i*pi*bound_time/2/Ne)*(2*i-1)/(pi+o_lin)*C;
     }
     
-    if (o_lin<GSL_SF_FACT_NMAX)
+    if (sum==0)
+    {
+        return 0;
+    }
+    else if (sum==NAN || sum==INFINITY)
+    {
+        return EXIT_FAILURE;
+    }
+    else if (o_lin<GSL_SF_FACT_NMAX)
         return sum/gsl_sf_fact(o_lin);
     else
     {
-        fprintf(stderr,"Error using a factorial function. A big numbers factorial library should be used\n");
-#ifdef DBG
-        fflush(stderr);
-#endif
-        ErrorReporter(UNEXPECTED_VALUE);
-        return -1;
+        return MPFRValOvFact(sum,o_lin);
+        
+//        fprintf(stderr,"Error using a factorial function. A big numbers factorial library should be used\n");
+//#ifdef DBG
+//        fflush(stderr);
+//#endif
+//        ErrorReporter(UNEXPECTED_VALUE);
+//        return -1;
     }
 }
 
@@ -682,3 +698,17 @@ size_t SampleNDoubles(size_t n, double * array, gsl_rng *seed)
 
 
 ///@}
+
+double MPFRValOvFact(double sum, int o_lin)
+{
+    mpfr_t fact_olin;
+    double result=0;
+    
+    mpfr_init_set_si(fact_olin,1,MPFR_RNDN);
+    mpfr_fac_ui(fact_olin, o_lin, MPFR_RNDN);
+    
+    mpfr_d_div(fact_olin, sum, fact_olin, MPFR_RNDN);
+    result=mpfr_get_d(fact_olin, MPFR_RNDN);
+    mpfr_clear(fact_olin);
+    return result;
+}

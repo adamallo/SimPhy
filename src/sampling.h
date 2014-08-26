@@ -37,9 +37,6 @@
 #define set_propsampling(a,b) (a->vtype==UI?(a->value=(ui_d)(int)b):(a->value=(ui_d)(double)b))
 
 extern int MAX_IT;
-extern int MAX_NAME;
-extern int MAX_CHILDS;
-extern int MAX_LEAVES;
 
 /**
  * \enum DISTRIBUTIONS

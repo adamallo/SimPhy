@@ -118,7 +118,6 @@ extern int errno;
 
 int MAX_IT=10000;
 int MAX_NAME=100;
-int MAX_CHILDS=100;
 int MAX_LEAVES=1000;
 int NUM_BUFFER=20;
 int IO_BUFFER=1000;
@@ -141,8 +140,8 @@ char TEST_CHAR=7;
 // NOTE: Function documentation is in the bottom of the text, in the function declaration section.
 
 // ** I/O ** //
-long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, float *u_seed);
-long int GetSettingsFromFile(FILE *file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, float *u_seed);
+long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, int *commands, float *u_seed, char **confile_name);
+long int GetSettingsFromFile(FILE *file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, int *commands, float *u_seed);
 void PrintXStringError(char **string, int x, char *errormsg);
 void PrintUsage(void);
 void PrintSettings(char * s_tree_newick, char *stree_ifile, int n_istrees,sampling_unit gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time, sampling_unit outgroup, sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit alpha_g,float epsilon, int verbosity, char * out_file,float u_seed);
@@ -187,9 +186,9 @@ int main (int argc, char **argv)
     
     // ******
     /// Configuration variables
-    int ns_trees=1,ng_trees=0,verbosity=1,min_lleaves=2,min_lsleaves=3, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
+    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=2,min_lsleaves=3, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
     float epsilon_brent=0.000001, u_seed=(time (NULL) * clock());
-    char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL;
+    char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*confile_name=NULL;
     char *buffer=NULL;
     
     buffer=getenv("SIMPHY_MAXIT");
@@ -202,12 +201,6 @@ int main (int argc, char **argv)
     if (buffer!=NULL)
     {
         sscanf(buffer,"%u",&MAX_NAME);
-        buffer=NULL;
-    }
-    buffer=getenv("SIMPHY_MAXCHILDS");
-    if (buffer!=NULL)
-    {
-        sscanf(buffer,"%u",&MAX_CHILDS);
         buffer=NULL;
     }
     buffer=getenv("SIMPHY_MAXLEAVES");
@@ -264,9 +257,9 @@ int main (int argc, char **argv)
     
     // *******
     /// <dl><dt>I/O variables</dt><dd></dd></dl>
-    char g_prefix[8]="g_trees", command_sufix[8]=".comand", recon_sufix2[8]="g.recon", reconsl_sufix2[9]=".reconsl", reconlg_sufix2[10]="g.reconlg", db_sufix[4]=".db", params_sufix[8]=".params", tree_sufix[7]=".trees", weirdg_sufix[8]=".ralpha", s_outname[13]="s_tree.trees",l_outname[14]="l_trees.trees", *g_outname=NULL, stat_outname[10]="stats.txt",weirds_outname[14]="s_tree.ralpha";
-    char  *recon_outname=NULL, *reconsl_outname=NULL, *reconlg_outname=NULL, *db_outname=NULL, *params_outname=NULL, *command_outname=NULL, *curr_outdir=NULL,  *weirdg_outname=NULL, *stree_iname=NULL, *ltree_iname=NULL;
-    FILE *stree_ifile=NULL, *ltree_ifile=NULL, *s_outfile=NULL,*l_outfile=NULL,*g_outfile=NULL,*stat_outfile=NULL, *params_outfile=NULL, *command_outfile=NULL, *weirds_outfile=NULL, *weirdg_outfile=NULL;
+    char g_prefix[8]="g_trees", command_sufix[8]=".comand", recon_sufix2[8]="g.recon", reconsl_sufix2[9]=".reconsl", reconlg_sufix2[10]="g.reconlg", db_sufix[4]=".db", params_sufix[8]=".params", tree_sufix[7]=".trees", weirdg_sufix[8]=".ralpha", s_outname[13]="s_tree.trees",l_outname[14]="l_trees.trees", *g_outname=NULL, stat_outname[10]="stats.txt",weirds_outname[14]="s_tree.ralpha",confile_sufix[6]=".conf",c=0;
+    char  *recon_outname=NULL, *reconsl_outname=NULL, *reconlg_outname=NULL, *db_outname=NULL, *params_outname=NULL, *command_outname=NULL, *curr_outdir=NULL,  *weirdg_outname=NULL, *stree_iname=NULL, *ltree_iname=NULL, *confile_outname=NULL;
+    FILE *stree_ifile=NULL, *ltree_ifile=NULL, *s_outfile=NULL,*l_outfile=NULL,*g_outfile=NULL,*stat_outfile=NULL, *params_outfile=NULL, *command_outfile=NULL, *weirds_outfile=NULL, *weirdg_outfile=NULL, *confile_infile=NULL, *confile_outfile=NULL;
     sqlite3 *database;
     int n_sdigits=0, n_ldigits=0, n_gdigits=0, n_istrees=0, n_iltrees=0, error=0;
 
@@ -297,7 +290,7 @@ int main (int argc, char **argv)
     
     
     
-    if (NUM_BUFFER<20 || MAX_LEAVES<100 || MAX_CHILDS<2 || MAX_NAME<10 || MAX_IT<10 || IO_BUFFER<100)
+    if (NUM_BUFFER<20 || MAX_LEAVES<100 || MAX_NAME<10 || MAX_IT<10 || IO_BUFFER<100)
     {
         fprintf(stderr,"Environment variables have been modified to unproper values, please, do not change them unless it is completely necessary\n");
         return (EXIT_FAILURE);
@@ -311,7 +304,7 @@ int main (int argc, char **argv)
     fflush(stdout);
 #endif
     
-    ErrorReporter(GetSettings(argc,argv,&ns_trees,&nl_trees,&ng_trees,&species_tree_str,&stree_ifile,&n_istrees,&stree_iname,&gen_time,&locus_tree_str,&ltree_ifile,&n_iltrees,&ltree_iname,&b_rate,&d_rate,&t_rate,&gc_rate,&t_kind,&min_lleaves,&min_lsleaves,&ind_per_sp,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&epsilon_brent,&verbosity,&out_name, &stats, &recon, &db, &params, &u_seed));
+    ErrorReporter(GetSettings(argc,argv,&ns_trees,&nl_trees,&ng_trees,&species_tree_str,&stree_ifile,&n_istrees,&stree_iname,&gen_time,&locus_tree_str,&ltree_ifile,&n_iltrees,&ltree_iname,&b_rate,&d_rate,&t_rate,&gc_rate,&t_kind,&min_lleaves,&min_lsleaves,&ind_per_sp,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&epsilon_brent,&verbosity,&out_name, &stats, &recon, &db, &params, &command, &u_seed, &confile_name));
 
 #ifdef NO_VAR
     gsl_rng_set(r,5);
@@ -421,7 +414,7 @@ int main (int argc, char **argv)
         
         if (verbosity>4)
         {
-            printf("Saving the settings in %s... ",params_outname);
+            printf("Saving the global settings in %s... ",params_outname);
 #ifdef DBG
             fflush(stdout);
 #endif
@@ -434,6 +427,7 @@ int main (int argc, char **argv)
         PrintFileSettings(params_outfile,species_tree_str,stree_iname,n_istrees,gen_time,locus_tree_str,ltree_iname,n_iltrees,sb_rate,sd_rate,bds_leaves,bds_length,outgroup,b_rate,d_rate,t_rate,gc_rate,t_kind,min_lleaves,min_lsleaves,ind_per_sp,nl_trees,ng_trees,Ne,mu,alpha_s,alpha_l,alpha_g,epsilon_brent,verbosity,out_name, u_seed);
         fclose(params_outfile);
         free(params_outname);
+        
         if (verbosity>4)
         {
             printf("Done\n");
@@ -448,9 +442,23 @@ int main (int argc, char **argv)
         command_outname=malloc((strlen(out_name)+strlen(command_sufix)+1)*sizeof(char));
         strcpy(command_outname,out_name);
         strcat(command_outname,command_sufix);
-        if (verbosity>4)
+        
+        if (confile_name!=NULL)
         {
-            printf("Saving the original command line arguments in %s... ",command_outname);
+            confile_outname=malloc((strlen(out_name)+strlen(confile_sufix)+1)*sizeof(char));
+            strcpy(confile_outname,out_name);
+            strcat(confile_outname,confile_sufix);
+            if (verbosity>4)
+            {
+                printf("Saving the command line settings in %s and the configuration file in %s... ",command_outname,confile_outname);
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+        }
+        else if (verbosity>4)
+        {
+            printf("Saving the original command line settings in %s... ",command_outname);
 #ifdef DBG
             fflush(stdout);
 #endif
@@ -464,6 +472,32 @@ int main (int argc, char **argv)
             fprintf(command_outfile,"%s ",argv[i]);
         fclose(command_outfile);
         free(command_outname);
+        
+        if(confile_name!=NULL)
+        {
+            if ((confile_infile=fopen(confile_name,"r"))==NULL)
+            {
+                perror("Error opening input .conf file:");
+                ErrorReporter(IO_ERROR);
+            }
+            if ((confile_outfile=fopen(confile_outname,"w"))==NULL)
+            {
+                perror("Error opening output .conf file:");
+                ErrorReporter(IO_ERROR);
+            }
+            while ((c=fgetc(confile_infile)) && c!=EOF)
+            {
+                fputc(c,confile_outfile);
+                if (ferror(confile_outfile))
+                {
+                    ErrorReporter(IO_ERROR);
+                }
+            }
+            fclose(confile_infile);
+            fclose(confile_outfile);
+            free(confile_outname);
+        }
+        
         if (verbosity>4)
         {
             printf("Done\n");
@@ -1419,7 +1453,7 @@ int main (int argc, char **argv)
 
 void PrintUsage(void)
 {
-    printf("\nUsage: ./SimPhy -[Parameter code] value ...\n\nEssential parameters:\n--------------------\n-Guide tree (\"or\" list):\n\t-Fixed species tree:\n\t\t-S newick_tree string:(\"(...);\")\n\t-Species tree simulation parameters:\n\t\t-Sb birth rate (relative to time if -G != 1) rational:(0,...);\n\t\t-Sd death rate (relative to time if -G != 1) rational:[birth_rate,...);\n\t\t-Sl number of leaves natural:[2,...);\n\t\t-St max tree time rational:(0,...);\n\t\t-So internal branch length for outgroup addition:[0,...);\n\t-Fixed locus tree:\n\t\t-L newick_tree string:(\"(...);\")\n-Number of trees:\n\t-R general replicates natural:[1,...) (number of locus trees, with one gene tree from each, instead if there is no locus tree, which implies using it as number of gene trees);\n\t-Rl locus trees natural:[1,...); \n\t-Rg number of gene trees from each locus tree natural:[1,...);\n-Effective haploid population size:\n\t-P natural:[1,...);\n\nOptional parameters\n-------------------\n-Locus tree simulation parameters:\n\t-Lb birth rate (relative to generations) rational:(0,...);\n\t-Ld death rate (relative to generations) rational:(0,...);\n\t-Lt transfer rate (relative to generations) rational:(0,...)\n\t-Ll minimum number of leaves natural:[2,species_tree_n_leaves];\n\t-Ls minimum number of leaves from different species. natural:[2,species_tree_n_leaves];\n-Generation time:\n\t-G generation time rational:(0,...) (if it is not set, the species tree is considered with time in number of generations);\n-Substitution rate:\n\t-U rational:(0,...);\n-Substitution rate heterogeneity:\n\t-Hs Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Lineage specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hl Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene family (gene tree) specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n\t-Hg Alpha parameter of the gamma distribution with mean=1 to sample rate heterogeneity mulipliers. Gene tree branch specific rate heterogeneity. rational:[0,...) (0=>no heterogeneity);\n-Bounded Multispecies Coalescent sampling related parameters:\n\t-E Brent root epsilon (maximum difference between iterations to consider them convergent): rational: (0,...);\n\tMinimum number of coalescent units to the bound to use a politomy. rational: (0,...) (0 = no politomies);\n-Verbosity:\n\t-V natural:[0-6];\n-General settings:\n\t -Cs seed of the random number generator. rational: (0,...)\n-Output related settings:\n\t-O common prefix for output files string:*;\n\t-Os logical flag to activate the csv *.stats file with some summary statistics binary;\n\t-Or logical flag to activate the *.recon file with the reconciliation between each gene tree and the common species tree binary;\n\t-Od logical flag to activate the output of a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.\n\t-Op logical flag to activate the output of the file prefix.params with the main params of the simulation\n\nExample\n\t./SimPhy -Rl 10 -Rg 10 -Lb 0.001 -Ld 0.0011 -P 200 -V 2 -O test1 -S \"((A:250#2000/2,B:250):250,(C:300,D:300):200);\"\n");
+    printf("\nUsage: ./SimPhy -[Parameter code] value(i|d|c|b|s) ...\n\n-RX→ Replicates\n_________________\n\n\t-RS i: Number of species tree replicates (study replicates).\n\t-RL s: Distribution of number of locus trees per species tree.\n\t-RG i: Number of gene trees per locus tree.\n\n-HX→ Heterogeneity generators\n_________________\n\n\t-HS s: Distribution of species-specific branch rate heterogeneity modifiers.\n\t-HL s: Distribution of locus-specific rate heterogeneity modifiers.\n\t-HG s: Distribution of gene-tree-branch-specific rate heterogeneity modifiers.\n\t-P s: Distribution of global population sizes.\n\t-U s: Distribution of global substitution rates\n\t-E d: Precision of the Brent’s method for root-finding when sampling the multilocus coalescent. (Devs advice: do not touch if you do not really need it) \n\t-G s: Global generation time.\n\t-V [0,6]: Verbosity. The bigger the verbosity the slower SimPhy becomes. Levels over 3 may only make sense for debugging or study the way SimPhy works.\n\n-OX→ Output\n_________________\n\n\t-O c: Common output prefix.\n\t-OS b: Activates the statistical output.\n\t-OR b: Activates the reconciliation output.\n\t-OD b: Activates the SQLite database output.\n\t-OP b: Activates the output of a file with a summary of the sampled options .\n\t-OC b: Activates the output of original command line parameters and input configuration file if used.\n\n-SX → Species tree\n_________________\n\n\t-S c: Fixed species tree string in modified Newick format . \n\t-SR c: Nexus file containing species trees.\n\t-SB s: Species tree simulation parameter: Distribution of birth rates.\n\t-SD s: Species tree simulation parameter: Distribution of death rates.\n\t-ST s: Species tree simulation parameter: Distribution of maximum tree lengths.\n\t-SL s: Species tree simulation parameter: Distribution of number of species (species tree leaves).\n\t-SO s: Species tree simulation parameter: Distribution of multipliers of half of the tree length to be applied as the branch length of the internal node generated when introducing an outgroup. If this parameter is not set the outgroup is not simulated. \n\t-SI s: Species tree simulation parameter: Distribution of number of individuals per species.\n\n-LX → Locus tree\n_________________\n\n\t-L c: Fixed locus tree string in modified Newick format .\n\t-LR c: Nexus file containing locus trees .\n\t-LB s: Locus tree simulation parameter: Distribution of duplication rates.\n\t-LD s: Locus tree simulation parameter: Distribution of loss rates.\n\t-LT s: Locus tree simulation parameter: Distribution of transfer rates. \n\t-LG s: Locus tree simulation parameter: Distribution of gene conversion rates.\n\t-LK b: Locus tree simulation parameter: Determines whether the sampling of acceptors for both transfers and gene conversions depends (1) or not (0) on the evolutionary distance between candidate acceptors and donors.\n\t-LL s: Locus tree simulation parameter: Distribution of minimum number of leaves to keep the simulated locus tree.\n\t-LS s: Locus tree simulation parameter: Distribution of minimum number of leaves from different species to keep the simulated locus tree.\n\n-CX → Global options\n_________________\n\n\t-CS d: Random number generator seed.\n\t-I c: Input config file (only as a command line parameter)\n\nValue kinds\n_________________\n\n\ti= integer\n\td= decimal\n\tc=character string\n\tb=boolean(1 or 0)\n\ts= sampling notation\n\nSampling notation\n___________________\n\t[.....]\n\nExample\n___________\n\nSimPhy -rs 100 -rl U10-100 -sb f0.000001 -sl U20-50 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 2");
     
     fflush(stdout);
     
@@ -1507,15 +1541,19 @@ void PrintUsage(void)
  *   Logical flag, if ==1 it generates a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.
  * \param params
  *  Logical flag to activate an output file (prefix.params) with the general parameters of the simulation.
+ * \param commands
+ *  Logical flag to activate the output of both the original command-line arguments (prefix.command) and the input configuration file (prefix.conf)
  * \param u_seed
  *  Seed for the random number generator.
+ * \param confile_name
+ *  Configuration file name.
  * \return Error-control code.
  *
  * \note n_trees and newick_stree/newick_ltree are essential.
  * \todo Think about the idea of using this library https://github.com/Cofyc/argparse to get the options, because it is much more flexible.
  *******************************************************************************/
 
-long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree,FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree,FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, float *u_seed)
+long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree,FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree,FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon,int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, int *commands, float *u_seed, char **confile_name)
 {
     int i=0,read_file=0;
     char code=0,sub_code=0,buff_char=0;
@@ -1526,11 +1564,11 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
     
     // *****
     /// Control of number of arguments
-    if (argc<3 || argc%2==0)
-    {
-        fprintf(stderr,"Improper number of arguments, they have to be even and more than 3\n");
-        return (SETTINGS_ERROR);
-    }
+//    if (argc<3 || argc%2==0)
+//    {
+//        fprintf(stderr,"Improper number of arguments, they have to be even and more than 3\n");
+//        return (SETTINGS_ERROR);
+//    }
     
     // *****
     /// <dl><dt> Arguments loop </dt><dd>
@@ -1671,7 +1709,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
                         return (SETTINGS_ERROR);
                         break;
-                }
+                    }
                     
                     break;
                     // ***
@@ -1731,9 +1769,18 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         }
                         break;
                         // **
-                        /// -OP. Params output output </dd></dl>
+                        /// -OP. Params output
                     case 'P':
                         if(sscanf(argv[i],"%u",params)==0)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return (SETTINGS_ERROR);
+                        }
+                        break;
+                        // **
+                        /// -OC. Commands output </dd></dl>
+                    case 'C':
+                        if(sscanf(argv[i],"%u",commands)==0)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return (SETTINGS_ERROR);
@@ -1899,6 +1946,15 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         }
                         break;
                         // **
+                        /// -LK. Simulated locus tree. Aceptor sampling dependent (1) or independent (0) to the evolutionary distance.
+                    case 'K':
+                        if (sscanf(argv[i],"%u",t_kind)==0 || *t_kind<0 || *t_kind>1)
+                        {
+                            PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
+                            return (SETTINGS_ERROR);
+                        }
+                        break;
+                        // **
                         /// -LL. Simulated locus tree. Minimum number of leaves of simulated locus trees.
                     case 'L':
                         if(sscanf(argv[i],"%u",min_lleaves)==0 || *min_lleaves<2)
@@ -1938,15 +1994,6 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         
                     }
                         break;
-                    case 'T':
-                    {
-                        if (sscanf(argv[i],"%u",t_kind)==0 || *t_kind<0 || *t_kind>1)
-                        {
-                            PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
-                            return (SETTINGS_ERROR);
-                        }
-                    }
-                        break;
                     default:
                         PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
                         return (SETTINGS_ERROR);
@@ -1966,6 +2013,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                     }
                     else
                     {
+                        *confile_name=argv[i];
                         if (argc>2)
                         {
                             printf("\n\tWARNING! You are using both the input file option -I and command line parameters. If you define a parameter using both input options, input file options will have preference\n");
@@ -1989,7 +2037,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
     switch (read_file)
     {
         case 1:
-            GetSettingsFromFile(input_file,ns_trees,nl_trees,ng_trees,newick_stree,stree_ifile,n_istrees,stree_iname,gen_time,newick_ltree,ltree_ifile,n_iltrees,ltree_iname,b_rate,d_rate,t_rate,gc_rate, t_kind,min_lleaves, min_lsleaves, ind_per_sp, sb_rate,  sd_rate,  bds_leaves,  bds_length,  outgroup, Ne,mu,alpha_s, alpha_l, alpha_g,epsilon, verbosity,out_name, stats, recon, db, params, u_seed);
+            GetSettingsFromFile(input_file,ns_trees,nl_trees,ng_trees,newick_stree,stree_ifile,n_istrees,stree_iname,gen_time,newick_ltree,ltree_ifile,n_iltrees,ltree_iname,b_rate,d_rate,t_rate,gc_rate, t_kind,min_lleaves, min_lsleaves, ind_per_sp, sb_rate,  sd_rate,  bds_leaves,  bds_length,  outgroup, Ne,mu,alpha_s, alpha_l, alpha_g,epsilon, verbosity,out_name, stats, recon, db, params, commands, u_seed);
             fclose(input_file);
             break;
     }
@@ -2196,12 +2244,15 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
  *   Logical flag, if ==1 it generates a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.
  * \param params
  *  Logical flag to activate an output file (prefix.params) with the general parameters of the simulation.
+ * \param commands
+ *  Logical flag to activate the output of both the original command-line arguments (prefix.command) and the input configuration file (prefix.conf)
  * \param u_seed
  *  Seed for the random number generator.
+ 
  * \return Error-control code.
  *******************************************************************************/
 
-long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, float *u_seed)
+long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *recon, int *db, int *params, int *commands, float *u_seed)
 {
     int i=0,offset=0;
     unsigned int LENGTH=10000;
@@ -2447,9 +2498,19 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             }
                             break;
                             // **
-                            /// -OP. Params output output </dd></dl>
+                            /// -OP. Params output
                         case 'P':
                             if(sscanf(buffer+offset,"%u",params)==0)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return (SETTINGS_ERROR);
+                            }
+                            break;
+                            // **
+                            /// -OC. Commands output </dd></dl>
+                        case 'C':
+                            if(sscanf(buffer+offset,"%u",commands)==0)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2628,6 +2689,16 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             }
                             break;
                             // **
+                            /// -LK. Simulated locus tree. Aceptor sampling dependent (1) or independent (0) to the evolutionary distance.
+                        case 'K':
+                            if (sscanf(buffer+offset,"%u",t_kind)==0 || *t_kind<0 || *t_kind>1)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return (SETTINGS_ERROR);
+                            }
+                            break;
+                            // **
                             /// -LL. Simulated locus tree. Minimum number of leaves of simulated locus trees.
                         case 'L':
                             if(sscanf(buffer+offset,"%u",min_lleaves)==0 || *min_lleaves<2)
@@ -2669,16 +2740,6 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                                 return (SETTINGS_ERROR);
                             }
                             
-                        }
-                            break;
-                        case 'T':
-                        {
-                            if (sscanf(buffer+offset,"%u",t_kind)==0 || *t_kind<0 || *t_kind>1)
-                            {
-                                
-                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
-                                return (SETTINGS_ERROR);
-                            }
                         }
                             break;
                         default:

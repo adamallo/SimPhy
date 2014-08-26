@@ -344,6 +344,22 @@ static double CheckUltrametricityLNodes(l_node *node);
 static double CheckUltrametricitySNodes(s_node *node);
 
 /**
+ * Calculates the expected number of locus tree leaves for a given species tree and birth and death rates. Performs a pre-order traversion.
+ *
+ * \param node
+ *  Pointer to the species tree node.
+ * \param b_rate
+ *  Birth rate.
+ * \param d_rate
+ *  Death rate.
+ * \param n0
+ *  Number of expected leaves in this node.
+ * \return Expected number of leaves.
+*******************************************************************************/
+
+static double ExpectedLtreeNleavesSNodes(s_node *node, double b_rate, double d_rate, double n0);
+
+/**
  * Gets the n_gen of the tree in coalescent units (n_gen/Ne).
  *
  * \param node
@@ -930,7 +946,7 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
 {
     int i=0,in_trees=0,j=0;
     size_t LENGTH=IO_BUFFER;
-    char *buffer=NULL; //BEL
+    char *buffer=NULL, *tok=NULL; //BEL
     
     // ******
     /// <dl><dt> Function structure </dt><dd>
@@ -959,7 +975,8 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
         
         if (in_trees==1)
         {
-            if (strcmp(strtok(buffer,"\n"),"End;")==0 || strcmp(strtok(buffer,"\n"),"END;")==0 || strcmp(strtok(buffer,"\n"),"end;")==0)
+            tok=strtok(buffer,"\n");
+            if (tok!=NULL && (strcmp(tok,"End;")==0 || strcmp(tok,"END;")==0 || strcmp(tok,"end;")==0))
                 break;
             else
             {
@@ -2461,12 +2478,6 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     // *
                     /// Translates the buffer in a integer number and asigns it as l_node::kind_node of the current node</dd></dl>
                     sscanf(buffer,"%ui",&is_dup);
-                    if (is_dup!=DUP)
-                    {
-                        //DBG
-                        fprintf(stderr,"WARNING!!!: The user is setting private values to the l_node event info\n");
-                        //ErrorReporter(SETTINGS_ERROR);
-                    }
                     current_node->kind_node=is_dup;
                 }
                 break;
@@ -3018,7 +3029,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 /// Memory error test (maximum number of leaves)
                 if (n_leaves>=MAX_LEAVES)
                 {
-                    fprintf(stderr,"\nMaximum number of leaves reached. This limit is hard-coded as a constant to avoid memory problems, so if you have memory enough, you can recompile the software with a bigger limit\n");
+                    fprintf(stderr,"\nMaximum number of leaves reached. After checking your simulation parameters carefully (mainly species tree simulation birth rate) you can sort this problem out setting the environmental variable SIMPHY_MAXLEAVES with a value higher than %d\n",MAX_LEAVES);
                     return(MEM_ERROR);
                 }
                 
@@ -3720,7 +3731,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
             {
                 if (maxnleaves_reached==1)
                 {
-                    printf("\n\t\tThe locus tree simulation reached the maximum number of locus tree lineages (%d) inside a species tree branch. Try %d of %d",MAX_LEAVES,l_tree_retries,MAX_IT);
+                    printf("\n\t\tThe locus tree simulation reached the maximum number of locus tree lineages (%d) inside a species tree branch. After checking your simulation parameters carefully (mainly the duplication rate) you can sort this problem out setting the environmental variable SIMPHY_MAXLEAVES with a value higher than Try %d of %d",MAX_LEAVES,l_tree_retries,MAX_IT);
                 }
                 else if (lt_true_leaves<min_lleaves)
                 {
@@ -3805,6 +3816,15 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         
         if(ResetSTreeSimL(wsp_tree)!= NO_ERROR)
             return MEM_ERROR;
+//        if (ExpectedLtreeNleavesSNodes(wsp_tree->root,b_rate,d_rate,1)>=MAX_LEAVES)
+//        {
+//            fprintf(stderr,"\n\nLocus tree birth rate is too hight for the rest of the settings, with an expected number of locus tree leaves bigger than MAX_LEAVES. You could increase this limit changing the environmental variable SIMPHY_MAXLEAVES\n");
+//            
+//#ifdef DBG
+//            fflush(stderr);
+//#endif
+//            return SETTINGS_ERROR;
+//        }
         
         // ******
         /// Reseting of B-D process variables and linking the root of both trees
@@ -4311,7 +4331,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             {
                 if (maxnleaves_reached==1)
                 {
-                    printf("\n\t\tThe locus tree simulation reached the maximum number of locus tree lineages (%d) inside a species tree branch. Try %d of %d",MAX_LEAVES,l_tree_retries,MAX_IT);
+                    printf("\n\t\tThe locus tree simulation reached the maximum number of locus tree lineages (%d) inside a species tree branch. After checking your simulation parameters carefully (mainly the duplication rate) you can sort this problem out setting the environmental variable SIMPHY_MAXLEAVES with a value higher than %d. Try %d of %d",MAX_LEAVES,MAX_LEAVES,l_tree_retries,MAX_IT);
                 }
                 else if (lt_true_leaves<min_lleaves)
                 {
@@ -5532,7 +5552,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
 
 void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed)
 {
-    int i=0,n_branch_wlin=0, wn_olin0=0, wn_olin1=0, reject=1, child;
+    int i=0,n_branch_wlin=0, wn_olin0=0, wn_olin1=0, reject=1, child,n_it=0;
     double p=0,u=0;
     
     if (node->n_child!=0)
@@ -5574,6 +5594,8 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                         
                     default: //Rejection sampling when it has a concrete number of starting lineages.
                         reject=1;
+                        n_it=0;
+                        
                         switch (verbosity)
                         {
                             case 0:
@@ -5590,9 +5612,9 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                         fflush(stdout);
 #endif
                         
-                        while (reject==1)
+                        while (reject==1 && n_it<MAX_IT)
                         {
-
+                            ++n_it;
                             p=ProbCoalFromXtoYLineages(wn_olin0+wn_olin1, node->n_olin, node->gen_length, node->Ne==0?Ne:node->Ne);
                             u=gsl_rng_uniform(seed);
                             switch (verbosity)
@@ -5620,6 +5642,13 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                                 wn_olin1=(int)SampleNDoubles(n_gleaves+1,(*(node->children+1))->o_probs,seed);
                             }
                         }
+                        
+                        if (reject==1)
+                        {
+                            //fprintf(stderr, ");
+                            ErrorReporter(LOOP_ERROR);
+                        }
+                        
                         switch (verbosity)
                         {
                             case 0:
@@ -10359,9 +10388,11 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     int done=0, next_t=1;
     double *t_times=calloc(n_nodes,sizeof(double));
     double t_prob=0, c_prob=0;
-    l_node *w_lnode=NULL,*w_tnode=t_node, **wl_pointers=calloc(n_nodes,sizeof(l_node *));
+    l_node *w_lnode=NULL,*w_tnode=t_node, **wl_pointers;
     
-    if (t_times==NULL || *wl_pointers==NULL)
+    wl_pointers=calloc(n_nodes,sizeof(l_node *));
+    
+    if (t_times==NULL || wl_pointers==NULL)
         ErrorReporter(MEM_ERROR);
     
     for (j=0; j<n_nodes; ++j) //Reset
@@ -10740,7 +10771,7 @@ double CheckUltrametricitySNodes(s_node *node)
             for (i=1; i<node->n_child; ++i)
             {
                 n_time=CheckUltrametricitySNodes(*(node->children+i));
-                if(n_time == -1 || fabs(time-n_time)>DBL_EPSILON)
+                if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
                     return -1;
             }
         return time;
@@ -10774,4 +10805,23 @@ double CheckUltrametricityLNodes(l_node *node)
     {
         return node->time;
     }
+}
+
+double ExpectedLtreeNleavesSNodes(s_node *node, double b_rate, double d_rate, double prev_n0)
+{
+    int i=0;
+    double n_eleaves=0,n0=0;
+    n0=prev_n0*exp((b_rate-d_rate)*node->n_gen);
+    if (node->n_child==0)
+    {
+        n_eleaves=n0;
+    }
+    else
+    {
+        for (i=0; i<node->n_child;++i)
+        {
+            n_eleaves+=ExpectedLtreeNleavesSNodes(*(node->children+i), b_rate, d_rate,n0);
+        }
+    }
+    return n_eleaves;
 }

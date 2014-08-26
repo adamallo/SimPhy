@@ -23,6 +23,9 @@
 #ifndef __GSL_RNG_H
 #include <gsl/gsl_rng.h>
 #endif
+#ifndef __MPFR_H__
+#include <mpfr.h>
+#endif
 
 ////MPFR Library
 //#ifndef  _STDARG_H
@@ -32,10 +35,6 @@
 //#include <float.h>
 
 extern int MAX_IT;
-extern int MAX_NAME;
-extern int MAX_CHILDS;
-extern int MAX_LEAVES;
-
 
 /** \name Root finding methods **/
 ///@{

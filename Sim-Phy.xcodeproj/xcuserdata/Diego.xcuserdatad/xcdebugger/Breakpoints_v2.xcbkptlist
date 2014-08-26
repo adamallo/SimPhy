@@ -358,11 +358,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3758"
-            endingLineNumber = "3758"
+            startingLineNumber = "3769"
+            endingLineNumber = "3769"
             landmarkName = "SimBDLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -374,11 +374,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3957"
-            endingLineNumber = "3957"
+            startingLineNumber = "3977"
+            endingLineNumber = "3977"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -390,11 +390,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "903"
-            endingLineNumber = "903"
+            startingLineNumber = "937"
+            endingLineNumber = "937"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -406,11 +406,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6399"
-            endingLineNumber = "6399"
+            startingLineNumber = "6428"
+            endingLineNumber = "6428"
             landmarkName = "FreeLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -422,11 +422,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1110"
-            endingLineNumber = "1110"
+            startingLineNumber = "1144"
+            endingLineNumber = "1144"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -438,11 +438,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5019"
-            endingLineNumber = "5019"
+            startingLineNumber = "5039"
+            endingLineNumber = "5039"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -454,11 +454,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5019"
-            endingLineNumber = "5019"
+            startingLineNumber = "5039"
+            endingLineNumber = "5039"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -470,11 +470,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5035"
-            endingLineNumber = "5035"
+            startingLineNumber = "5055"
+            endingLineNumber = "5055"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -486,11 +486,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5032"
-            endingLineNumber = "5032"
+            startingLineNumber = "5052"
+            endingLineNumber = "5052"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -502,11 +502,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6572"
-            endingLineNumber = "6572"
+            startingLineNumber = "6601"
+            endingLineNumber = "6601"
             landmarkName = "ReallocNames()"
             landmarkType = "7">
          </BreakpointContent>
@@ -518,11 +518,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5202"
-            endingLineNumber = "5202"
+            startingLineNumber = "5222"
+            endingLineNumber = "5222"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -534,11 +534,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5212"
-            endingLineNumber = "5212"
+            startingLineNumber = "5232"
+            endingLineNumber = "5232"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -550,11 +550,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407820324.973173"
+            timestampString = "430755254.417851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "420"
-            endingLineNumber = "420"
+            startingLineNumber = "436"
+            endingLineNumber = "436"
             landmarkName = "SampleCDFCoalTimeMLCFromXtoYLineages()"
             landmarkType = "7">
          </BreakpointContent>
@@ -566,11 +566,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407820490.414284"
+            timestampString = "430744814.422004"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "90"
-            endingLineNumber = "90"
+            startingLineNumber = "92"
+            endingLineNumber = "92"
             landmarkName = "brent_root()"
             landmarkType = "7">
          </BreakpointContent>
@@ -582,11 +582,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407820628.197496"
+            timestampString = "430744814.422004"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "94"
-            endingLineNumber = "94"
+            startingLineNumber = "96"
+            endingLineNumber = "96"
             landmarkName = "brent_root()"
             landmarkType = "7">
          </BreakpointContent>
@@ -598,11 +598,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407820727.157837"
+            timestampString = "430755254.417851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "422"
-            endingLineNumber = "422"
+            startingLineNumber = "438"
+            endingLineNumber = "438"
             landmarkName = "SampleCDFCoalTimeMLCFromXtoYLineages()"
             landmarkType = "7">
          </BreakpointContent>
@@ -614,11 +614,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407868174.083382"
+            timestampString = "430755254.417851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "370"
-            endingLineNumber = "370"
+            startingLineNumber = "386"
+            endingLineNumber = "386"
             landmarkName = "SampleCoalTimeMLCFromXtoYLineages()"
             landmarkType = "7">
          </BreakpointContent>
@@ -630,11 +630,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5077"
-            endingLineNumber = "5077"
+            startingLineNumber = "5097"
+            endingLineNumber = "5097"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -646,11 +646,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5492"
-            endingLineNumber = "5492"
+            startingLineNumber = "5512"
+            endingLineNumber = "5512"
             landmarkName = "CalcProbsNLineagesLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -662,11 +662,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5083"
-            endingLineNumber = "5083"
+            startingLineNumber = "5103"
+            endingLineNumber = "5103"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -678,11 +678,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5049"
-            endingLineNumber = "5049"
+            startingLineNumber = "5069"
+            endingLineNumber = "5069"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
             <Locations>
@@ -724,11 +724,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5046"
-            endingLineNumber = "5046"
+            startingLineNumber = "5066"
+            endingLineNumber = "5066"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -740,11 +740,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5041"
-            endingLineNumber = "5041"
+            startingLineNumber = "5061"
+            endingLineNumber = "5061"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -756,11 +756,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5196"
-            endingLineNumber = "5196"
+            startingLineNumber = "5216"
+            endingLineNumber = "5216"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -772,11 +772,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5048"
-            endingLineNumber = "5048"
+            startingLineNumber = "5068"
+            endingLineNumber = "5068"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -788,11 +788,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407900680.221495"
+            timestampString = "430755254.417851"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "671"
-            endingLineNumber = "671"
+            startingLineNumber = "687"
+            endingLineNumber = "687"
             landmarkName = "SampleNDoubles()"
             landmarkType = "7">
          </BreakpointContent>
@@ -804,11 +804,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4935"
-            endingLineNumber = "4935"
+            startingLineNumber = "4955"
+            endingLineNumber = "4955"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -820,11 +820,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/num_methods.c"
-            timestampString = "407952621.827505"
+            timestampString = "430744814.422004"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "153"
-            endingLineNumber = "153"
+            startingLineNumber = "155"
+            endingLineNumber = "155"
             landmarkName = "brent_root()"
             landmarkType = "7">
          </BreakpointContent>
@@ -836,11 +836,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "582"
-            endingLineNumber = "582"
+            startingLineNumber = "616"
+            endingLineNumber = "616"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -852,11 +852,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4435"
-            endingLineNumber = "4435"
+            startingLineNumber = "4455"
+            endingLineNumber = "4455"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -868,11 +868,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "890"
-            endingLineNumber = "890"
+            startingLineNumber = "924"
+            endingLineNumber = "924"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -884,11 +884,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1929"
-            endingLineNumber = "1929"
+            startingLineNumber = "1983"
+            endingLineNumber = "1983"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -900,11 +900,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "429117626.4727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "194"
-            endingLineNumber = "194"
+            startingLineNumber = "193"
+            endingLineNumber = "193"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -916,11 +916,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1522"
-            endingLineNumber = "1522"
+            startingLineNumber = "1558"
+            endingLineNumber = "1558"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -932,11 +932,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1927"
-            endingLineNumber = "1927"
+            startingLineNumber = "1981"
+            endingLineNumber = "1981"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -948,11 +948,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10419"
-            endingLineNumber = "10419"
+            startingLineNumber = "10450"
+            endingLineNumber = "10450"
             landmarkName = "ChooseLNodePeriod()"
             landmarkType = "7">
          </BreakpointContent>
@@ -964,11 +964,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4315"
-            endingLineNumber = "4315"
+            startingLineNumber = "4335"
+            endingLineNumber = "4335"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -980,11 +980,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4400"
-            endingLineNumber = "4400"
+            startingLineNumber = "4420"
+            endingLineNumber = "4420"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -996,11 +996,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10412"
-            endingLineNumber = "10412"
+            startingLineNumber = "10443"
+            endingLineNumber = "10443"
             landmarkName = "ChooseLNodePeriod()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1012,11 +1012,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4462"
-            endingLineNumber = "4462"
+            startingLineNumber = "4482"
+            endingLineNumber = "4482"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1028,11 +1028,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4465"
-            endingLineNumber = "4465"
+            startingLineNumber = "4485"
+            endingLineNumber = "4485"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1040,58 +1040,58 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.h"
-            timestampString = "426099626.601466"
+            timestampString = "430684473.108519"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1572"
-            endingLineNumber = "1572"
+            startingLineNumber = "1576"
+            endingLineNumber = "1576"
             landmarkName = "ErrorReporter(long int code)"
             landmarkType = "7">
             <Locations>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "ErrorReporter"
                   moduleName = "Sim-Phy"
                   urlString = "file:///Users/Diego/Desktop/Sim-Phy/src/trees.h"
-                  timestampString = "426180235.155271"
+                  timestampString = "430423845.156636"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1573"
-                  endingLineNumber = "1573"
+                  startingLineNumber = "1576"
+                  endingLineNumber = "1576"
                   offsetFromSymbolStart = "294">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "ErrorReporter"
                   moduleName = "Sim-Phy"
                   urlString = "file:///Users/Diego/Desktop/Sim-Phy/src/trees.h"
-                  timestampString = "426180235.155456"
+                  timestampString = "430423845.156819"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1573"
-                  endingLineNumber = "1573"
+                  startingLineNumber = "1576"
+                  endingLineNumber = "1576"
                   offsetFromSymbolStart = "294">
                </Location>
                <Location
-                  shouldBeEnabled = "Yes"
+                  shouldBeEnabled = "No"
                   ignoreCount = "0"
                   continueAfterRunningActions = "No"
                   symbolName = "ErrorReporter"
                   moduleName = "Sim-Phy"
                   urlString = "file:///Users/Diego/Desktop/Sim-Phy/src/trees.h"
-                  timestampString = "426180235.155614"
+                  timestampString = "430423845.156974"
                   startingColumnNumber = "9223372036854775807"
                   endingColumnNumber = "9223372036854775807"
-                  startingLineNumber = "1573"
-                  endingLineNumber = "1573"
+                  startingLineNumber = "1576"
+                  endingLineNumber = "1576"
                   offsetFromSymbolStart = "294">
                </Location>
             </Locations>
@@ -1104,11 +1104,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1171"
-            endingLineNumber = "1171"
+            startingLineNumber = "1205"
+            endingLineNumber = "1205"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1120,11 +1120,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2202"
-            endingLineNumber = "2202">
+            startingLineNumber = "2249"
+            endingLineNumber = "2249">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1134,11 +1134,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2820"
-            endingLineNumber = "2820"
+            startingLineNumber = "2831"
+            endingLineNumber = "2831"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
             <Locations>
@@ -1180,11 +1180,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2813"
-            endingLineNumber = "2813"
+            startingLineNumber = "2824"
+            endingLineNumber = "2824"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1196,11 +1196,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2829"
-            endingLineNumber = "2829"
+            startingLineNumber = "2840"
+            endingLineNumber = "2840"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
             <Locations>
@@ -1242,11 +1242,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4755"
-            endingLineNumber = "4755"
+            startingLineNumber = "4775"
+            endingLineNumber = "4775"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1258,11 +1258,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4412"
-            endingLineNumber = "4412"
+            startingLineNumber = "4432"
+            endingLineNumber = "4432"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1274,11 +1274,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4340"
-            endingLineNumber = "4340"
+            startingLineNumber = "4360"
+            endingLineNumber = "4360"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1290,11 +1290,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4375"
-            endingLineNumber = "4375"
+            startingLineNumber = "4395"
+            endingLineNumber = "4395"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1306,11 +1306,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "9501"
-            endingLineNumber = "9501"
+            startingLineNumber = "9530"
+            endingLineNumber = "9530"
             landmarkName = "WriteSNodesGen()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1322,11 +1322,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4365"
-            endingLineNumber = "4365"
+            startingLineNumber = "4385"
+            endingLineNumber = "4385"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1338,11 +1338,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10313"
-            endingLineNumber = "10313"
+            startingLineNumber = "10342"
+            endingLineNumber = "10342"
             landmarkName = "WriteGNodesFile()"
             landmarkType = "7">
             <Locations>
@@ -1384,11 +1384,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10283"
-            endingLineNumber = "10283"
+            startingLineNumber = "10312"
+            endingLineNumber = "10312"
             landmarkName = "WriteGNodesFile()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1400,11 +1400,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10301"
-            endingLineNumber = "10301"
+            startingLineNumber = "10330"
+            endingLineNumber = "10330"
             landmarkName = "WriteGNodesFile()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1416,11 +1416,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1023"
-            endingLineNumber = "1023"
+            startingLineNumber = "1057"
+            endingLineNumber = "1057"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1432,11 +1432,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "897"
-            endingLineNumber = "897"
+            startingLineNumber = "931"
+            endingLineNumber = "931"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1448,11 +1448,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5063"
-            endingLineNumber = "5063"
+            startingLineNumber = "5083"
+            endingLineNumber = "5083"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1464,11 +1464,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4811"
-            endingLineNumber = "4811"
+            startingLineNumber = "4831"
+            endingLineNumber = "4831"
             landmarkName = "SimMSCGTree()"
             landmarkType = "7">
             <Locations>
@@ -1510,11 +1510,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2942"
-            endingLineNumber = "2942"
+            startingLineNumber = "2953"
+            endingLineNumber = "2953"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1526,11 +1526,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2865"
-            endingLineNumber = "2865"
+            startingLineNumber = "2876"
+            endingLineNumber = "2876"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1542,11 +1542,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2784"
-            endingLineNumber = "2784"
+            startingLineNumber = "2795"
+            endingLineNumber = "2795"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
             <Locations>
@@ -1588,11 +1588,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2810"
-            endingLineNumber = "2810"
+            startingLineNumber = "2821"
+            endingLineNumber = "2821"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1604,11 +1604,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3253"
-            endingLineNumber = "3253"
+            startingLineNumber = "3264"
+            endingLineNumber = "3264"
             landmarkName = "NewBDSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1620,11 +1620,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "880"
-            endingLineNumber = "880"
+            startingLineNumber = "914"
+            endingLineNumber = "914"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1636,11 +1636,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4752"
-            endingLineNumber = "4752"
+            startingLineNumber = "4772"
+            endingLineNumber = "4772"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1652,11 +1652,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1923"
-            endingLineNumber = "1923"
+            startingLineNumber = "1977"
+            endingLineNumber = "1977"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1668,11 +1668,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4613"
-            endingLineNumber = "4613"
+            startingLineNumber = "4633"
+            endingLineNumber = "4633"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1684,11 +1684,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1106"
-            endingLineNumber = "1106"
+            startingLineNumber = "1140"
+            endingLineNumber = "1140"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1700,11 +1700,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "902"
-            endingLineNumber = "902"
+            startingLineNumber = "936"
+            endingLineNumber = "936"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1716,11 +1716,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4586"
-            endingLineNumber = "4586"
+            startingLineNumber = "4606"
+            endingLineNumber = "4606"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1732,11 +1732,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4360"
-            endingLineNumber = "4360"
+            startingLineNumber = "4380"
+            endingLineNumber = "4380"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1748,11 +1748,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4367"
-            endingLineNumber = "4367"
+            startingLineNumber = "4387"
+            endingLineNumber = "4387"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1764,11 +1764,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4744"
-            endingLineNumber = "4744"
+            startingLineNumber = "4764"
+            endingLineNumber = "4764"
             landmarkName = "SimBDLHTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1780,11 +1780,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7407"
-            endingLineNumber = "7407"
+            startingLineNumber = "7436"
+            endingLineNumber = "7436"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1796,11 +1796,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "891"
-            endingLineNumber = "891"
+            startingLineNumber = "925"
+            endingLineNumber = "925"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1812,11 +1812,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5110"
-            endingLineNumber = "5110"
+            startingLineNumber = "5130"
+            endingLineNumber = "5130"
             landmarkName = "SimMLCGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1828,11 +1828,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.h"
-            timestampString = "426099626.601466"
+            timestampString = "429117626.4727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "210"
-            endingLineNumber = "210">
+            startingLineNumber = "213"
+            endingLineNumber = "213">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1842,11 +1842,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "6775"
-            endingLineNumber = "6775"
+            startingLineNumber = "6804"
+            endingLineNumber = "6804"
             landmarkName = "MatchTreesMLC()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1858,11 +1858,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7450"
-            endingLineNumber = "7450"
+            startingLineNumber = "7479"
+            endingLineNumber = "7479"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1874,11 +1874,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7080"
-            endingLineNumber = "7080"
+            startingLineNumber = "7109"
+            endingLineNumber = "7109"
             landmarkName = "CollapseGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1890,11 +1890,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7044"
-            endingLineNumber = "7044"
+            startingLineNumber = "7073"
+            endingLineNumber = "7073"
             landmarkName = "CollapseGTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1906,11 +1906,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1109"
-            endingLineNumber = "1109"
+            startingLineNumber = "1143"
+            endingLineNumber = "1143"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1922,11 +1922,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7493"
-            endingLineNumber = "7493"
+            startingLineNumber = "7522"
+            endingLineNumber = "7522"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1938,11 +1938,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7420"
-            endingLineNumber = "7420"
+            startingLineNumber = "7449"
+            endingLineNumber = "7449"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1954,11 +1954,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7426"
-            endingLineNumber = "7426"
+            startingLineNumber = "7455"
+            endingLineNumber = "7455"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1970,11 +1970,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7507"
-            endingLineNumber = "7507"
+            startingLineNumber = "7536"
+            endingLineNumber = "7536"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -1986,11 +1986,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7425"
-            endingLineNumber = "7425"
+            startingLineNumber = "7454"
+            endingLineNumber = "7454"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2002,11 +2002,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7428"
-            endingLineNumber = "7428"
+            startingLineNumber = "7457"
+            endingLineNumber = "7457"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2018,11 +2018,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7518"
-            endingLineNumber = "7518"
+            startingLineNumber = "7547"
+            endingLineNumber = "7547"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2034,11 +2034,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7429"
-            endingLineNumber = "7429"
+            startingLineNumber = "7458"
+            endingLineNumber = "7458"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2050,11 +2050,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7482"
-            endingLineNumber = "7482"
+            startingLineNumber = "7511"
+            endingLineNumber = "7511"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2066,27 +2066,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1762"
-            endingLineNumber = "1762"
-            landmarkName = "GetSettings()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/main.c"
-            timestampString = "426181198.020437"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1766"
-            endingLineNumber = "1766"
+            startingLineNumber = "1807"
+            endingLineNumber = "1807"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2098,43 +2082,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "314"
-            endingLineNumber = "314"
-            landmarkName = "main()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/main.c"
-            timestampString = "426181198.020437"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "315"
-            endingLineNumber = "315"
-            landmarkName = "main()"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/main.c"
-            timestampString = "426181198.020437"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2027"
-            endingLineNumber = "2027"
+            startingLineNumber = "1811"
+            endingLineNumber = "1811"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2146,11 +2098,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "429117626.4727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "478"
-            endingLineNumber = "478"
+            startingLineNumber = "307"
+            endingLineNumber = "307"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2162,11 +2114,27 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "429117626.4727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2101"
-            endingLineNumber = "2101"
+            startingLineNumber = "308"
+            endingLineNumber = "308"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            timestampString = "430413089.092734"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2072"
+            endingLineNumber = "2072"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2178,11 +2146,43 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "680"
-            endingLineNumber = "680"
+            startingLineNumber = "512"
+            endingLineNumber = "512"
+            landmarkName = "main()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            timestampString = "430413089.092734"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "2146"
+            endingLineNumber = "2146"
+            landmarkName = "GetSettings()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            timestampString = "430325573.467558"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "714"
+            endingLineNumber = "714"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2194,11 +2194,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1281"
-            endingLineNumber = "1281"
+            startingLineNumber = "1298"
+            endingLineNumber = "1298"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2210,11 +2210,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1206"
-            endingLineNumber = "1206"
+            startingLineNumber = "1223"
+            endingLineNumber = "1223"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2226,11 +2226,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1376"
-            endingLineNumber = "1376"
+            startingLineNumber = "1393"
+            endingLineNumber = "1393"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2242,11 +2242,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1147"
-            endingLineNumber = "1147"
+            startingLineNumber = "1164"
+            endingLineNumber = "1164"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2258,11 +2258,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8016"
-            endingLineNumber = "8016"
+            startingLineNumber = "8045"
+            endingLineNumber = "8045"
             landmarkName = "CheckNexusTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2274,11 +2274,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8019"
-            endingLineNumber = "8019"
+            startingLineNumber = "8048"
+            endingLineNumber = "8048"
             landmarkName = "CheckNexusTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2290,11 +2290,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1296"
-            endingLineNumber = "1296"
+            startingLineNumber = "1313"
+            endingLineNumber = "1313"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2306,11 +2306,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1107"
-            endingLineNumber = "1107"
+            startingLineNumber = "1141"
+            endingLineNumber = "1141"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2322,11 +2322,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1068"
-            endingLineNumber = "1068">
+            startingLineNumber = "1085"
+            endingLineNumber = "1085">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -2336,11 +2336,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2053"
-            endingLineNumber = "2053"
+            startingLineNumber = "2098"
+            endingLineNumber = "2098"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2352,11 +2352,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2037"
-            endingLineNumber = "2037"
+            startingLineNumber = "2082"
+            endingLineNumber = "2082"
             landmarkName = "GetSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2368,11 +2368,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7956"
-            endingLineNumber = "7956"
+            startingLineNumber = "7985"
+            endingLineNumber = "7985"
             landmarkName = "WriteReconLG()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2384,11 +2384,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2081"
-            endingLineNumber = "2081"
+            startingLineNumber = "2098"
+            endingLineNumber = "2098"
             landmarkName = "ParseNexusLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2400,11 +2400,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "900"
-            endingLineNumber = "900"
+            startingLineNumber = "934"
+            endingLineNumber = "934"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2416,11 +2416,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "899"
-            endingLineNumber = "899"
+            startingLineNumber = "933"
+            endingLineNumber = "933"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2432,11 +2432,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "475"
-            endingLineNumber = "475"
+            startingLineNumber = "509"
+            endingLineNumber = "509"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2444,15 +2444,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430413089.092734"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2904"
-            endingLineNumber = "2904"
+            startingLineNumber = "2962"
+            endingLineNumber = "2962"
             landmarkName = "PrintSettings()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2464,11 +2464,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "429117626.4727"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "339"
-            endingLineNumber = "339"
+            startingLineNumber = "332"
+            endingLineNumber = "332"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2480,11 +2480,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "500"
-            endingLineNumber = "500"
+            startingLineNumber = "534"
+            endingLineNumber = "534"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2496,11 +2496,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/main.c"
-            timestampString = "426181198.020437"
+            timestampString = "430325573.467558"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "954"
-            endingLineNumber = "954"
+            startingLineNumber = "988"
+            endingLineNumber = "988"
             landmarkName = "main()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2512,11 +2512,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7525"
-            endingLineNumber = "7525"
+            startingLineNumber = "7554"
+            endingLineNumber = "7554"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2528,11 +2528,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7563"
-            endingLineNumber = "7563"
+            startingLineNumber = "7592"
+            endingLineNumber = "7592"
             landmarkName = "CheckUltrametricitySTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2544,11 +2544,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1137"
-            endingLineNumber = "1137"
+            startingLineNumber = "1154"
+            endingLineNumber = "1154"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2560,11 +2560,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430684473.108519"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "926"
-            endingLineNumber = "926"
+            startingLineNumber = "942"
+            endingLineNumber = "942"
             landmarkName = "NewPeriods()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2576,11 +2576,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1252"
-            endingLineNumber = "1252"
+            startingLineNumber = "1269"
+            endingLineNumber = "1269"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2592,11 +2592,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1263"
-            endingLineNumber = "1263"
+            startingLineNumber = "1280"
+            endingLineNumber = "1280"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2608,11 +2608,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8414"
-            endingLineNumber = "8414"
+            startingLineNumber = "8443"
+            endingLineNumber = "8443"
             landmarkName = "ResetBuffer()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2624,11 +2624,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1267"
-            endingLineNumber = "1267"
+            startingLineNumber = "1284"
+            endingLineNumber = "1284"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2640,11 +2640,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430772240.301726"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "10498"
-            endingLineNumber = "10498"
+            startingLineNumber = "10529"
+            endingLineNumber = "10529"
             landmarkName = "GetSnodeParamsFromNexusComments()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2656,11 +2656,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1976"
-            endingLineNumber = "1976"
+            startingLineNumber = "1993"
+            endingLineNumber = "1993"
             landmarkName = "ParseNexusLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2668,15 +2668,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1305"
-            endingLineNumber = "1305"
+            startingLineNumber = "1322"
+            endingLineNumber = "1322"
             landmarkName = "ParseNexusSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2688,11 +2688,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1730"
-            endingLineNumber = "1730"
+            startingLineNumber = "1747"
+            endingLineNumber = "1747"
             landmarkName = "ParseNewickSTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2700,15 +2700,15 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
-            shouldBeEnabled = "Yes"
+            shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2019"
-            endingLineNumber = "2019"
+            startingLineNumber = "2036"
+            endingLineNumber = "2036"
             landmarkName = "ParseNexusLTree()"
             landmarkType = "7">
          </BreakpointContent>
@@ -2720,12 +2720,252 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "426445979.450869"
+            timestampString = "430765225.261345"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2520"
-            endingLineNumber = "2520"
+            startingLineNumber = "2531"
+            endingLineNumber = "2531"
             landmarkName = "ParseNewickLTree()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/sampling.c"
+            timestampString = "429548948.435517"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "90"
+            endingLineNumber = "90"
+            landmarkName = "ParseSampling()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430765225.261345"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "5555"
+            endingLineNumber = "5555"
+            landmarkName = "SampleNLineagesLTree()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430765225.261345"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4603"
+            endingLineNumber = "4603"
+            landmarkName = "SimBDLHTree()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430765225.261345"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4602"
+            endingLineNumber = "4602"
+            landmarkName = "SimBDLHTree()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430772240.301726"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "10395"
+            endingLineNumber = "10395"
+            landmarkName = "ChooseLNodePeriod()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "348"
+            endingLineNumber = "348"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "331"
+            endingLineNumber = "331"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "351"
+            endingLineNumber = "351"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "345"
+            endingLineNumber = "345"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            timestampString = "430755254.417851"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "328"
+            endingLineNumber = "328"
+            landmarkName = "ProbCoalFromXtoYLineages()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430764392.169068"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "970"
+            endingLineNumber = "970"
+            landmarkName = "NNexusTrees()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430765516.710098"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1411"
+            endingLineNumber = "1411"
+            landmarkName = "ParseNexusSTree()"
+            landmarkType = "7">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/trees.c"
+            timestampString = "430772240.301726"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "10774"
+            endingLineNumber = "10774"
+            landmarkName = "CheckUltrametricitySNodes()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

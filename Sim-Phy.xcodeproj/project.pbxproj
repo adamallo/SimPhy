@@ -226,11 +226,13 @@
 					/opt/local/include,
 				);
 				"LIBRARY_SEARCH_PATHS[arch=*]" = /opt/local/lib;
+				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-lgmp",
 					"-lgsl",
 					"-lgslcblas",
 					"-lsqlite3",
+					"-lmpfr",
 				);
 				PRODUCT_NAME = "Sim-Phy";
 			};
@@ -243,11 +245,13 @@
 					/usr/include,
 					/opt/local/include,
 				);
+				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-lgmp",
 					"-lgsl",
 					"-lgslcblas",
 					"-lsqlite3",
+					"-lmpfr",
 				);
 				PRODUCT_NAME = "Sim-Phy";
 			};

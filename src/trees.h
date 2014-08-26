@@ -51,7 +51,10 @@
 
 #define STREE_MAXMEM ((max_lname*n_gleaves+((n_gleaves*2)-1)*(DBL_DIG+4))+1)  //Str memory overstimation. Max length of the name * n_names + n_nodes* max_blength_ndigits+2(separators) + ; * number of replicas (+ \0).
 
-
+extern int MAX_IT;
+extern int MAX_NAME;
+extern int MAX_CHILDREN;
+extern int MAX_LEAVES;
 extern int NUM_BUFFER;
 extern char TEST_CHAR;
 extern int IO_BUFFER;
@@ -1307,6 +1310,7 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
 long int CheckUltrametricitySTree(s_tree *tree);
 
 long int CheckUltrametricityLTree(l_tree *tree);
+
 ///@}
 
 /** \name Trees I/O **/
@@ -1588,8 +1592,6 @@ static inline void ErrorReporter(long int code)
             fflush(stderr);
             exit (EXIT_FAILURE);
             break;
-
-            
         default: //Pointers with no error.
             break;
     }
