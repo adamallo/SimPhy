@@ -2013,7 +2013,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                     else
                     {
                         *confile_name=argv[i];
-                        if (argc>2)
+                        if (argc>3)
                         {
                             printf("\n\tWARNING! You are using both the input file option -I and command line parameters. If you define a parameter using both input options, input file options will have preference\n");
                         }
@@ -2270,7 +2270,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
     {
         if (*buffer=='#' || (*buffer=='/' && *buffer=='/'))
             continue;
-        else if (*buffer!='-' || ferror(input_file)!=0 || feof(input_file)!=0)
+        else if (*buffer!='-' || ferror(input_file)!=0)
         {
             fprintf(stderr,"Error in the parameter: %s\n",buffer);
             return (SETTINGS_ERROR);

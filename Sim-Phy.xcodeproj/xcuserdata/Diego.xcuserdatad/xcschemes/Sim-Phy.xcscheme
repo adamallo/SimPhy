@@ -64,6 +64,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/test_siavash.txt"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-rs 1 -rl f1 -sr /Users/Diego/Desktop/dlcoal_sim/stree.tree.nex -lb f0.01 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 6 -cs 22"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -73,7 +77,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 1 -rl U10-100 -sb f0.000001 -sl U200-500 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o b_test -os 1 -oc 1 -or 1 -od 1 -v 3 -cs 22"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 1 -rl U10-100 -sb f0.000001 -sl U200-500 -si f5 -ld f0.000000005 -lb f0.000000005 -lt f0.00000005 -p f10000 -g f1 -o b_test -os 1 -oc 1 -or 1 -od 1 -v 3 -cs 22"
