@@ -44,6 +44,9 @@
 #include <string.h>
 #endif
 
+//#define DBG
+//\todo remove for final release
+
 /**
  * Overestimation of the memory required to store one gene tree in Newick format.
  * Based on this formula \f[ ((max\_taxa\_name\_length \ast number\_of\_leaves+((number\_of\_leaves \ast 2)-1) \ast (max\_double\_true\_digits+4)+1) \f]
@@ -1531,7 +1534,7 @@ long int CheckNewickLTree (char * tree);
 
 /** \name Miscellanea **/
 ///@{
-void PrintUsage(void);
+extern void PrintUsage(void);
 void PrintXCharError(char *string, int x, char *errormsg1, char *errormsg);
 inline void ResetBuffer(char *buffer, size_t size);
 inline void reallocBuffer(char **buffer,size_t *size, size_t newsize);
@@ -1543,51 +1546,52 @@ inline void reallocBuffer(char **buffer,size_t *size, size_t newsize);
  * Detector of errors. 
  * This function writes info of errors in stderr and closes
  * the program if it is necessary. The error_codes are declared in \ref ERRORS. 
- * This function was declared into the header to allow to be used as an function.
  *
  * \param code
- *   Error code
+ *  Error code
+ * \param MSN
+ *  Mensage to write in stderr before exiting the program.
  ******************************************************************************/
 
-static inline void ErrorReporter(long int code)
+static inline void ErrorReporter(long int code, char * MSN)
 {
     switch (code) 
     {
         case NO_ERROR:
             break;
         case MEM_ERROR:
-            fprintf(stderr,"\nDynamic memory error\n");
+            fprintf(stderr,"\nDynamic memory error %s\n",MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);
             break;
         case IO_ERROR:
-            fprintf(stderr,"\nIO_error\n");
+            fprintf(stderr,"\nIO_error %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);
             break;
         case LOOP_ERROR:
-            fprintf(stderr,"\nInfinite loop\n");
+            fprintf(stderr,"\nInfinite loop %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);
             break;
         case SETTINGS_ERROR:
-            fprintf(stderr,"\nSettings error\n");
+            fprintf(stderr,"\nSettings error %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             PrintUsage();
             exit (EXIT_FAILURE);
             break;
         case UNEXPECTED_VALUE:
-            fprintf(stderr,"\nUnexpected value has been reached\n");
+            fprintf(stderr,"\nUnexpected value has been reached %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);
             break;
         case DB_ERROR:
-            fprintf(stderr,"\nError with the DB manipulation\n");
+            fprintf(stderr,"\nError with the DB manipulation %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);

@@ -123,13 +123,13 @@ int NUM_BUFFER=20;
 int IO_BUFFER=1000;
 char TEST_CHAR=7;
 
-#define DBG
+//#define DBG
 
 #undef NO_VAR ///< If NO_VAR is defined, the random number generator allways leads the same numbers.
 #undef SORTHOLOGS
 
 #ifdef DBG
-//#define NO_OUT
+#define NO_OUT
 #endif
 
 //\todo Implement branch heterogeneity to the locus tree (different speed for each paralog)//
@@ -304,7 +304,7 @@ int main (int argc, char **argv)
     fflush(stdout);
 #endif
     
-    ErrorReporter(GetSettings(argc,argv,&ns_trees,&nl_trees,&ng_trees,&species_tree_str,&stree_ifile,&n_istrees,&stree_iname,&gen_time,&locus_tree_str,&ltree_ifile,&n_iltrees,&ltree_iname,&b_rate,&d_rate,&t_rate,&gc_rate,&t_kind,&min_lleaves,&min_lsleaves,&ind_per_sp,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&epsilon_brent,&verbosity,&out_name, &stats, &recon, &db, &params, &command, &u_seed, &confile_name));
+    ErrorReporter(GetSettings(argc,argv,&ns_trees,&nl_trees,&ng_trees,&species_tree_str,&stree_ifile,&n_istrees,&stree_iname,&gen_time,&locus_tree_str,&ltree_ifile,&n_iltrees,&ltree_iname,&b_rate,&d_rate,&t_rate,&gc_rate,&t_kind,&min_lleaves,&min_lsleaves,&ind_per_sp,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&epsilon_brent,&verbosity,&out_name, &stats, &recon, &db, &params, &command, &u_seed, &confile_name), ": getting settings");
 
 #ifdef NO_VAR
     gsl_rng_set(r,5);
@@ -396,7 +396,7 @@ int main (int argc, char **argv)
             fflush(stdout);
 #endif
         }
-        ErrorReporter(InitDB(&database, db_outname));
+        ErrorReporter(InitDB(&database, db_outname), NULL);
         if (verbosity>4)
         {
             printf("Done\n");
@@ -422,7 +422,7 @@ int main (int argc, char **argv)
         if ((params_outfile=fopen(params_outname,"w"))==NULL)
         {
             perror("Error opening .params file:");
-            ErrorReporter(IO_ERROR);
+            ErrorReporter(IO_ERROR,NULL);
         }
         PrintFileSettings(params_outfile,species_tree_str,stree_iname,n_istrees,gen_time,locus_tree_str,ltree_iname,n_iltrees,sb_rate,sd_rate,bds_leaves,bds_length,outgroup,b_rate,d_rate,t_rate,gc_rate,t_kind,min_lleaves,min_lsleaves,ind_per_sp,nl_trees,ng_trees,Ne,mu,alpha_s,alpha_l,alpha_g,epsilon_brent,verbosity,out_name, u_seed);
         fclose(params_outfile);
@@ -466,7 +466,7 @@ int main (int argc, char **argv)
         if ((command_outfile=fopen(command_outname,"w"))==NULL)
         {
             perror("Error opening .command file:");
-            ErrorReporter(IO_ERROR);
+            ErrorReporter(IO_ERROR, NULL);
         }
         for (i=0; i<argc;++i)
             fprintf(command_outfile,"%s ",argv[i]);
@@ -478,19 +478,19 @@ int main (int argc, char **argv)
             if ((confile_infile=fopen(confile_name,"r"))==NULL)
             {
                 perror("Error opening input .conf file:");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             if ((confile_outfile=fopen(confile_outname,"w"))==NULL)
             {
                 perror("Error opening output .conf file:");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             while ((c=fgetc(confile_infile)) && c!=EOF)
             {
                 fputc(c,confile_outfile);
                 if (ferror(confile_outfile))
                 {
-                    ErrorReporter(IO_ERROR);
+                    ErrorReporter(IO_ERROR,NULL);
                 }
             }
             fclose(confile_infile);
@@ -509,7 +509,7 @@ int main (int argc, char **argv)
     
     if (n_istrees>0)
     {
-        ErrorReporter(InitNexusParser(stree_ifile));
+        ErrorReporter(InitNexusParser(stree_ifile), ": parsing Nexus file");
     }
     
 #endif
@@ -530,16 +530,16 @@ int main (int argc, char **argv)
         // ******
         /// <dl><dt>Species-level parameter sampling</dt></dl>
 
-        ErrorReporter(sample_distr(r,15,&bds_leaves,&bds_length,&sb_rate,&sd_rate,&outgroup,&ind_per_sp,&nl_trees,&b_rate,&d_rate,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&gen_time));
-        ErrorReporter(CheckSampledSettings(bds_leaves,bds_length,sb_rate,sd_rate,outgroup,ind_per_sp,nl_trees,b_rate,d_rate,t_rate,gc_rate,Ne,alpha_s,alpha_l,alpha_g,mu,gen_time,min_lleaves));
+        ErrorReporter(sample_distr(r,15,&bds_leaves,&bds_length,&sb_rate,&sd_rate,&outgroup,&ind_per_sp,&nl_trees,&b_rate,&d_rate,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&gen_time),": sampling distributions");
+        ErrorReporter(CheckSampledSettings(bds_leaves,bds_length,sb_rate,sd_rate,outgroup,ind_per_sp,nl_trees,b_rate,d_rate,t_rate,gc_rate,Ne,alpha_s,alpha_l,alpha_g,mu,gen_time,min_lleaves), ": inproper sampled values");
         
         if (n_istrees>0)
         {
-            ErrorReporter(NextNexusTree(stree_ifile,&species_tree_str));
+            ErrorReporter(NextNexusTree(stree_ifile,&species_tree_str)," : getting next Nexus tree");
         }
         else if (n_iltrees>0)
         {
-            ErrorReporter(InitNexusParser(ltree_ifile));
+            ErrorReporter(InitNexusParser(ltree_ifile),": Parsing Nexus tree");
         }
         
         if (verbosity>2)
@@ -633,7 +633,7 @@ int main (int argc, char **argv)
             if ((s_outfile=fopen(s_outname, "w"))==NULL)
             {
                 perror("Error opening s_trees.tree file..");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             if (verbosity>4)
             {
@@ -656,7 +656,7 @@ int main (int argc, char **argv)
             if ((stat_outfile=fopen(stat_outname, "w"))==NULL)
             {
                 perror("Error opening stats.txt:");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             fprintf(stat_outfile,"L_tree;N_losses;N_duplications;N_transfers;N_lt_totaltips;N_gt_presenttips;Mean_gt_height(cu);Mean_gt_height(ec);Mean_extra_lineages\n");
             if (verbosity>4)
@@ -679,7 +679,7 @@ int main (int argc, char **argv)
         if ((l_outfile=fopen(l_outname,"w"))==NULL)
         {
             perror("Error opening l_trees.tree file: ");
-            ErrorReporter(IO_ERROR);
+            ErrorReporter(IO_ERROR,NULL);
         }
         if (verbosity>4)
         {
@@ -694,7 +694,7 @@ int main (int argc, char **argv)
             if ((weirds_outfile=fopen(weirds_outname, "w"))==NULL)
             {
                 perror("Error opening weirds file:");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             weirdg_outname=malloc((strlen(g_prefix)+n_ldigits+strlen(weirdg_sufix)+1)*sizeof(char));
         }
@@ -715,10 +715,7 @@ int main (int argc, char **argv)
                 CollapseSTree(sp_tree,(get_sampling(b_rate) == get_sampling(d_rate)) && get_sampling(b_rate)==0?1:0); //Memory reallocation in post-order
                 
                 if (sp_tree->n_leaves<min_lleaves)
-                {
-                    fprintf(stderr,"\n\t\tERROR:The minimum number of locus tree leaves is bigger than the number of leaves of the fixed species tree. Please, check the -Ll parameter and the input species tree.\n");
-                    ErrorReporter(SETTINGS_ERROR);
-                }
+                    ErrorReporter(SETTINGS_ERROR,"\n\t\tERROR:The minimum number of locus tree leaves is bigger than the number of leaves of the fixed species tree. Please, check the -Ll parameter and the input species tree.\n");
                 
             }
             else
@@ -732,7 +729,7 @@ int main (int argc, char **argv)
                 }
                 // ******
                 /// Species tree simulation using a birth-death process (\ref NewBDSTree) and collapse-reallocation (\ref CollapseSTree) if it is not fixed. Pre-order if the locus tree will be simulated, post-order if it will not.
-                ErrorReporter(NewBDSTree(&sp_tree,get_sampling(bds_leaves), get_sampling(bds_length), get_sampling(sb_rate), get_sampling(sd_rate),get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp),get_sampling(outgroup),0,1,r, verbosity));//complete 0 and SSA simulation at least.
+                ErrorReporter(NewBDSTree(&sp_tree,get_sampling(bds_leaves), get_sampling(bds_length), get_sampling(sb_rate), get_sampling(sd_rate),get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp),get_sampling(outgroup),0,1,r, verbosity), ": simulating the species tree");//complete 0 and SSA simulation at least.
                 CollapseSTree(sp_tree,(get_sampling(b_rate) == get_sampling(d_rate)) && get_sampling(b_rate)==0?1:0);
                 
                 if (sp_tree->n_leaves<min_lleaves)
@@ -850,7 +847,7 @@ int main (int argc, char **argv)
                 // ****
                 /// Intermediate node pointers allocation </dd></dl></dd></dl>
                 node_ptrs=calloc(MAX_LEAVES,sizeof(l_node *));
-                ErrorReporter((long int)node_ptrs);
+                ErrorReporter((long int)node_ptrs, NULL);
             }
         }
         
@@ -883,13 +880,13 @@ int main (int argc, char **argv)
         {
             if (locus_tree_str!=NULL || n_iltrees!=0)
             {
-                ErrorReporter(WriteSTreeDB(&database,0,0,0,0,0,0,0,0,0,0,0,0));
+                ErrorReporter(WriteSTreeDB(&database,0,0,0,0,0,0,0,0,0,0,0,0), ": writting the species tree table");
             }
             else
             {
                 Measure_ST_height(sp_tree, &st_height, CU);
                 Measure_ST_length(sp_tree, &st_length, CU);
-                ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,(*sp_tree->root->children)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time)));
+                ErrorReporter(WriteSTreeDB(&database, sp_tree->n_leaves, st_height,st_length,(*sp_tree->root->children)->gen_length, get_sampling(ind_per_sp), get_sampling(nl_trees), get_sampling(alpha_s), get_sampling(alpha_l), get_sampling(alpha_g), get_sampling(Ne), get_sampling(mu), get_sampling(gen_time)), ": writting the species tree table");
             }
 
         }
@@ -921,7 +918,7 @@ int main (int argc, char **argv)
 
                 // ******
                 /// Locus tree simulation
-                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves));
+                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves), ": simulating a locus tree");
                 
                 // ******
                 /// Species tree reindexation in post-order
@@ -933,14 +930,14 @@ int main (int argc, char **argv)
                 if (recon>1) //If I would use includelosses (more than one extra lineage per loss), this has to be st_losses*includelosses
                     locus_tree->n_gleaves+=st_losses;
                 
-                ErrorReporter(CollapseLTree(locus_tree,1,0,(st_dups==0 && st_transf==0 && st_gc==0)?0:1));
-                
+                ErrorReporter(CollapseLTree(locus_tree,1,0,(st_dups==0 && st_transf==0 && st_gc==0)?0:1), NULL);
+#ifndef NO_OUT
                 if (recon>0 && recon!=2)
                 {
                     sprintf(reconsl_outname,"%.*d%s",n_ldigits,curr_ltree,reconsl_sufix2);
                     WriteReconSL(sp_tree, locus_tree, names, reconsl_outname);
                 }
-                
+#endif
                 switch (verbosity)
                 {
                     case 0:
@@ -980,7 +977,7 @@ int main (int argc, char **argv)
                 }
                 if (n_iltrees>0)
                 {
-                    ErrorReporter(NextNexusTree(ltree_ifile,&locus_tree_str));
+                    ErrorReporter(NextNexusTree(ltree_ifile,&locus_tree_str),": parsing the next Nexus tree");
                 }
                 
                 // ***
@@ -994,7 +991,7 @@ int main (int argc, char **argv)
                 {
                     st_leaves=locus_tree->n_leaves;
                     st_gleaves=locus_tree->n_gleaves;
-                    ErrorReporter(Count_duplications(locus_tree,&st_dups));
+                    ErrorReporter(Count_duplications(locus_tree,&st_dups),NULL);
                 }
                 
                 // ****
@@ -1051,7 +1048,7 @@ int main (int argc, char **argv)
 
             if (db>0)
             {
-                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),locus_tree->n_leaves, st_dups, st_losses,st_transf,st_gc,gamma_l));
+                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(b_rate), get_sampling(d_rate), get_sampling(t_rate), get_sampling(gc_rate),locus_tree->n_leaves, st_dups, st_losses,st_transf,st_gc,gamma_l),": writting the locus tree rable");
                 t_n_ltree++;
             }
             
@@ -1084,12 +1081,12 @@ int main (int argc, char **argv)
             if ((g_outfile=fopen(g_outname, "w"))==NULL)
             {
                 perror("Error opening g_tree file: ");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             if (weirdness!=0 && (weirdg_outfile=fopen(weirdg_outname, "w"))==NULL)
             {
                 perror("Error opening weirdg_tree file: ");
-                ErrorReporter(IO_ERROR);
+                ErrorReporter(IO_ERROR,NULL);
             }
             if (verbosity>4)
             {
@@ -1138,9 +1135,9 @@ int main (int argc, char **argv)
                 // ****
                 /// Gene tree simulation
                 if (st_dups==0 && st_transf==0 && st_gc==0)
-                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)));
+                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 else
-                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)));
+                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>
@@ -1202,7 +1199,7 @@ int main (int argc, char **argv)
                 if (recon>0)
                 {
                     if (recon!=2)
-                        ErrorReporter(WriteReconLG(gene_tree, names, reconlg_outname));
+                        ErrorReporter(WriteReconLG(gene_tree, names, reconlg_outname),": obtaining LG reconciliation");
                 }
 #endif
                 // ****
@@ -1293,7 +1290,7 @@ int main (int argc, char **argv)
 #ifndef NO_OUT
                 if (db>0)
                 {
-                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, locus_tree->n_gleaves, st_lcoals, height_cu, length_bl));
+                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, locus_tree->n_gleaves, st_lcoals, height_cu, length_bl),": writting gene tree table");
                 }
                 
 #endif
@@ -1416,8 +1413,10 @@ int main (int argc, char **argv)
         free(stree_iname);
     if (ltree_iname!=NULL)
         free(ltree_iname);
+#ifndef NO_OUT
     if (db>0)
-        ErrorReporter(CloseDB(&database));
+        ErrorReporter(CloseDB(&database),NULL);
+#endif
 #ifdef SORTHOLOGS
     if (dupdistances!=NULL)
         free(dupdistances);
@@ -1812,11 +1811,11 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         {
                             PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
                             perror("Error opening input_file: ");
-                            ErrorReporter(IO_ERROR);
+                            ErrorReporter(IO_ERROR,NULL);
                         }
                         else
                         {
-                            ErrorReporter(NNexusTrees(*stree_ifile,n_istrees));
+                            ErrorReporter(NNexusTrees(*stree_ifile,n_istrees),NULL);
                         }
                         break;
                         // **
@@ -1902,11 +1901,11 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                         {
                             PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
                             perror("Error opening input_file: ");
-                            ErrorReporter(IO_ERROR);
+                            ErrorReporter(IO_ERROR,NULL);
                         }
                         else
                         {
-                            ErrorReporter(NNexusTrees(*ltree_ifile,n_iltrees));
+                            ErrorReporter(NNexusTrees(*ltree_ifile,n_iltrees),NULL);
                         }
                         break;
                         // **
@@ -2009,7 +2008,7 @@ long int GetSettings(int argc, char **argv,int *ns_trees, sampling_unit *nl_tree
                     {
                         PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
                         perror("Error opening input_file: ");
-                        ErrorReporter(IO_ERROR);
+                        ErrorReporter(IO_ERROR,NULL);
                     }
                     else
                     {
@@ -2544,11 +2543,11 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             {
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
                                 perror("Error opening input_file: ");
-                                ErrorReporter(IO_ERROR);
+                                ErrorReporter(IO_ERROR,NULL);
                             }
                             else
                             {
-                                ErrorReporter(NNexusTrees(*stree_ifile,n_istrees));
+                                ErrorReporter(NNexusTrees(*stree_ifile,n_istrees),NULL);
                             }
                             break;
                             // **
@@ -2641,11 +2640,11 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             {
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
                                 perror("Error opening input_file: ");
-                                ErrorReporter(IO_ERROR);
+                                ErrorReporter(IO_ERROR,NULL);
                             }
                             else
                             {
-                                ErrorReporter(NNexusTrees(*ltree_ifile,n_iltrees));
+                                ErrorReporter(NNexusTrees(*ltree_ifile,n_iltrees),NULL);
                             }
                             break;
                             // **

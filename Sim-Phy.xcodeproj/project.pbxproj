@@ -245,6 +245,7 @@
 					/usr/include,
 					/opt/local/include,
 				);
+				LIBRARY_SEARCH_PATHS = /opt/local/lib;
 				OTHER_LDFLAGS = "";
 				"OTHER_LDFLAGS[arch=*]" = (
 					"-lgmp",

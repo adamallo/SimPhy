@@ -724,7 +724,7 @@ s_node * NewSNodes(int n_nodes, int max_children)
     // **
     /// \ref s_node "S_node" memory allocation
     nodes=calloc(n_nodes,sizeof(s_node));
-    ErrorReporter((int long)nodes);
+    ErrorReporter((int long)nodes, NULL);
     
     // **
     /// <dl><dt>\ref s_node "S_node" loop</dt><dd>
@@ -750,7 +750,7 @@ s_node * NewSNodes(int n_nodes, int max_children)
         // *
         /// s_node::children memory allocation and initialization</dd></dl></dd></dl>
         w_node->children=calloc(max_children,sizeof(s_node *));
-        ErrorReporter((long int) w_node->children);
+        ErrorReporter((long int) w_node->children, NULL);
         
         for (j=0; j<max_children; ++j)
         {
@@ -774,7 +774,7 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
     // **
     /// \ref l_node "L_node" memory allocation
     nodes=calloc(n_nodes,sizeof(l_node));
-    ErrorReporter((int long)nodes);
+    ErrorReporter((int long)nodes, NULL);
     
     // **
     /// <dl><dt>\ref l_node "L_node" loop</dt><dd>
@@ -804,7 +804,7 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         // *
         /// l_node::children memory allocation and initialization
         w_node->children=calloc(max_children,sizeof(l_node *));
-        ErrorReporter((long int) w_node->children);
+        ErrorReporter((long int) w_node->children, NULL);
         
         for (j=0; j<max_children; ++j)
         {
@@ -817,11 +817,11 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         if (n_gleaves!=0 && probs!=0)
         {
             w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
-            ErrorReporter((long int)w_node->g_nodes);
-            w_node->i_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
-            ErrorReporter((long int)w_node->i_probs);
-            w_node->o_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
-            ErrorReporter((long int)w_node->o_probs);
+            ErrorReporter((long int)w_node->g_nodes, NULL);
+            w_node->i_probs=calloc(n_gleaves+1,sizeof(double));
+            ErrorReporter((long int)w_node->i_probs, NULL);
+            w_node->o_probs=calloc(n_gleaves+1,sizeof(double));
+            ErrorReporter((long int)w_node->o_probs, NULL);
             
             for (j=0; j<n_gleaves; ++j)
             {
@@ -833,7 +833,7 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         else if (n_gleaves!=0)
         {
             w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
-            ErrorReporter((long int)w_node->g_nodes);
+            ErrorReporter((long int)w_node->g_nodes,NULL);
             w_node->i_probs=NULL;
             w_node->o_probs=NULL;
             
@@ -844,10 +844,10 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         }
         else if (probs!=0)
         {
-            w_node->i_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
-            ErrorReporter((long int)w_node->i_probs);
-            w_node->o_probs=calloc(n_gleaves,sizeof(double)*n_gleaves);
-            ErrorReporter((long int)w_node->o_probs);
+            w_node->i_probs=calloc(n_gleaves+1,sizeof(double));
+            ErrorReporter((long int)w_node->i_probs,NULL);
+            w_node->o_probs=calloc(n_gleaves+1,sizeof(double));
+            ErrorReporter((long int)w_node->o_probs,NULL);
             w_node->g_nodes=NULL;
             
             for (j=0; j<n_gleaves; ++j)
@@ -886,7 +886,7 @@ g_node * NewGNodes(int n_nodes, int max_children)
         return (NULL);
     
     nodes=calloc(n_nodes,sizeof(g_node));
-    ErrorReporter((int long)nodes);
+    ErrorReporter((int long)nodes,NULL);
     
     // **
     /// <dl><dt>\ref g_node "g_node" loop</dt><dd>
@@ -912,7 +912,7 @@ g_node * NewGNodes(int n_nodes, int max_children)
         // *
         /// g_node::children memory allocation and initialization</dd></dl>
         w_node->children=calloc(max_children,sizeof(g_node *));
-        ErrorReporter((long int) w_node->children);
+        ErrorReporter((long int) w_node->children,NULL);
         
         for (j=0; j<max_children; ++j)
         {
@@ -929,14 +929,14 @@ period * NewPeriods(int n_periods, int max_nodes)
     int i=0;
     
     periods=calloc(n_periods, sizeof(struct period));
-    ErrorReporter((long int)periods);
+    ErrorReporter((long int)periods,NULL);
     
     for (i=0; i<n_periods; ++i)
     {
         w_period=periods+i;
         w_period->r_bound=0;
         w_period->l_nodes=calloc(max_nodes,sizeof(l_node *));
-        ErrorReporter((long int)w_period->l_nodes);
+        ErrorReporter((long int)w_period->l_nodes,NULL);
         w_period->n_lnodes=0;
     }
     return periods;
@@ -1166,13 +1166,13 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Test of the nexus tree string by \ref ChecknexusSTree
     
-    ErrorReporter(CheckNexusTree(nexus));
+    ErrorReporter(CheckNexusTree(nexus),": Error in the Nexus species tree file\n");
     
     // ***
     /// Error control
     
     if (gen_time==0)
-        ErrorReporter(UNEXPECTED_VALUE);
+        ErrorReporter(UNEXPECTED_VALUE,": Inproper generation time");
     
     // ***
     /// Buffer allocation and initialization
@@ -1206,11 +1206,11 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                 break;
                 
             default:
-                ErrorReporter(UNEXPECTED_VALUE);
+                ErrorReporter(UNEXPECTED_VALUE,NULL);
                 break;
         }
         ++step;
-        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing a Nexus species tree"); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
     
@@ -1281,7 +1281,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                     ++step;
                     code=*(nexus+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing a branch length"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1299,11 +1299,11 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                 break;
             case '[':
                 step+=2;
-                ErrorReporter(GetSnodeParamsFromNexusComments(nexus,current_node,&step));
+                ErrorReporter(GetSnodeParamsFromNexusComments(nexus,current_node,&step), ": Error parsing Nexus tree comments as branch-specific parameters");
                 if (current_node->n_replicas>1 && current_node->n_child!=0)
                 {
                     PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
-                    ErrorReporter(SETTINGS_ERROR);
+                    ErrorReporter(SETTINGS_ERROR, NULL);
                 }
                 if (current_node->n_replicas>1)
                     n_gleaves+=current_node->n_replicas-1;
@@ -1324,7 +1324,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                     ++step;
                     code=*(nexus+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing leaf information"); // Avoids ininite loops
                 else if (n_char==MAX_NAME)
                 {
                     fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
@@ -1336,7 +1336,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                         ++step;
                         code=*(nexus+step);
                     }
-                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing leaf information"); // Avoids ininite loops
                 }
                 
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
@@ -1378,7 +1378,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
         ++step;
         code=*(nexus+step);
         ++iteration;
-        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
         
     }
     
@@ -1409,13 +1409,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     /// Checks ultrametricity when measuring the species tree in time units.
     
     if(CheckUltrametricitySTree(tree)==-1)
-    {
-        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
-#ifdef DBG
-        fflush(stderr);
-#endif
-        ErrorReporter(UNEXPECTED_VALUE);
-    }
+        ErrorReporter(UNEXPECTED_VALUE,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
     
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
@@ -1457,13 +1451,13 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Test of the newick tree string by \ref CheckNewickSTree
     
-    ErrorReporter(CheckNewickSTree(newick));
+    ErrorReporter(CheckNewickSTree(newick),": Error in the Newick species tree\n");
     
     // ***
     /// Error control
     
     if (gen_time==0)
-        ErrorReporter(UNEXPECTED_VALUE);
+        ErrorReporter(UNEXPECTED_VALUE, ": Inproper generation time");
     
     // ***
     /// Buffer allocation and initialization
@@ -1493,7 +1487,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                 ++step;
                 code=*(newick+step);
             }
-            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,""); // Avoids ininite loops
             else if (n_char==tbuffer)
             {
                 step-=n_char+2;
@@ -1510,7 +1504,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
 
         }
         ++step;
-        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing a Newick tree"); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
     n_gleaves+=(n_leaves-n_priv_ngleaves)*ind_persp;//Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
@@ -1582,7 +1576,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing a branch length"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1615,7 +1609,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing a branch specific substitution rate"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1648,7 +1642,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing a branch specific generation time"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1680,7 +1674,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,":  parsing a branch specific population size"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1694,12 +1688,12 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     /// Translates the buffer in a integer number and asigns it as s_node::Ne of the current node</dd></dl>
                     sscanf(buffer,"%ui",&current_node->Ne);
                     if (current_node->Ne==0)
-                        ErrorReporter(SETTINGS_ERROR);
+                        ErrorReporter(SETTINGS_ERROR,": Null branch specific population size is not allowed");
                 }
                 break;
             case '/':
                 // **
-                /// <dl><dt>New number of replicas (code="/").</dt><dd>
+                /// <dl><dt>New number of replicates (code="/").</dt><dd>
                 
                 // *
                 /// Reads all the following integers in a buffer
@@ -1715,7 +1709,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing a branch specific number of replicates"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -1729,7 +1723,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     /// Translates the buffer in a integer number and asigns it as s_node::n_nodes of the current node</dd></dl>
                     sscanf(buffer,"%ui",&n_replica);
                     if (n_replica==0)
-                        ErrorReporter(SETTINGS_ERROR);
+                        ErrorReporter(SETTINGS_ERROR,": Null branch specific number of replicates is not allowed");
                     current_node->n_replicas=n_replica;
                 }
                 break;
@@ -1749,7 +1743,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing leaf information"); // Avoids ininite loops
                 else if (n_char==MAX_NAME)
                 {
                     fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
@@ -1761,7 +1755,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
                         ++step;
                         code=*(newick+step);
                     }
-                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing leaf information"); // Avoids ininite loops
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
@@ -1801,7 +1795,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
         ++step;
         code=*(newick+step);
         ++iteration;
-        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR,NULL); // Avoids ininite loops
         
     }
     
@@ -1832,14 +1826,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     /// Checks ultrametricity when measuring the species tree in time units.
     
     if(CheckUltrametricitySTree(tree)==-1)
-    {
-        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
-#ifdef DBG
-        fflush(stderr);
-#endif
-        ErrorReporter(UNEXPECTED_VALUE);
-    }
-    
+        ErrorReporter(UNEXPECTED_VALUE,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
     free(buffer);
@@ -1878,13 +1865,13 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Test of the nexus tree string by \ref ChecknexusSTree
     
-    ErrorReporter(CheckNexusTree(nexus));
+    ErrorReporter(CheckNexusTree(nexus),": Nexus locus tree error");
     
     // ***
     /// Error control
     
     if (gen_time==0)
-        ErrorReporter(UNEXPECTED_VALUE);
+        ErrorReporter(UNEXPECTED_VALUE, ": Inproper generation time");
     
     // ***
     /// Buffer allocation and initialization
@@ -1919,11 +1906,11 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 break;
                 
             default:
-                ErrorReporter(UNEXPECTED_VALUE);
+                ErrorReporter(UNEXPECTED_VALUE,": parsing Nexus locus tree");
                 break;
         }
         ++step;
-        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR,NULL); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
     
@@ -1994,7 +1981,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                     ++step;
                     code=*(nexus+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR,": parsing a branch length"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2012,11 +1999,11 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 break;
             case '[':
                 step+=2;
-                ErrorReporter(GetLnodeParamsFromNexusComments(nexus,current_node,&step));
+                ErrorReporter(GetLnodeParamsFromNexusComments(nexus,current_node,&step), ": parsing Nexus tree comments");
                 if (current_node->n_nodes>1 && current_node->n_child!=0)
                 {
                     PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
-                    ErrorReporter(SETTINGS_ERROR);
+                    ErrorReporter(SETTINGS_ERROR,NULL);
                 }
                 if (current_node->n_nodes>1)
                     n_gleaves+=current_node->n_nodes-1;
@@ -2038,7 +2025,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                     ++step;
                     code=*(nexus+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing leaf info"); // Avoids ininite loops
                 else if (n_char==MAX_NAME)
                 {
                     fprintf(stderr,"\nSpecies names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
@@ -2050,7 +2037,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                         ++step;
                         code=*(nexus+step);
                     }
-                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing leaf info"); // Avoids ininite loops
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
                 
@@ -2091,7 +2078,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
         ++step;
         code=*(nexus+step);
         ++iteration;
-        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
         
     }
     
@@ -2122,13 +2109,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     /// Checks ultrametricity when measuring the species tree in time units.
     
     if(CheckUltrametricityLTree(tree)==-1)
-    {
-        fprintf(stderr,"The locus tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
-#ifdef DBG
-        fflush(stderr);
-#endif
-        ErrorReporter(UNEXPECTED_VALUE);
-    }
+        ErrorReporter(UNEXPECTED_VALUE,": locus tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
     
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
@@ -2170,13 +2151,13 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Test of the newick tree string by \ref CheckNewickLTree
     
-    ErrorReporter(CheckNewickLTree(newick));
+    ErrorReporter(CheckNewickLTree(newick), ": Newick locus tree error");
     
     // ***
     /// Error control
     
     if (gen_time==0)
-        ErrorReporter(UNEXPECTED_VALUE);
+        ErrorReporter(UNEXPECTED_VALUE, ": Inproper generation time");
     
     // ***
     /// Buffer allocation and initialization
@@ -2206,7 +2187,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 ++step;
                 code=*(newick+step);
             }
-            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+            if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing replicates"); // Avoids ininite loops
             else if (n_char==tbuffer)
             {
                 step-=n_char+2;
@@ -2222,7 +2203,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
             }
         }
         ++step;
-        if (step==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (step==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
     n_gleaves+=(n_leaves-n_priv_ngleaves)*ind_persp; //Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
@@ -2294,7 +2275,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing branch length"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2327,7 +2308,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing branch specific substitution rate"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2360,7 +2341,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing branch specific generation time"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2393,7 +2374,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing branch specific population size"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2407,7 +2388,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     /// Translates the buffer in a integer number and asigns it as l_node::Ne of the current node</dd></dl>
                     sscanf(buffer,"%ui",&current_node->Ne);
                     if (current_node->Ne==0)
-                        ErrorReporter(SETTINGS_ERROR);
+                        ErrorReporter(SETTINGS_ERROR,": Null branch specific population size is not allowed");
                 }
                 
                 break;
@@ -2429,7 +2410,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing number of replicates"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2443,7 +2424,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     /// Translates the buffer in a integer number and asigns it as l_node::n_nodes of the current node</dd></dl>
                     sscanf(buffer,"%ui",&n_replica);
                     if (n_replica==0)
-                        ErrorReporter(SETTINGS_ERROR);
+                        ErrorReporter(SETTINGS_ERROR, ": Null number of replicates is not allowed");
                     current_node->n_nodes=n_replica;
                 }
                 break;
@@ -2465,7 +2446,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing node kind"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2500,7 +2481,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing locus id"); // Avoids ininite loops
                 else if (n_char==tbuffer)
                 {
                     step-=n_char+2;
@@ -2533,7 +2514,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     ++step;
                     code=*(newick+step);
                 }
-                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing leaf info"); // Avoids ininite loops
                 else if (n_char==MAX_NAME)
                 {
                     fprintf(stderr,"Species names are being truncated, since they are bigger than the buffer. You could change this behaviour increasing the buffer size by changing the environment variable SIMPHY_MAXNAME\n"); //\todo Change the name_c implementation to avoid this behaviour.
@@ -2545,7 +2526,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                         ++step;
                         code=*(newick+step);
                     }
-                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+                    if (n_char==MAX_IT) ErrorReporter(LOOP_ERROR, ": parsing leaf info"); // Avoids ininite loops
 
                 }
                 *(name_buffer+n_char)=0; //Sets the end of the string to avoid problems in the sscanf
@@ -2586,7 +2567,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
         ++step;
         code=*(newick+step);
         ++iteration;
-        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR); // Avoids ininite loops
+        if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
         
     }
     
@@ -2617,13 +2598,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     /// Checks ultrametricity when measuring the species tree in time units.
     
     if(CheckUltrametricityLTree(tree)==-1)
-    {
-        fprintf(stderr,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
-#ifdef DBG
-        fflush(stderr);
-#endif
-        ErrorReporter(UNEXPECTED_VALUE);
-    }
+        ErrorReporter(UNEXPECTED_VALUE,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
     
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
@@ -2660,7 +2635,7 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     // *
     /// Tree memory allocation
     tree=calloc(1,sizeof(s_tree));
-    ErrorReporter((long int)tree);
+    ErrorReporter((long int)tree, NULL);
     
     // *
     /// Tree initialization
@@ -2750,9 +2725,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         }
         
         i_nodes=calloc(leaves-1, sizeof(double));
-        ErrorReporter((long int)i_nodes);
+        ErrorReporter((long int)i_nodes, NULL);
         node_ptrs=calloc((*out_tree)->n_nodes,sizeof(s_node *));
-        ErrorReporter((long int)node_ptrs);
+        ErrorReporter((long int)node_ptrs, NULL);
         
         // ****
         /// Calculates the start of the tree (From user options or sampled from the inverse of the pdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.)
@@ -2977,7 +2952,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             // ****
             /// Variable initialization
             node_ptrs=calloc(MAX_LEAVES,sizeof(s_node *));
-            ErrorReporter((long int)node_ptrs);
+            ErrorReporter((long int)node_ptrs,NULL);
             (*out_tree)=NewSTree(1, 1, 0, 2,gen_time,Ne, mu); // Recursion oriented tree (root).
             
             
@@ -3379,6 +3354,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
             dummy_node.lat_node=w_snode->anc_node->l_nodes; //dummy node to allow the loop to start in the first iteration, due to the use of different structures (first iteration: s_node->l_nodes, rest: l_node->lat_node)
             w_lnode3=&dummy_node;
             diffs_true_leaves=0;
+            bd_iter=0;
             
             // *****
             /// <dl><dt>Loop of associated \ref s_node::l_nodes "l_nodes" to the working s_node, i.e paralogs</dt><dd>
@@ -3504,6 +3480,8 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                     while(current_ngen+sampled_ngen<max_ngen && avail_leaves!=0 && bd_iter<=MAX_IT && bd_iter<MAX_LEAVES-1)
                     {
                         ++bd_iter;
+                        printf("iter %d\n",bd_iter);
+                        fflush(stdout);
                         // ***
                         /// Chooses the leave for the next event
                         if(avail_leaves>1)
@@ -3761,10 +3739,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     
     
     if (ltree_iter>MAX_IT)
-    {
-        ErrorReporter(LOOP_ERROR);
-        return (NO_ERROR);
-    }
+        return (LOOP_ERROR);
     else
     {
         // ******
@@ -3793,7 +3768,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
     // ******
     /// B-D + Poisson process related variables
-    int n_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
+    int n_leaves=0,slice_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
     int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
     double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0, gen_time=wsp_tree->gen_time;
@@ -3816,15 +3791,15 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         
         if(ResetSTreeSimL(wsp_tree)!= NO_ERROR)
             return MEM_ERROR;
-//        if (ExpectedLtreeNleavesSNodes(wsp_tree->root,b_rate,d_rate,1)>=MAX_LEAVES)
-//        {
-//            fprintf(stderr,"\n\nLocus tree birth rate is too hight for the rest of the settings, with an expected number of locus tree leaves bigger than MAX_LEAVES. You could increase this limit changing the environmental variable SIMPHY_MAXLEAVES\n");
-//            
-//#ifdef DBG
-//            fflush(stderr);
-//#endif
-//            return SETTINGS_ERROR;
-//        }
+        if (ExpectedLtreeNleavesSNodes(wsp_tree->root,b_rate,d_rate,1)>=MAX_LEAVES)
+        {
+            fprintf(stderr,"\n\nLocus tree birth rate is too hight for the rest of the settings, with an expected number of locus tree leaves bigger than MAX_LEAVES. You could increase this limit changing the environmental variable SIMPHY_MAXLEAVES\n");
+            
+#ifdef DBG
+            fflush(stderr);
+#endif
+            return SETTINGS_ERROR;
+        }
         
         // ******
         /// Reseting of B-D process variables and linking the root of both trees
@@ -3873,6 +3848,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             dummy_node.lat_node=w_snode->anc_node->l_nodes; //dummy node to allow the loop to start in the first iteration, due to the use of different structures (first iteration: s_node->l_nodes, rest: l_node->lat_node)
             w_lnode3=&dummy_node;
             diffs_true_leaves=0;
+            slice_leaves=0;
             
             // *****
             /// <dl><dt>Loop of associated \ref s_node::l_nodes "l_nodes" to the working s_node, i.e paralogs</dt><dd>
@@ -3887,7 +3863,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     fflush(stdout);
 #endif
                 }
-                
+
                 // ****
                 /// Waiting-time sampling
                 w_lnode3=w_lnode3->lat_node;
@@ -3907,6 +3883,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
 #endif
                     }
                     
+                    ++slice_leaves;
                     // ****
                     /// New l-node allocation and configuration if there are no events along this branch
                     
@@ -3998,7 +3975,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     
                     // ****
                     /// <dl><dt>Birth-death process loop (while final time is not exceeded)</dt><dd>
-                    while(current_ngen+sampled_ngen<max_ngen && avail_leaves!=0 && bd_iter<=MAX_IT && bd_iter<MAX_LEAVES-1)
+                    while(current_ngen+sampled_ngen<max_ngen && avail_leaves!=0 && bd_iter<=MAX_IT && slice_leaves<MAX_LEAVES-1)
                     {
                         ++bd_iter;
                         // ***
@@ -4016,6 +3993,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             // **
                             /// <dl><dt>Birth</dt><dd>
                             
+                            ++slice_leaves;
                             // *
                             /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
                             w_lnode=NewLNodes(1,0,wsp_tree->max_children,0);
@@ -4076,7 +4054,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             // *
                             /// Set the selected node as non avaliable, filling its info.</dd></dl></dd></dl>
-                            
+                            --slice_leaves;
                             w_lnode=*(node_ptrs+node_index);
                             anc_lnode=w_lnode->anc_node;
                             
@@ -4226,7 +4204,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         sampled_ngen= -log(gsl_rng_uniform_pos(seed))/(w_prob*avail_leaves);
                     }
                     
-                    if (bd_iter+1>=MAX_LEAVES)
+                    if (slice_leaves+1>=MAX_LEAVES)
                     {
                         maxnleaves_reached=1;
                         break;
@@ -4362,10 +4340,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
     
     if (ltree_iter>MAX_IT)
-    {
-        ErrorReporter(LOOP_ERROR);
-        return (NO_ERROR);
-    }
+        return (LOOP_ERROR);
     else
     {
         if (*st_transfr+*st_gc>0)
@@ -4388,7 +4363,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             
             //WriteLNodes((*wlocus_tree)->root, (name_c *) NULL, 0); /////DEBUG!!!!!!!
             
-            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0)); //The root of this tree is going to be badly set due to the extra still not used nodes.
+            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0),NULL); //The root of this tree is going to be badly set due to the extra still not used nodes.
             
             //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
@@ -4583,7 +4558,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         }
                                         break;
                                     default:
-                                        ErrorReporter(UNEXPECTED_VALUE);
+                                        ErrorReporter(UNEXPECTED_VALUE,NULL);
                                         break;
                                 }
                             }
@@ -4616,7 +4591,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         w_lnode2=*(avail_receptors+gsl_rng_uniform_int(seed,n_avail_receptors));
                                         break;
                                     default:
-                                        ErrorReporter(SETTINGS_ERROR);
+                                        ErrorReporter(SETTINGS_ERROR,NULL);
                                         break;
                                         
                                 }
@@ -4703,7 +4678,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                         break;
                                         
                                     default:
-                                        ErrorReporter(UNEXPECTED_VALUE);
+                                        ErrorReporter(UNEXPECTED_VALUE,NULL);
                                         break;
                                 }
                                 
@@ -5106,7 +5081,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     /// Values
     int next_avail_inode=0,n_coals=0,n_anc_nodes=0,p_Ne=0;
     double p_mu=0;
-    double sampled_ngen=0, min_ngen=0, current_ngen=0;
+    double sampled_ngen=0, min_ngen=0, current_ngen=0, *sampled_ngens=NULL;
     int avail_leaves=0,node_index=0;
     
     // ******
@@ -5121,6 +5096,9 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         if (iobuffer==NULL)
             return MEM_ERROR;
     }
+    sampled_ngens=calloc(wlocus_tree->n_gleaves-1, sizeof(double));
+    if (sampled_ngens==NULL)
+        return MEM_ERROR;
     
     // ****
     /// Association between locus tree and gene tree and gene tree reset
@@ -5273,27 +5251,57 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
 #endif
         }
         
+        
         // ***
         /// <dl><dt> Coalescent simulation loop. Each iteration means one coalescence. It ends either if the end of the branch has been reached, or there is no more posible coalescences (only 1 active g_node left) </dt><dd>
+        // **
+        /// Waiting time (coalescent time) sample, depending on the sampled counts (regular coalescence at the root)
+        if (n_coals>0)
+        {
+            if (w_lnode->gen_length!=0)
+            {
+                for (j=0;j<n_coals;++j)
+                {
+                    *(sampled_ngens+j)=SampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity);
+                    current_ngen-=*(sampled_ngens+j);
+                    --avail_leaves;
+                }
+                if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
+                {
+                    current_ngen=w_lnode->n_gen;
+                    avail_leaves=w_lnode->n_ilin;
+                    for (j=0;j<n_coals;++j)
+                    {
+                        *(sampled_ngens+j)=MPFRSampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity,512);
+                        current_ngen-=*(sampled_ngens+j);
+                        --avail_leaves;
+                    }
+                    if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
+                        return UNEXPECTED_VALUE;
+                }
+            }
+            else
+            {
+                for (j=0;j<n_coals;++j)
+                {
+                    *(sampled_ngens+j)=((-log(gsl_rng_uniform_pos(seed)))*(2*p_Ne))/(avail_leaves*(avail_leaves-1));// - (1/lambda) * ln uniform random variable. Lambda = parameter (k over 2). K, number of nodes avaliable to coalesce.
+                    current_ngen-=*(sampled_ngens+j);
+                    --avail_leaves;
+                }
+            }
+            
+            current_ngen=w_lnode->n_gen;
+            avail_leaves=w_lnode->n_ilin;
+            min_ngen=current_ngen-w_lnode->gen_length;
+        }
+
         
         for (j=0; j<n_coals;++j)
         {
             // **
-            /// Waiting time (coalescent time) sample, depending on the sampled counts (regular coalescence at the root)
-            if (w_lnode->gen_length!=0)
-            {
-                sampled_ngen=SampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity);
-                if(sampled_ngen<=0 || current_ngen-sampled_ngen-epsilon_brent<=min_ngen)
-                    return UNEXPECTED_VALUE;
-
-            }
-            else
-            {
-                sampled_ngen=((-log(gsl_rng_uniform_pos(seed)))*(2*p_Ne))/(avail_leaves*(avail_leaves-1));// - (1/lambda) * ln uniform random variable. Lambda = parameter (k over 2). K, number of nodes avaliable to coalesce.
-                if(sampled_ngen<=0)
-                    return UNEXPECTED_VALUE;
-            }
+            /// Next sampled value
             
+            sampled_ngen=*(sampled_ngens+j);
             current_ngen-=sampled_ngen;
             
             // **
@@ -5422,6 +5430,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     }
     
     free(w_gnodes_ptr);
+    free(sampled_ngens);
     
     return(NO_ERROR);
 }
@@ -5430,17 +5439,16 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
 {
     // **
     /// Variable declaration
-    int *max_nlin=NULL, i=0,j=0, fmax_nlin=0, nbranch_wlin=0;
-    double i_probs_sum=0, o_probs_sum=0;
-    
-    //This has no sense, since we have the option to put any desired number of "lost nodes" in a LOSS/RGC/RTRFR node
+    int *max_nlin=NULL, i=0,j=0, fmax_nlin=0, nbranch_wlin=0, full_prob=0;
+    //Kahan summation
+    double comp=0,comp_opsum=0,o_prob_sum=0;
     
     // *
     /// Obtaining number of lineages and input probabilities using combinatorics and data of output lineages/probabilities of children
     if (node->n_child>0)
     {
         max_nlin=calloc(node->n_child,sizeof(int));
-        ErrorReporter((long int)max_nlin);
+        ErrorReporter((long int)max_nlin,NULL);
         
         for (i=0; i<node->n_child; ++i)
         {
@@ -5478,11 +5486,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
                 *(node->o_probs)=1;
                 break;
             default:
-                fprintf(stderr,"Not yet implemented\n"); //When I implement this, I can remove the ifs (it should be general)
-#ifdef DBG
-                fflush(stderr);
-#endif
-                ErrorReporter(UNEXPECTED_VALUE);
+                ErrorReporter(UNEXPECTED_VALUE,"Not implemented yet\n");
                 break;
         }
     }
@@ -5491,7 +5495,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
     
     
     // *
-    /// Calculating the output probabilities using \ref ProbCoalFromXtoYLineages for regular nodes or setting it to fixed values if necessary (1 if bounded, 0 if either no lineages present or unbounded process)
+    /// Calculating the output probabilities using \ref LogscaleProbCoalFromXtoYLineages for regular nodes or setting it to fixed values if necessary (1 if bounded, 0 if either no lineages present or unbounded process)
     
     if (node->anc_node==NULL || fmax_nlin==0) //Either unbounded (root) or witout any node
     {
@@ -5505,11 +5509,17 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
     }
     else //Normal
     {
+        full_prob=0;
+        comp_opsum=0;
         for (i=1; i<=fmax_nlin;++i)
+        {
+            comp=0;
             for (j=i; j<=fmax_nlin;++j)
-            {
-                *(node->o_probs+i)+=ProbCoalFromXtoYLineages(j,i,node->gen_length,node->Ne==0?Ne:node->Ne)* *(node->i_probs+j);
-            }
+                SKahanSum(node->o_probs+i,KahanLogscaleProbCoalFromXtoYLineages(j,i,node->gen_length,node->Ne==0?Ne:node->Ne)* *(node->i_probs+j),&comp);
+            SKahanSum(&o_prob_sum, *(node->o_probs+i), &comp_opsum);
+            if (o_prob_sum>=1)
+                break;
+        }
     }
     
     if (max_nlin!=NULL)
@@ -5518,23 +5528,18 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
 
     if (verbosity>4)
     {
-        for (i=0; i<=fmax_nlin; ++i)
-        {
-            i_probs_sum+=*(node->i_probs+i);
-            o_probs_sum+=*(node->o_probs+i);
-        }
         if (verbosity==5)
         {
-            printf("\n\t\t\t\tNode %u, input probabilities sum %lf, output probabilities sum %lf",node->index,i_probs_sum,o_probs_sum);
+            printf("\n\t\t\t\tNode %u, input probabilities sum %lf, output probabilities sum %lf",node->index,VKahanSum(node->i_probs,fmax_nlin+1),VKahanSum(node->o_probs,fmax_nlin+1));
         }
         else
         {
-            printf("\n\t\t\t\tNode %u, kind node %u, n_children %u, input probabilities sum %lf, input probabilities: ", node->index, node->kind_node, node->n_child,i_probs_sum);
+            printf("\n\t\t\t\tNode %u, kind node %u, n_children %u, input probabilities sum %lf, input probabilities: ", node->index, node->kind_node, node->n_child,VKahanSum(node->i_probs,fmax_nlin+1));
             for (i=0; i<=fmax_nlin; ++i)
             {
                 printf("%u:%lf,",i,*(node->i_probs+i));
             }
-            printf("; Output probabilities sum %lf, output probabilities: ", o_probs_sum);
+            printf("; Output probabilities sum %lf, output probabilities: ", VKahanSum(node->o_probs,fmax_nlin+1));
             for (i=0; i<=fmax_nlin; ++i)
             {
                 printf("%u:%lf,",i,*(node->o_probs+i));
@@ -5615,7 +5620,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                         while (reject==1 && n_it<MAX_IT)
                         {
                             ++n_it;
-                            p=ProbCoalFromXtoYLineages(wn_olin0+wn_olin1, node->n_olin, node->gen_length, node->Ne==0?Ne:node->Ne);
+                            p=KahanLogscaleProbCoalFromXtoYLineages(wn_olin0+wn_olin1, node->n_olin, node->gen_length, node->Ne==0?Ne:node->Ne);
                             u=gsl_rng_uniform(seed);
                             switch (verbosity)
                             {
@@ -5644,10 +5649,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                         }
                         
                         if (reject==1)
-                        {
-                            //fprintf(stderr, ");
-                            ErrorReporter(LOOP_ERROR);
-                        }
+                            ErrorReporter(LOOP_ERROR,": reached MAX_IT iterations using rejection sampling to sample lineage counts. This problem is usually related to really unlikely scenarios with unrealistic short branches and big population sizes. Please, check your simulation settings.");
                         
                         switch (verbosity)
                         {
@@ -5717,7 +5719,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                         reject=1;
                         while (reject==1)
                         {
-                            p=ProbCoalFromXtoYLineages(wn_olin0, node->n_olin, node->gen_length, node->Ne==0?Ne:node->Ne);
+                            p=KahanLogscaleProbCoalFromXtoYLineages(wn_olin0, node->n_olin, node->gen_length, node->Ne==0?Ne:node->Ne);
                             u=gsl_rng_uniform(seed);
                             switch (verbosity)
                             {
@@ -5778,11 +5780,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                 //The n_lineages have to be previosly set here.
                 break;
             default:
-                fprintf(stderr,"Not yet implemented\n"); //When I implement this, I can remove the switches (it should be general)
-#ifdef DBG
-                fflush(stderr);
-#endif
-                ErrorReporter(UNEXPECTED_VALUE);
+                ErrorReporter(UNEXPECTED_VALUE,": not implemented yet\n");
                 break;
         }
     }
@@ -5809,7 +5807,7 @@ l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     // *
     /// Tree memory allocation
     tree=calloc(1,sizeof(l_tree));
-    ErrorReporter((long int)tree);
+    ErrorReporter((long int)tree,NULL);
     
     // *
     /// Tree initialization
@@ -5854,7 +5852,7 @@ g_tree * NewGTree (int n_nodes, int max_children, double gen_time)
     // *
     /// Tree memory allocation
     tree=calloc(1,sizeof(g_tree));
-    ErrorReporter((long int) tree);
+    ErrorReporter((long int) tree,NULL);
     
     // *
     /// Tree initialization
@@ -6069,7 +6067,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         
         if (w_input->i_probs!=NULL)
         {
-            w_output->i_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            w_output->i_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
             if (w_output->i_probs==NULL)
                 return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
@@ -6079,7 +6077,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         }
         if (w_input->o_probs!=NULL)
         {
-            w_output->o_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
             if (w_output->o_probs==NULL)
                 return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
@@ -6147,7 +6145,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         /// Copy of input and output probabilities of numbers of lineages
         if (w_input->i_probs!=NULL)
         {
-            w_output->i_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            w_output->i_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
             if (w_output->i_probs==NULL)
                 return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
@@ -6157,7 +6155,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         }
         if (w_input->o_probs!=NULL)
         {
-            w_output->o_probs=calloc(in_tree->n_gleaves,sizeof(double)*in_tree->n_gleaves);
+            w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
             if (w_output->o_probs==NULL)
                 return MEM_ERROR;
             for (j=0;j<in_tree->n_gleaves;++j)
@@ -6553,7 +6551,7 @@ name_c * NewNames (int n_names, int max_lname)
     // *
     /// Allocation of name_c memory
     names=calloc(1,sizeof(name_c));
-    ErrorReporter((long int) names);
+    ErrorReporter((long int) names,NULL);
     
     // *
     /// Inizialitation of name_c
@@ -6563,7 +6561,7 @@ name_c * NewNames (int n_names, int max_lname)
     // *
     /// Allocation of the string of names (name_c::names)
     names->names=calloc((n_names+1)*max_lname,sizeof(char));
-    ErrorReporter((long int)names->names);
+    ErrorReporter((long int)names->names,NULL);
     
     // *
     /// Inizialitation of the string </dd></dl>
@@ -6592,7 +6590,7 @@ void ReallocNames (name_c * names,int max_lname)
     // *
     /// Allocation of the new string of names
     new_names=calloc((names->n_names+1)*max_lname,sizeof(char));
-    ErrorReporter((long int)new_names);
+    ErrorReporter((long int)new_names,NULL);
     
     // *
     /// Loop for the names copy
@@ -8449,7 +8447,7 @@ extern inline void reallocBuffer(char **buffer,size_t *size, size_t newsize)
 {
     *size=newsize;
     *buffer=(char *)realloc(*buffer, newsize*sizeof(char));
-    ErrorReporter((long int) *buffer);
+    ErrorReporter((long int) *buffer,NULL);
 }
 
 ///@}
@@ -8699,7 +8697,7 @@ void PostCollapseSNodes(s_node *output,s_node *input)
     /// Saves the original s_tree::children of the output node
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     c_backup=w_output->children;
     
     // **
@@ -8755,7 +8753,7 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
     /// Saves the original l_tree::g_nodes, l_tree::children, l_tree::i_probs and l_tree::o_probs of the output node, and allocates memory if necessary
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     r_backup=w_output->children;
     if (w_output->g_nodes!=NULL)
     {
@@ -8848,7 +8846,7 @@ void PostCollapseGNodes(g_node *output,g_node *input)
     /// Saves the original g_tree::children of the output node
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     c_backup=w_output->children;
     
     // **
@@ -8893,7 +8891,7 @@ void PreCollapseSNodes(s_node *output,s_node *input)
     /// Saves the original s_tree::children of the output node
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     c_backup=w_output->children;
     
     // **
@@ -8948,7 +8946,7 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
     /// Saves the original l_tree::g_nodes and l_tree::children of the output node
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     r_backup=w_output->children;
     if (w_output->g_nodes!=NULL)
     {
@@ -9039,7 +9037,7 @@ void PreCollapseGNodes(g_node *output,g_node *input)
     /// Saves the original g_tree::children of the output node
     w_output=(output+input->index);
     
-    ErrorReporter((long int)w_output->children);
+    ErrorReporter((long int)w_output->children,NULL);
     c_backup=w_output->children;
     
     // **
@@ -9341,10 +9339,7 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time)
                 
             default:
                 if (node->n_replicas>0)
-                {
-                    fprintf(stderr,"Number of replicas per taxa applied to internal branches are not allowed\n");
-                    ErrorReporter(SETTINGS_ERROR);
-                }
+                    ErrorReporter(SETTINGS_ERROR,": number of replicas per taxa applied to internal branches are not allowed\n");
                 break;
         }
         node->n_gen=node->anc_node->n_gen+node->gen_length;
@@ -9396,7 +9391,7 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
     if (node->g_nodes==NULL)
     {
         node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
-        ErrorReporter((long int)node->g_nodes);
+        ErrorReporter((long int)node->g_nodes,NULL);
         for (j=0; j<n_gleaves; ++j)
         {
             *(node->g_nodes+j)=NULL;
@@ -10393,7 +10388,7 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     wl_pointers=calloc(n_nodes,sizeof(l_node *));
     
     if (t_times==NULL || wl_pointers==NULL)
-        ErrorReporter(MEM_ERROR);
+        ErrorReporter(MEM_ERROR,NULL);
     
     for (j=0; j<n_nodes; ++j) //Reset
     {
@@ -10494,7 +10489,7 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     free(wl_pointers);
     
     if (w_lnode==NULL)
-        ErrorReporter(UNEXPECTED_VALUE);
+        ErrorReporter(UNEXPECTED_VALUE,NULL);
     
     return w_lnode;
 }
@@ -10513,8 +10508,8 @@ int firstnoblank(char *string)
     }
     if (it>=MAX_IT)
     {
-        ErrorReporter(LOOP_ERROR);
-        return 0;
+        ErrorReporter(LOOP_ERROR,NULL);
+        return EXIT_FAILURE;
     }
     else
     {
@@ -10825,3 +10820,4 @@ double ExpectedLtreeNleavesSNodes(s_node *node, double b_rate, double d_rate, do
     }
     return n_eleaves;
 }
+

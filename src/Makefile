@@ -10,7 +10,7 @@ OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
 _DBG_OBJECTS= num_methods_dbg.o sampling_dbg.o sql_managing_dbg.o trees_dbg.o
 DBG_OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_DBG_OBJECTS))
 #LIBS=-lm -lgsl -lcblas -lsqlite3 Improves the performance but reduces the compatibility.
-LIBS=-lm -lgsl -lgslcblas -lsqlite3
+LIBS=-lm -lgsl -lgslcblas -lsqlite3 -lmpfr
 
 simphy: main.c $(OBJECTS)
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBS)
