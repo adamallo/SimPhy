@@ -16,7 +16,9 @@
 #ifndef trees_h
 #define trees_h
 #include <stdio.h>
+#ifndef stdlib_h
 #include <stdlib.h>
+#endif
 #include <memory.h>
 #include <math.h>
 #include <float.h>
@@ -36,9 +38,6 @@
 #endif
 #ifndef sampling_h
 #include "sampling.h"
-#endif
-#ifndef stdlib_h
-#include <stdlib.h>
 #endif
 #ifndef string_h
 #include <string.h>

@@ -64,7 +64,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/test_siavash.txt"
+            argument = "-i test_siavash_nversion.txt"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

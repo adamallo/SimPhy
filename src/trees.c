@@ -3258,7 +3258,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         case 2:
             break;
         case 3:
-            printf("\n\t%d-node species tree correctly simulated",(*out_tree)->n_nodes);
+            printf("\n\t%d-node species tree correctly simulated\n",(*out_tree)->n_nodes);
             break;
         default:
             printf("\n\t\t%d-node species tree correctly simulated: ",(*out_tree)->n_nodes);
