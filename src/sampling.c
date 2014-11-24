@@ -168,34 +168,41 @@ long int sample_distr(gsl_rng *r,int n_arg,...)
 
 long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sampling_vars)
 {
-    char * buffer=calloc(strlen(p)+1, sizeof(char));
-    int in_parsing=0,is_pointer=0,b_index=0,p_index=0,i=0,j=0,p_found=0;
+    char * buffer=calloc(strlen(p)+1, sizeof(char)),*last_parsed=NULL;
+    int in_parsing=0,is_pointer=0,b_index=0,p_index=0,i=0,j=0,p_found=0,n_p=0;
     
     switch (toupper(*p))
     {
         case 'F':
             sample->distribution_code=FIXED;
+            n_p=1;
             break;
         case 'U':
             sample->distribution_code=UNIFORM;
+            n_p=2;
             break;
         case 'N':
             sample->distribution_code=NORMAL;
+            n_p=2;
             break;
         case 'E':
             sample->distribution_code=EXPONENTIAL;
+            n_p=1;
             break;
         case 'G':
             sample->distribution_code=GAMMA;
+            n_p=2;
             break;
         case 'L':
             sample->distribution_code=LOGNORMAL;
+            n_p=2;
             break;
         case 'S':
             switch (toupper(*(p+1)))
             {
                 case 'L':
                     sample->distribution_code=LOGNORMAL_MULT;
+                    n_p=3;
                     ++p;
                     break;
                 
@@ -234,7 +241,7 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
                 in_parsing=1;
                 b_index=1;
                 buffer[0]=*p;
-                if (!(isdigit(*p)|| *p=='.'|| *p=='-')) //Pointer
+                if (!(isdigit(*p)|| *p=='.'|| *p=='-'|| *p=='+')) //Pointer
                     is_pointer=1;
                 break;
                 
@@ -249,7 +256,8 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
                         switch (is_pointer)
                         {
                             default: //value
-                                if(sscanf(buffer,"%lf",&sample->params[p_index].d)==0)
+                                sample->params[p_index].d=strtod(buffer,&last_parsed);
+                                if(!(*last_parsed=='\0' || *last_parsed==',' || *last_parsed=='/'|| *last_parsed=='\n'))
                                     return SETTINGS_ERROR;
                                 else
                                     sample->params_type[p_index]=D;
@@ -289,7 +297,7 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
     while (*p!='\0' && *p!='/' && i<= MAX_IT);
     if (i>=MAX_IT)
         return MAX_IT;
-    else if (*p=='/' && *(p+1)!='/')
+    else if (p_index != n_p || (*p=='/' && *(p+1)!='/'))
         return SETTINGS_ERROR;
     if (sample->distribution_code==FIXED && sample->params_type[0]!=SU)
         set_propsampling(sample, sample->params[0].d);
@@ -344,7 +352,7 @@ void Print_Sampling(sampling_unit *sample, char * buffer, const sampling_table s
         switch (*(sample->params_type+i))
         {
             case UI:
-                sprintf(buffer+strlen(buffer),"%ui,",(sample->params+i)->i);
+                sprintf(buffer+strlen(buffer),"%u,",(sample->params+i)->i);
                 break;
             case D:
                 sprintf(buffer+strlen(buffer),"%e,",(sample->params+i)->d);

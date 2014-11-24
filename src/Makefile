@@ -1,6 +1,6 @@
 CC=gcc
 CFLAGS:= $(CFLAGS) -Wall
-PERF=
+PERF=-O2
 DBG=-DDEBUG -O0
 OBJDIR=out
 

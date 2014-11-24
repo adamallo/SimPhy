@@ -245,8 +245,8 @@ struct l_node
     /// @{
     int n_child; ///< Number of children (offspring) of this node.
     int n_nodes; ///< Number of g_nodes wich are being pointed by this restriction tree (avaliable nodes).
-    int n_ilin; ///< Number of input lineages.
-    int n_olin; ///< Number of output lineages.
+    int n_ilin; ///< Number of input (backwards in time) lineages.
+    int n_olin; ///< Number of output (backwards in time) lineages.
     /// @}
     
     /** \name Data **/
