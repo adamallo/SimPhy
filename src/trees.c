@@ -5502,7 +5502,7 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
         node->n_olin=0;
         *(node->o_probs)=1;
     }
-    else if (fmax_nlin==1 || ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+0)==node)) //Either without possible coalescences or bounded to only one node
+    else if (fmax_nlin==1 || ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+1)==node)) //Either without possible coalescences or bounded to only one node
     {
         node->n_olin=1;
         *(node->o_probs+1)=1;
@@ -6813,7 +6813,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
             w_lnode->n_olin=0;
             *(w_lnode->o_probs)=1;
         }
-        else if((w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *w_lnode->anc_node->children==w_lnode) || w_lnode->anc_node==NULL) //Either bounded or root
+        else if((w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *(w_lnode->anc_node->children+1)==w_lnode) || w_lnode->anc_node==NULL) //Either bounded or root
         {
             w_lnode->n_olin=1;
             *(w_lnode->o_probs+1)=1;
