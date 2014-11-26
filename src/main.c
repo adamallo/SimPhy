@@ -9,6 +9,7 @@
  * \date October-2013/...
  * \section usage User Guide
  *
+ * ///OUT OF DATE USAGE
  * <B>Usage: ./SimPhy -[Parameter code] value ...</B>
  *
  * Essential parameters\n
@@ -766,7 +767,6 @@ int main (int argc, char **argv)
                 // *****
                 /// Species tree allocation (\ref ParseNexusSTree) and collapse-reallocation (\ref CollapseSTree) if it is fixed. Pre-order if the locus tree will be simulated, post-order if it will not.
                 sp_tree=ParseNexusSTree(species_tree_str,&names,verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
-                CollapseSTree(sp_tree,(get_sampling(b_rate) == get_sampling(d_rate)) && get_sampling(b_rate)==0?1:0); //Memory reallocation in post-order
                 
                 if (sp_tree->n_leaves<min_lleaves)
                     ErrorReporter(SETTINGS_ERROR,"\n\t\tERROR:The minimum number of locus tree leaves is bigger than the number of leaves of the fixed species tree. Please, check the -Ll parameter and the input species tree.\n");
@@ -784,7 +784,6 @@ int main (int argc, char **argv)
                 // ******
                 /// Species tree simulation using a birth-death process (\ref NewBDSTree) and collapse-reallocation (\ref CollapseSTree) if it is not fixed. Pre-order if the locus tree will be simulated, post-order if it will not.
                 ErrorReporter(NewBDSTree(&sp_tree,get_sampling(bds_leaves), get_sampling(bds_length), get_sampling(sb_rate), get_sampling(sd_rate),get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp),get_sampling(outgroup),0,1,r, verbosity), ": simulating the species tree");//complete 0 and SSA simulation at least.
-                CollapseSTree(sp_tree,(get_sampling(b_rate) == get_sampling(d_rate)) && get_sampling(b_rate)==0?1:0);
                 
                 if (sp_tree->n_leaves<min_lleaves)
                 {
@@ -799,6 +798,8 @@ int main (int argc, char **argv)
                 }
                 
             }
+            
+            CollapseSTree(sp_tree,0); //Memory reallocation in preorder
             
             // *****
             /// Species tree modification (substitution rate and generation time heterogeneities)
@@ -1026,7 +1027,7 @@ int main (int argc, char **argv)
                 
                 // ****
                 /// Direct conversion of s_tree into l_tree.
-                CopyStoLTree(sp_tree, locus_tree);
+                CopyStoLTree(sp_tree, locus_tree, 1);
                 
                 // ***
                 /// Statistical measurements </dd></dl>

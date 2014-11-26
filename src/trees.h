@@ -878,17 +878,19 @@ long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, int tree_struct, int
 long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int relink);
 
 /**
- * Direct copy of a species tree into a locus tree (no dl)
+ * Direct copy of a species tree (pre or post-ordered) into a locus tree (post-ordered)
  *
  *
  * \param species_tree
  *  Collapsed species tree.
  * \param locus_tree
  *  Preallocated proper(same size) locus tree.
+ * \param no_reindex
+ * Logical flag. If reindex == 1 the resulting species tree will be reindexed in post-order (but not reordered in the array)
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-long int CopyStoLTree(s_tree *species_tree, l_tree *locus_tree);
+long int CopyStoLTree(s_tree *species_tree, l_tree *locus_tree, int reindex);
 //\cond DOXYGEN_EXCLUDE
 //// ** Tree edition ** //
 //
