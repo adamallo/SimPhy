@@ -74,7 +74,7 @@ static void FreeGNodes (g_node * node, int complete);
  *  Pointer where updating the index in each function call. Its value should be
  *  0 in the first call.
  *******************************************************************************/
-void PostReorderSNodes (s_node * node, int * index); ///\todo Undo this provisional trick (removing the static status) to have this function accesible from the main function of the program.
+static void PostReorderSNodes (s_node * node, int * index);
 
 /**
  * Reorders a group of l_node with tree structure in a post-order.
@@ -4368,7 +4368,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
             
-            //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra for loop
+            //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra loop
             periods=calloc(n_periods, sizeof(struct period));
             if (periods==NULL)
                 return MEM_ERROR;
@@ -4801,7 +4801,17 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     // ****
     /// Association between locus tree and gene tree and gene tree reset
+    if (verbosity>4)
+        printf("\n\t\t\tAssociation and initialization of gene tree and locus tree structures...");
+#ifdef DBG
+    fflush(stdout);
+#endif
     MatchTreesMSC(wlocus_tree,*gene_tree,1,simlosses);
+    if (verbosity>4)
+        printf("\n\t\t\tDone\n\t\t\tSampling the coalescent history along each branch of the locus tree...");
+#ifdef DBG
+    fflush(stdout);
+#endif
     
     w_gnodes=(*gene_tree)->m_node;
     next_avail_inode=wlocus_tree->n_gleaves;
@@ -4901,7 +4911,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         }
         
         // ***
-        /// <dl><dt> Coalescent simulation loop. Each iteration means one coalescence. Ends if the end of the branch has reached,there is no more posible coalescences (only 1 active g_node left) or a politomy is required</dt><dd>
+        /// <dl><dt> Coalescent simulation loop. Each iteration means one coalescence. Ends if the end of the branch has reached or there is no more posible coalescences (only 1 active g_node left)</dt><dd>
         
         for (j=0; j<max_coals;++j)
         {
@@ -5268,6 +5278,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
                 {
+#ifdef __MPFR_H
                     current_ngen=w_lnode->n_gen;
                     avail_leaves=w_lnode->n_ilin;
                     for (j=0;j<n_coals;++j)
@@ -5276,6 +5287,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                         current_ngen-=*(sampled_ngens+j);
                         --avail_leaves;
                     }
+#endif
                     if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
                         return UNEXPECTED_VALUE;
                 }
@@ -6952,6 +6964,17 @@ long int CollapseSTree (s_tree * in_tree, int post_order)
     
     return NO_ERROR;
     
+}
+
+long int ReindexSTree (s_tree * in_tree, int post_order)
+{
+    int i=0;
+    if (post_order==1)
+        PostReorderSNodes(in_tree->root,&i);
+    else
+        PreReorderSNodes(in_tree->root, &i);
+    
+    return NO_ERROR;
 }
 
 long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
@@ -9374,11 +9397,20 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
         switch (node->n_child)
         {
             case 0:
-                if (node->n_nodes==0)
+                switch (node->kind_node)
                 {
-                    node->n_nodes=ind_persp;
-                    node->n_ilin=ind_persp;
+                    case LOSS:
+                    case RTRFR:
+                    case RGC:
+                        node->n_nodes=0;
+                        node->n_ilin=0;
+                        break;
+                    default:
+                        node->n_nodes=ind_persp;
+                        node->n_ilin=ind_persp;
+                        break;
                 }
+  
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
                 node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
@@ -10791,7 +10823,7 @@ double CheckUltrametricityLNodes(l_node *node)
             for (i=1; i<node->n_child; ++i)
             {
                 n_time=CheckUltrametricityLNodes(*(node->children+i));
-                if(n_time == -1 || fabs(time-n_time)>DBL_EPSILON)
+                if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
                     return -1;
             }
         return time;

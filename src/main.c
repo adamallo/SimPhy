@@ -942,8 +942,7 @@ int main (int argc, char **argv)
                 
                 // ******
                 /// Species tree reindexation in post-order
-                i=0;
-                PostReorderSNodes(sp_tree->root,&i);
+                ReindexSTree(sp_tree, 1);
 
                 // ******
                 /// Reallocation of locus tree in post-order and reconciliation output (if necessary)

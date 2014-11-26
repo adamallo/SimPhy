@@ -263,7 +263,7 @@ struct l_node
     ///@{
     l_node **children; ///< Pointer to the array of children (pointers).
     l_node *anc_node; ///< Ancestor
-    l_node *lat_node; ///< Lateral node to do not use a big array of memory to save the avaliable locus nodes in the birth-death process of the locus tree creation.
+    l_node *lat_node; ///< Lateral node to not use a big array of memory to save the avaliable locus nodes in the birth-death process of the locus tree simulation.
     g_node **g_nodes; ///< Array of pointers to g_nodes (avaliable gene nodes).
     s_node *conts; ///< s_node that contains this g_node along his branch.
     double *i_probs; ///< Array of probabilities for each number of input lineages (0,1,2...)
@@ -1081,6 +1081,20 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
  *  ocurrs.
  *******************************************************************************/
 long int CollapseSTree (s_tree * in_tree, int post_order);
+
+/**
+ * Reindex a s_tree using either a post-order or a pre-order.
+ *
+ * \param in_tree
+ *  Input s_tree.
+ * \param post_order
+ *  Logical flag. If post_order = 1, the new tree will be in a post-order. Else,
+ *  it will be in a pre-order.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \attention THIS FUNCTION GENERATES AN UNPROPER TREE WITH NODE INDEXES THAT DO NOT CORESPOND TO THE POSITION IN THE MEMORY ARRAY
+ *******************************************************************************/
+long int ReindexSTree (s_tree * in_tree, int post_order);
 
 /**
  * Collapse a sparse l_tree (root) in an l_tree with nodes in an array (m_node)
