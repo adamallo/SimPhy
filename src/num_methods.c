@@ -163,7 +163,7 @@ double brent_root (double (*f)(double value, int n, va_list ap), double a, doubl
  *******************************************************************************/
 ///@{
 
-double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time)
+double CdfBoundedCoalescent(double w_time, int n_leaves,int pop_size, double bound_time)
 {
 	int i=0;
     int pn_leaves=n_leaves;
@@ -196,121 +196,141 @@ double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double b
    	return (double)(pn_leaves/sum2) * ((pn_leaves-1)*sum1);
 }
 
-//long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision)
-//{
-//	//Variable initialization
-//	
-//	//Normal variables
-//	long int i=0;
-//    long int pn_leaves=n_leaves, leaves_i;
-//    long double result_ldouble=0;
-//    
-//    //Mpfr declaration and initialization
-//    mpfr_t cak1,cak2,cak_fact,sum1,sum2,f1,f1_fact,f2,c1,mpfr_time,mpfr_bound_time,result;
-//    mpfr_inits2(precision,cak1,cak2,cak_fact,sum1,sum2,f1,f2,c1,f1_fact,mpfr_time,mpfr_bound_time,result,(mpfr_ptr)0);
-//    mpfr_set_zero(sum1,1);
-//    mpfr_set_zero(sum2,1);
-//    mpfr_set_zero(f1,1);
-//    mpfr_set_zero(f2,1);
-//    mpfr_set_zero(c1,1);
-//    mpfr_set_si(cak1,1,MPFR_RNDN);
-//    mpfr_set_si(cak2,1,MPFR_RNDN);
-//    mpfr_set_ld(mpfr_time,time,MPFR_RNDN);
-//    mpfr_set_ld(mpfr_bound_time,bound_time,MPFR_RNDN);
-//    //long double error1=0,error2=0, next_sum1=0, next_sum2=0, addend1=0, addend2=0; //Compensated summation
-//    
-//    for (i=1;i<pn_leaves;++i)
-//    {
-//    	//C1
-//    	mpfr_set_si(c1,i*(i-1),MPFR_RNDN);
-//		mpfr_div_ui(c1,c1,(2*pop_size),MPFR_RNDN);
-//		mpfr_mul(c1,c1,mpfr_bound_time,MPFR_RNDN);
-//		mpfr_mul_si(c1,c1,-1,MPFR_RNDN);
-//		mpfr_exp(c1,c1,MPFR_RNDN);
-//		mpfr_mul_si(c1,c1,(2*i-1),MPFR_RNDN);
-//		
-//		//F1 && F2
-//        mpfr_mul(f1,c1,cak1,MPFR_RNDN);
-//        mpfr_mul(f2,c1,cak2,MPFR_RNDN);
-//        
-//        leaves_i= i*(i-1)-pn_leaves * (pn_leaves-1);
-//        
-//        //  //Compensated summation
-//        //  addend1=  (f1 * (expl(time*leaves_i/(2*pop_size))-1)/leaves_i)-error1;
-//        //  next_sum1=sum1+addend1;
-//        //  error1=(next_sum1-sum1)-addend1;
-//        //  addend2= f2-error2;
-//        //  next_sum2=sum2+addend2;
-//        //  error2=(next_sum2-sum2)-addend2;
-//        //
-//        //  sum1=next_sum1;
-//        //  sum2=next_sum2;
-//        
-// 		//F1 fact
-// 		mpfr_set_si(f1_fact,leaves_i,MPFR_RNDN);
-// 		mpfr_div_ui(f1_fact,f1_fact,(2*pop_size),MPFR_RNDN);
-// 		mpfr_mul(f1_fact,f1_fact,mpfr_time,MPFR_RNDN);
-// 		mpfr_exp(f1_fact,f1_fact,MPFR_RNDN);
-// 		mpfr_sub_ui(f1_fact,f1_fact,1,MPFR_RNDN);
-// 		mpfr_div_si(f1_fact,f1_fact,leaves_i,MPFR_RNDN);
-// 		mpfr_mul(f1_fact,f1,f1_fact,MPFR_RNDN);
-// 		
-// 		//Summatories
-// 		mpfr_add(sum1,sum1,f1_fact,MPFR_RNDN);
-//		mpfr_add(sum2,sum2,f2,MPFR_RNDN);
-//       	//New cak1
-//       	mpfr_set_si(cak_fact,i-pn_leaves+1,MPFR_RNDN);
-//       	mpfr_div_si(cak_fact,cak_fact,i+pn_leaves-1,MPFR_RNDN);
-//       	mpfr_mul(cak1,cak1,cak_fact,MPFR_RNDN);
-//       	
-//       	//New cak2
-//       	mpfr_set_si(cak_fact,i-pn_leaves,MPFR_RNDN);
-//       	mpfr_div_si(cak_fact,cak_fact,i+pn_leaves,MPFR_RNDN);
-//       	mpfr_mul(cak2,cak2,cak_fact,MPFR_RNDN);
-//    }
-//    
-//    //Last Sum2
-//    mpfr_set_si(c1,pn_leaves*(pn_leaves-1),MPFR_RNDN);
-//	mpfr_div_ui(c1,c1,(2*pop_size),MPFR_RNDN);
-//	mpfr_mul(c1,c1,mpfr_bound_time,MPFR_RNDN);
-//	mpfr_mul_si(c1,c1,-1,MPFR_RNDN);
-//	mpfr_exp(c1,c1,MPFR_RNDN);
-//	mpfr_mul_si(c1,c1,(2*pn_leaves-1),MPFR_RNDN);
-//	
-//	mpfr_mul(f2,c1,cak2,MPFR_RNDN);
-//	
-//    mpfr_add(sum2,sum2,f2,MPFR_RNDN);
-//    
-//    mpfr_set_si(result,pn_leaves,MPFR_RNDN);
-//    mpfr_div(result,result,sum2,MPFR_RNDN);
-//    mpfr_mul_si(sum1,sum1,pn_leaves-1,MPFR_RNDN);
-//    mpfr_mul(result,result,sum1,MPFR_RNDN);
-//    
-//    result_ldouble=mpfr_get_ld(result,MPFR_RNDN);
-//    mpfr_clears(cak1,cak2,cak_fact,sum1,sum2,f1,f1_fact,f2,c1,mpfr_time,mpfr_bound_time,result,(mpfr_ptr)0);
-//    mpfr_free_cache();
-//    
-//    
-//   	return result_ldouble;
-//}
+#ifdef __MPFR_H
+long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision)
+{
+	//Variable initialization
+	
+	//Normal variables
+	long int i=0;
+    long int pn_leaves=n_leaves, leaves_i;
+    long double result_ldouble=0;
+    
+    //Mpfr declaration and initialization
+    mpfr_t cak1,cak2,cak_fact,sum1,sum2,f1,f1_fact,f2,c1,mpfr_time,mpfr_bound_time,result;
+    mpfr_inits2(precision,cak1,cak2,cak_fact,sum1,sum2,f1,f2,c1,f1_fact,mpfr_time,mpfr_bound_time,result,(mpfr_ptr)0);
+    mpfr_set_zero(sum1,1);
+    mpfr_set_zero(sum2,1);
+    mpfr_set_zero(f1,1);
+    mpfr_set_zero(f2,1);
+    mpfr_set_zero(c1,1);
+    mpfr_set_si(cak1,1,MPFR_RNDN);
+    mpfr_set_si(cak2,1,MPFR_RNDN);
+    mpfr_set_ld(mpfr_time,time,MPFR_RNDN);
+    mpfr_set_ld(mpfr_bound_time,bound_time,MPFR_RNDN);
+    //long double error1=0,error2=0, next_sum1=0, next_sum2=0, addend1=0, addend2=0; //Compensated summation
+    
+    for (i=1;i<pn_leaves;++i)
+    {
+    	//C1
+    	mpfr_set_si(c1,i*(i-1),MPFR_RNDN);
+		mpfr_div_ui(c1,c1,(2*pop_size),MPFR_RNDN);
+		mpfr_mul(c1,c1,mpfr_bound_time,MPFR_RNDN);
+		mpfr_mul_si(c1,c1,-1,MPFR_RNDN);
+		mpfr_exp(c1,c1,MPFR_RNDN);
+		mpfr_mul_si(c1,c1,(2*i-1),MPFR_RNDN);
+		
+		//F1 && F2
+        mpfr_mul(f1,c1,cak1,MPFR_RNDN);
+        mpfr_mul(f2,c1,cak2,MPFR_RNDN);
+        
+        leaves_i= i*(i-1)-pn_leaves * (pn_leaves-1);
+        
+ 		//F1 fact
+ 		mpfr_set_si(f1_fact,leaves_i,MPFR_RNDN);
+ 		mpfr_div_ui(f1_fact,f1_fact,(2*pop_size),MPFR_RNDN);
+ 		mpfr_mul(f1_fact,f1_fact,mpfr_time,MPFR_RNDN);
+ 		mpfr_exp(f1_fact,f1_fact,MPFR_RNDN);
+ 		mpfr_sub_ui(f1_fact,f1_fact,1,MPFR_RNDN);
+ 		mpfr_div_si(f1_fact,f1_fact,leaves_i,MPFR_RNDN);
+ 		mpfr_mul(f1_fact,f1,f1_fact,MPFR_RNDN);
+ 		
+ 		//Summatories
+ 		mpfr_add(sum1,sum1,f1_fact,MPFR_RNDN);
+		mpfr_add(sum2,sum2,f2,MPFR_RNDN);
+       	//New cak1
+       	mpfr_set_si(cak_fact,i-pn_leaves+1,MPFR_RNDN);
+       	mpfr_div_si(cak_fact,cak_fact,i+pn_leaves-1,MPFR_RNDN);
+       	mpfr_mul(cak1,cak1,cak_fact,MPFR_RNDN);
+       	
+       	//New cak2
+       	mpfr_set_si(cak_fact,i-pn_leaves,MPFR_RNDN);
+       	mpfr_div_si(cak_fact,cak_fact,i+pn_leaves,MPFR_RNDN);
+       	mpfr_mul(cak2,cak2,cak_fact,MPFR_RNDN);
+    }
+    
+    //Last Sum2
+    mpfr_set_si(c1,pn_leaves*(pn_leaves-1),MPFR_RNDN);
+	mpfr_div_ui(c1,c1,(2*pop_size),MPFR_RNDN);
+	mpfr_mul(c1,c1,mpfr_bound_time,MPFR_RNDN);
+	mpfr_mul_si(c1,c1,-1,MPFR_RNDN);
+	mpfr_exp(c1,c1,MPFR_RNDN);
+	mpfr_mul_si(c1,c1,(2*pn_leaves-1),MPFR_RNDN);
+	
+	mpfr_mul(f2,c1,cak2,MPFR_RNDN);
+	
+    mpfr_add(sum2,sum2,f2,MPFR_RNDN);
+    
+    mpfr_set_si(result,pn_leaves,MPFR_RNDN);
+    mpfr_div(result,result,sum2,MPFR_RNDN);
+    mpfr_mul_si(sum1,sum1,pn_leaves-1,MPFR_RNDN);
+    mpfr_mul(result,result,sum1,MPFR_RNDN);
+    
+    result_ldouble=mpfr_get_ld(result,MPFR_RNDN);
+    mpfr_clears(cak1,cak2,cak_fact,sum1,sum2,f1,f1_fact,f2,c1,mpfr_time,mpfr_bound_time,result,(mpfr_ptr)0);
+    mpfr_free_cache();
+    
+    
+   	return result_ldouble;
+}
+#endif
 
-//double sample_bounded_coalescent(double time, double density, int n_leaves, int pop_size, double bound_time, int precision)
-//{
-//    long double ltime=(long double)time, ldensity=(long double) density, lbound_time=(long double)bound_time; //Increasing precision
-//    
-//    if (time <=0)
-//    {
-//        return time - density; //CDF =0. Way of differenciate all the results of time<=0, the more deviated from 0 the lower resulting value.
-//    }
-//    else if (time >= bound_time)
-//    {
-//        return (double)(1 - ldensity + (ltime - lbound_time)); //CDF =1. Way of differenciate all the results of time>=bound_time, the more diviated from bound_time, the higher resulting value.
-//    }
-//    else
-//    {
-//        return(double)(cdf_bounded_coalescent_mpfr(ltime, n_leaves, pop_size, lbound_time, precision)-ldensity);
-//    }
-//}
+double SampleBoundedCoalescent(double w_time, int n_arg, va_list ap)
+{
+    int i=0,n_leaves=0, pop_size=0;
+    double density=0,bound_time=0;
+    
+    if (n_arg!=4)
+        ErrorReporter(UNEXPECTED_VALUE,NULL);
+    
+    for (i=0; i<n_arg; ++i)
+    {
+        switch (i)
+        {
+            case 0:
+                density=va_arg(ap,double);
+                break;
+            case 1:
+                n_leaves=va_arg(ap,int);
+                break;
+            case 2:
+                pop_size=va_arg(ap,int);
+                break;
+            case 3:
+                bound_time=va_arg(ap,double);
+                break;
+            default:
+                ErrorReporter(UNEXPECTED_VALUE,NULL);
+                break;
+                
+        }
+    }
+    va_end(ap);
+    
+    if (w_time <=0)
+    {
+        return w_time - density; //CDF =0. Way of differenciate all the results of time<=0, the more deviated from 0 the lower resulting value.
+    }
+    else if (w_time >= bound_time)
+    {
+        return (1 - density + (w_time - bound_time)); //CDF =1. Way of differenciate all the results of time>=bound_time, the more diviated from bound_time, the higher resulting value.
+    }
+    else
+    {
+        return CdfBoundedCoalescent(w_time, n_leaves, pop_size, bound_time)-density;
+        ///\todo CHECK SOMETHING AND USE MPFR IF NECESSARY???
+    }
+}
 
 double OriginalProbCoalFromXtoYLineages (int i_lin, int o_lin, double bound_time, int Ne)
 {

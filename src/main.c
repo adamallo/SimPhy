@@ -146,7 +146,7 @@ static inline long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampl
 static inline void PrintXStringError(char **string, int x, char *errormsg);
 void PrintUsage(void);
 static inline void PrintGlobalSettings(FILE *output_file,char * s_tree_newick, char *stree_ifile, int n_istrees,int n_strees,sampling_unit *gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit *sb_rate, sampling_unit *sd_rate, sampling_unit *s_leaves, sampling_unit *s_time, sampling_unit *outgroup, sampling_unit *b_rate, sampling_unit *d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit *lb_rate, sampling_unit *ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit *ind_per_sp,sampling_unit *nl_trees,int ng_trees,sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g,float epsilon, int verbosity, char * out_file,float u_seed,int stats,int recon,int db, int params, int command, const sampling_table stable);
-static inline void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time, char *l_tree_newick, char *ltree_ifile, int n_iltrees,sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time,sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate,int t_kind,sampling_unit outgroup, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit alpha_g,float epsilon, int verbosity, char * out_file, int n_replicate);
+static inline void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time, char *l_tree_newick, char *ltree_ifile, int n_iltrees,sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time,sampling_unit b_rate, sampling_unit d_rate, sampling_unit t_rate, sampling_unit gc_rate,sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate,int t_kind,sampling_unit outgroup, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit alpha_g,float epsilon, int verbosity, char * out_file, int n_replicate);
 static inline void PrintSettingsLloop(int curr_ltree,sampling_unit lb_rate,sampling_unit ld_rate,sampling_unit lt_rate,sampling_unit lgc_rate,double gamma_l,sampling_unit lalpha_g);
 static inline void PrintSettingsGloop(int curr_gtree,sampling_unit alpha_g);
 static inline long int CheckSampledSettingsSloop(sampling_unit bds_leaves, sampling_unit bds_length, sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit outgroup, sampling_unit ind_per_sp, sampling_unit nl_trees, sampling_unit b_rate, sampling_unit d_rate, sampling_unit t_rate, sampling_unit gc_rate, sampling_unit Ne, sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit alpha_g, sampling_unit mu, sampling_unit gen_time, int min_lleaves);
@@ -278,7 +278,7 @@ int main (int argc, char **argv)
     const sampling_table sampling_vars=
     {
     (sampling_duple[]){
-        {"P",&Ne},
+        {"CP",&Ne},
         {"SL",&bds_leaves},
         {"SI",&ind_per_sp},
         {"RL",&nl_trees},
@@ -296,8 +296,8 @@ int main (int argc, char **argv)
         {"SD",&sd_rate},
         {"ST",&bds_length},
         {"SO",&outgroup},
-        {"G",&gen_time},
-        {"U",&mu},
+        {"PG",&gen_time},
+        {"PU",&mu},
         {"HS",&alpha_s},
         {"HL",&alpha_l},
         {"HG",&alpha_g}
@@ -335,7 +335,7 @@ int main (int argc, char **argv)
     // ********
     /// <dl><dt>Main program</dt><dd>
     
-    printf("\nSimPhy1.0\n--------------------\n"); /// Welcome
+    printf("%s","   _____ _           ____  __             ___  ____ \n  / ___/(_)___ ___  / __ \\/ /_  __  __   <  / / __ \\\n  \\__ \\/ / __ `__ \\/ /_/ / __ \\/ / / /   / / / / / /\n ___/ / / / / / / / ____/ / / / /_/ /   / /_/ /_/ / \n/____/_/_/ /_/ /_/_/   /_/ /_/\\__, /   /_/(_)____/  \n                             /____/                 \n\n---------------------------------------------------\n\n"); /// Welcome
     
     // *******
     /// <dl><dt>Setting-dependent I/O</dt><dd>
@@ -598,7 +598,7 @@ int main (int argc, char **argv)
         }
         
         if (verbosity>2)
-            PrintSettingsSloop(species_tree_str,gen_time,locus_tree_str,ltree_iname,n_iltrees,sb_rate,sd_rate,bds_leaves,bds_length,b_rate,d_rate,t_rate,gc_rate,t_kind,outgroup,min_lleaves,min_lsleaves,ind_per_sp,nl_trees,ng_trees,Ne,mu,alpha_s,alpha_l,salpha_g,epsilon_brent,verbosity,out_name,curr_stree);
+            PrintSettingsSloop(species_tree_str,gen_time,locus_tree_str,ltree_iname,n_iltrees,sb_rate,sd_rate,bds_leaves,bds_length,b_rate,d_rate,t_rate,gc_rate,lb_rate,ld_rate,lt_rate,lgc_rate,t_kind,outgroup,min_lleaves,min_lsleaves,ind_per_sp,nl_trees,ng_trees,Ne,mu,alpha_s,alpha_l,salpha_g,epsilon_brent,verbosity,out_name,curr_stree);
         
         // ******
         /// Initialization of setting-dependent variables
@@ -917,7 +917,6 @@ int main (int argc, char **argv)
                 gamma_l=gsl_ran_gamma(r, get_sampling(alpha_l), 1/(get_sampling(alpha_l)));
             if (verbosity>2)
                 PrintSettingsLloop(curr_ltree,lb_rate,ld_rate,lt_rate,lgc_rate,gamma_l,lalpha_g);
-            
             // *******
             /// <dl><dt>Locus tree simulation (if it is necessary)</dt><dd>
             if (get_sampling(lb_rate) !=0 || get_sampling(ld_rate)!= 0 || get_sampling(lt_rate)!=0 || get_sampling(lgc_rate)!=0) // l_tree != s_tree
@@ -1492,7 +1491,7 @@ int main (int argc, char **argv)
 
 void PrintUsage(void)
 {
-    printf("\nUsage: ./SimPhy -[Parameter code] value(i|d|c|b|s) ...\n\nValue kinds\n\ti=integer\n\td=decimal\n\tc=character string\n\tb=boolean(1 or 0)\n\ts=sampling notation\n\nPARAMETERS\n_________________\n\n-RX→ Replicates\n_________________\n\n\t-RS i: Number of species tree replicates (study replicates).\n\t-RL s: Distribution of number of locus trees per species tree.\n\t-RG i: Number of gene trees per locus tree.\n\n-HX→ Heterogeneity generators\n_________________\n\n\t-HS s: Distribution of species-specific branch rate heterogeneity modifiers.\n\t-HL s: Distribution of locus-specific rate heterogeneity modifiers.\n\t-HG s: Distribution of gene-tree-branch-specific rate heterogeneity modifiers.\n\t-P s: Distribution of global population sizes.\n\t-U s: Distribution of global substitution rates\n\t-E d: Precision of the Brent’s method for root-finding when sampling the multilocus coalescent. (Devs advice: do not touch if you do not really need it) \n\t-G s: Global generation time.\n\t-V [0,6]: Verbosity. The bigger the verbosity the slower SimPhy becomes. Levels over 3 may only make sense for debugging or study the way SimPhy works.\n\n-OX→ Output\n_________________\n\n\t-O c: Common output prefix.\n\t-OS b: Activates the statistical output.\n\t-OR b: Activates the reconciliation output.\n\t-OD b: Activates the SQLite database output.\n\t-OP b: Activates the output of a file with a summary of the sampled options .\n\t-OC b: Activates the output of original command line parameters and input configuration file if used.\n\n-SX → Species tree\n_________________\n\n\t-S c: Fixed species tree string in modified Newick format . \n\t-SR c: Nexus file containing species trees.\n\t-SB s: Species tree simulation parameter: Distribution of birth rates.\n\t-SD s: Species tree simulation parameter: Distribution of death rates.\n\t-ST s: Species tree simulation parameter: Distribution of maximum tree lengths.\n\t-SL s: Species tree simulation parameter: Distribution of number of species (species tree leaves).\n\t-SO s: Species tree simulation parameter: Distribution of multipliers of half of the tree length to be applied as the branch length of the internal node generated when introducing an outgroup. If this parameter is not set the outgroup is not simulated. \n\t-SI s: Species tree simulation parameter: Distribution of number of individuals per species.\n\n-LX → Locus tree\n_________________\n\n\t-L c: Fixed locus tree string in modified Newick format .\n\t-LR c: Nexus file containing locus trees .\n\t-LB s: Locus tree simulation parameter: Distribution of duplication rates.\n\t-LD s: Locus tree simulation parameter: Distribution of loss rates.\n\t-LT s: Locus tree simulation parameter: Distribution of transfer rates. \n\t-LG s: Locus tree simulation parameter: Distribution of gene conversion rates.\n\t-LK b: Locus tree simulation parameter: Determines whether the sampling of acceptors for both transfers and gene conversions depends (1) or not (0) on the evolutionary distance between candidate acceptors and donors.\n\t-LL s: Locus tree simulation parameter: Distribution of minimum number of leaves to keep the simulated locus tree.\n\t-LS s: Locus tree simulation parameter: Distribution of minimum number of leaves from different species to keep the simulated locus tree.\n\n-CX → Global options\n_________________\n\n\t-CS d: Random number generator seed.\n\t-I c: Input config file (only as a command line parameter)\n\n\nSampling notation\n___________________\n\t[.....]\n\nExample\n___________\n\nSimPhy -rs 100 -rl U10-100 -sb f0.000001 -sl U20-50 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 2\n\n");
+    printf("\nUsage: ./SimPhy -[Parameter code] value(i|d|c|b|s) ...\n\nValue kinds\n\ti=integer\n\td=decimal\n\tc=character string\n\tb=boolean(1 or 0)\n\ts=sampling notation\n\nPARAMETERS\n__________\n__________\n\n-RX→ Replicates\n_______________\n\n\t-RS i: Number of species tree replicates (study replicates).\n\t-RL s: Distribution of number of locus trees per species tree.\n\t-RG i: Number of gene trees per locus tree.\n\n-SX → Species tree\n__________________\n\n\t-S c: Fixed species tree string in modified Newick format . \n\t-SR c: Nexus file containing species trees.\n\t-SB s: Species tree simulation parameter: Distribution of birth rates.\n\t-SD s: Species tree simulation parameter: Distribution of death rates.\n\t-ST s: Species tree simulation parameter: Distribution of maximum tree lengths.\n\t-SL s: Species tree simulation parameter: Distribution of number of species (species tree leaves).\n\t-SO s: Species tree simulation parameter: Distribution of multipliers of half of the tree length to be applied as the branch length of the internal node generated when introducing an outgroup. If this parameter is not set the outgroup is not simulated. \n\t-SI s: Species tree simulation parameter: Distribution of number of individuals per species.\n\n-LX → Locus tree\n________________\n\n\t-L c: Fixed locus tree string in modified Newick format .\n\t-LR c: Nexus file containing locus trees .\n\t-LB s: Locus tree simulation parameter: Distribution of duplication rates.\n\t-LD s: Locus tree simulation parameter: Distribution of loss rates.\n\t-LT s: Locus tree simulation parameter: Distribution of transfer rates. \n\t-LG s: Locus tree simulation parameter: Distribution of gene conversion rates.\n\t-LK b: Locus tree simulation parameter: Determines whether the sampling of acceptors for both transfers and gene conversions depends (1) or not (0) on the evolutionary distance between candidate acceptors and donors.\n\t-LL s: Locus tree simulation parameter: Distribution of minimum number of leaves to keep the simulated locus tree.\n\t-LS s: Locus tree simulation parameter: Distribution of minimum number of leaves from different species to keep the simulated locus tree.\n\n\n-PX → Hyperparameters\n_____________________\n\n\t-PB s: Hyperparameter (sampled for each species tree) for the duplication rate of the locus tree simulation (LB)\n\t-PD s: Hyperparameter (sampled for each species tree) for the loss rate of the locus tree simulation (LD)\n\t-PT s: Hyperparameter (sampled for each species tree) for the transfer rate of the locus tree simulation (LT)\n\t-PG s: Hyperparameter (sampled for each species tree) for the gene conversion rate of the locus tree simulation (LG)\n\t-PP s: Hyperhyperparameter (sampled for each species tree) for the gene-tree-branch-specific rate heterogeneity modifiers (HG) \n\t-PH s: Hyperparameter (sampled for each locus tree) for the gene-tree-branch-specific rate heterogeneity modifiers (HG)\n\n-HX→ Heterogeneity generators\n_____________________________\n\n\t-HS s: Distribution of species-specific branch rate heterogeneity modifiers.\n\t-HL s: Distribution of locus-specific rate heterogeneity modifiers.\n\t-HG s: Distribution of gene-tree-branch-specific rate heterogeneity modifiers.\n\n-CX → Global options\n____________________\n\n\t-CS d: Random number generator seed.\n\t-CP s: Distribution of global population sizes.\n\t-CU s: Distribution of global substitution rates\n\t-CE d: Precision of the Brent’s method for root-finding when sampling the multilocus coalescent. (Devs advice: do not touch if you do not really need it) \n\t-CG s: Global generation time.\n\n-I c: Input config file (only as a command line parameter)\n\n-V [0,6]: Verbosity. The bigger the verbosity the slower SimPhy becomes. Levels over 3 may only make sense for debugging or study the way SimPhy works.\n\n-OX→ Output\n___________\n\n\t-O c: Common output prefix.\n\t-OS b: Activates the statistical output.\n\t-OR b: Activates the reconciliation output.\n\t-OD b: Activates the SQLite database output.\n\t-OP b: Activates the output of a file with a summary of the sampled options.\n\t-OC b: Activates the output of original command line parameters and input configuration file if used.\n\n\nSampling notation\n_________________\n\nNotation squeme= Distribution_code:parameter_1,parameter_2,...,parameter_n\nDistribution codes:\n\t-F: fixed value\n\tU: uniform\n\tN: normal\n\tE: exponential\n\tG: gamma\n\tL: lognormal\n\tSL: lognormal * constant\nExample: N:1,1 (Normal with mean and sd equal 1)\n\nExample\n___________\n\nsimphy -sb f:0.000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 100 -rl U:10,100 -rg 1 -o SimPhy_test -cp f:10000 -cg f:1 -sl U:20,50 -st f:1000000 -os 1 -or 1 -v 2 -od 1 -cs 22\n\n");
     
     fflush(stdout);
     
@@ -1530,13 +1529,13 @@ void PrintUsage(void)
  * \param ltree_ifile
  *   Locus tree nexus filename.
  * \param b_rate
- *   Birth rate for the locus_tree simulation.
+ *   Birth rate hyperparemeter for the locus_tree simulation.
  * \param d_rate
- *   Death rate for the locus_tree simulation.
+ *   Death rate hyperparemeter for the locus_tree simulation.
  * \param t_rate
- *   Transfer rate for the locus_tree simulation.
+ *   Transfer rate hyperparemeter for the locus_tree simulation.
  * \param gc_rate
- *   Gene conversion rate for the locus_tree simulation.
+ *   Gene conversion rate hyperparemeter for the locus_tree simulation.
  * \param lb_rate
  *   Birth rate for the locus_tree simulation.
  * \param ld_rate
@@ -1721,55 +1720,6 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
                         return(SETTINGS_ERROR);
                         break;
-                }
-                    break;
-                    // ***
-                    /// -P. Haploid population size
-                case 'P':
-                    if(ParseSampling(argv[i],Ne,sampling_vars)!=NO_ERROR)
-                    {
-                        PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
-                        return SETTINGS_ERROR;
-                    }
-                    break;
-                    // ***
-                    /// -U. Global substitution rate
-                case 'U':
-                    if(ParseSampling(argv[i],mu,sampling_vars)!=NO_ERROR)
-                    {
-                        PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
-                        return SETTINGS_ERROR;
-                    }
-                    break;
-                    // ***
-                    /// <dl><dt>-Ex. Epsilons for the bounded multispecies coalescent sampling </dt><dd>
-                case 'E':
-                    switch (toupper(sub_code))
-                    {
-                        // **
-                        /// -E. Brent method </dd></dt>
-                    case '\0':
-                        if(sscanf(argv[i],"%f",epsilon)==0 || *epsilon<0)
-                        {
-                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
-                            return (SETTINGS_ERROR);
-                        }
-                        break;
-
-                    default:
-                        PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
-                        return (SETTINGS_ERROR);
-                        break;
-                    }
-                    
-                    break;
-                    // ***
-                    /// -G. Generation time (branch lengths as time instead of generations, input and output trees, inside the software, the trees are in generations)
-                case 'G':
-                    if(ParseSampling(argv[i],gen_time,sampling_vars)!=NO_ERROR)
-                    {
-                        PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
-                        return SETTINGS_ERROR;
                     }
                     break;
                     // ***
@@ -1963,7 +1913,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         // **
                         /// -LB. Simulated locus tree. Birth rate.
                     case 'B':
-                        if(ParseSampling(argv[i],b_rate,sampling_vars)!=NO_ERROR)
+                        if(ParseSampling(argv[i],lb_rate,sampling_vars)!=NO_ERROR)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return SETTINGS_ERROR;
@@ -1972,7 +1922,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         // **
                         /// -LD. Simulated locus tree. Death rate.
                     case 'D':
-                        if(ParseSampling(argv[i],d_rate,sampling_vars)!=NO_ERROR)
+                        if(ParseSampling(argv[i],ld_rate,sampling_vars)!=NO_ERROR)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return SETTINGS_ERROR;
@@ -1981,7 +1931,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         // **
                         /// -LT. Simulated locus tree. Transfer rate.
                     case 'T':
-                        if(ParseSampling(argv[i],t_rate,sampling_vars)!=NO_ERROR)
+                        if(ParseSampling(argv[i],lt_rate,sampling_vars)!=NO_ERROR)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return SETTINGS_ERROR;
@@ -1990,7 +1940,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         // **
                         /// -LG. Simulated locus tree. Gene conversion rate.
                     case 'G':
-                        if(ParseSampling(argv[i],gc_rate,sampling_vars)!=NO_ERROR)
+                        if(ParseSampling(argv[i],lgc_rate,sampling_vars)!=NO_ERROR)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return SETTINGS_ERROR;
@@ -2030,11 +1980,77 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                 }
                     break;
                     // ***
+                    /// <dl><dt>-Px. Hyperparameters.</dt><dd>
+                case 'P':
+                    switch (sub_code)
+                {
+                        // **
+                        /// -Pb. Locus tree birth rate hyperparameter.
+                    case 'B':
+                        if(ParseSampling(argv[i],b_rate,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -PD. Locus tree death rate hyperparameter.
+                    case 'D':
+                        if(ParseSampling(argv[i],d_rate,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -PT. Locus tree transfer rate hyperparameter.
+                    case 'T':
+                        if(ParseSampling(argv[i],t_rate,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -PG. Locus tree gene conversion rate hyperparameter.
+                    case 'G':
+                        if(ParseSampling(argv[i],gc_rate,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -PP. Hyperhyperparameter for the gene-tree-branch-specific rate heterogeneity.
+                    case 'P':
+                        if(ParseSampling(argv[i],salpha_g,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -PH. Hyperparameter for the gene-tree-branch-specific rate heterogeneity.</dd></dl>
+                    case 'H':
+                        if(ParseSampling(argv[i],lalpha_g,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        
+                    default:
+                        PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
+                        return (SETTINGS_ERROR);
+                        break;
+                }
+                    break;
+                    // ***
                     /// <dl><dt>-Cx. Global options.</dt><dd>
                 case 'C':
                     switch (toupper(sub_code))
                 {       // **
-                        /// -Cs. Seed for the random number generator.</dd></dl>
+                        /// -Cs. Seed for the random number generator.
                     case 'S':
                     {
                         if(sscanf(argv[i],"%f",u_seed)==0)
@@ -2044,6 +2060,42 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         }
                         
                     }
+                        break;
+                        // **
+                        /// -Cp. Haploid population size
+                    case 'P':
+                        if(ParseSampling(argv[i],Ne,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -Cu. Global substitution rate
+                    case 'U':
+                        if(ParseSampling(argv[i],mu,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
+                        break;
+                        // **
+                        /// -Ce. Brent method
+                    case 'E':
+                        if(sscanf(argv[i],"%f",epsilon)==0 || *epsilon<0)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return (SETTINGS_ERROR);
+                        }
+                        break;
+                        // **
+                        /// -Cg. Generation time (branch lengths as time instead of generations, input and output trees, inside the software, the trees are in generations)</dd></dl>
+                    case 'G':
+                        if(ParseSampling(argv[i],gen_time,sampling_vars)!=NO_ERROR)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return SETTINGS_ERROR;
+                        }
                         break;
                     default:
                         PrintXStringError(argv,i, "|<– Unrecognized parameter\n");
@@ -2056,21 +2108,34 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                     // ***
                     /// -I. Input file</dd></dl>
                 case 'I':
-                    if ((input_file=fopen(argv[i], "r"))==NULL)
+                    switch (read_file)
                     {
-                        PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
-                        perror("Error opening input_file: ");
-                        ErrorReporter(IO_ERROR,NULL);
+                        case 1:
+                            break;
+                            
+                        default:
+                            if ((input_file=fopen(argv[i], "r"))==NULL)
+                            {
+                                PrintXStringError(argv,i, "|<- ERROR in this parameter\n");
+                                perror("Error opening input_file: ");
+                                ErrorReporter(IO_ERROR,NULL);
+                            }
+                            else
+                            {
+                                *confile_name=argv[i];
+                                if (argc>3)
+                                {
+                                    printf("\n\tWARNING! You are using both the input file option -I and command line parameters. If you define a parameter using both input options, command line options will have preference\n");
+                                }
+                                read_file=1;
+                                ErrorReporter(GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, recon, db, params, commands, u_seed, sampling_vars),"");
+                                
+                                fclose(input_file);
+                                i=0;
+                            }
+                            break;
                     }
-                    else
-                    {
-                        *confile_name=argv[i];
-                        if (argc>3)
-                        {
-                            printf("\n\tWARNING! You are using both the input file option -I and command line parameters. If you define a parameter using both input options, input file options will have preference\n");
-                        }
-                        read_file=1;
-                    }
+
                     break;
                     
                 default:
@@ -2082,18 +2147,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
             
         }
     }
-    
-    // *****
-    /// <dl><dt>Getting input parameters from input file if it is present</dt><dd></dd></dl>
-    switch (read_file)
-    {
-        case 1:
-            
-            ErrorReporter(GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, recon, db, params, commands, u_seed, sampling_vars),"");
-            
-            fclose(input_file);
-            break;
-    }
+    ///</dt><dd>
     
     // *****
     /// <dl><dt>Error detection</dt><dd>
@@ -2461,58 +2515,6 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                     }
                         break;
                         // ***
-                        /// -P. Haploid population size
-                    case 'P':
-                        if(ParseSampling(buffer+offset+1,Ne,sampling_vars)!=NO_ERROR)
-                        {
-                            
-                            fprintf(stderr,"Error in the parameter: %s\n",buffer);
-                            return SETTINGS_ERROR;
-                        }
-                        break;
-                        // ***
-                        /// -U. Global substitution rate
-                    case 'U':
-                        if(ParseSampling(buffer+offset+1,mu,sampling_vars)!=NO_ERROR)
-                        {
-                            
-                            fprintf(stderr,"Error in the parameter: %s\n",buffer);
-                            return SETTINGS_ERROR;
-                        }
-                        break;
-                        // ***
-                        /// <dl><dt>-Ex. Epsilons for the bounded multispecies coalescent sampling </dt><dd>
-                    case 'E':
-                        switch (sub_code)
-                    {
-                            // **
-                            /// -E. Brent method </dd></dt>
-                        case '\0':
-                            if(sscanf(buffer+offset,"%f",epsilon)==0 || *epsilon<0)
-                            {
-                                
-                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
-                                return (SETTINGS_ERROR);
-                            }
-                            break;
-                        default:
-                            
-                            fprintf(stderr,"Unrecognized parameter: %s\n",buffer);
-                            return (SETTINGS_ERROR);
-                            break;
-                    }
-                        break;
-                        // ***
-                        /// -G. Generation time (branch lengths as time instead of generations, input and output trees, inside the software, the trees are in generations)
-                    case 'G':
-                        if(ParseSampling(buffer+offset+1,gen_time,sampling_vars)!=NO_ERROR)
-                        {
-                            
-                            fprintf(stderr,"Error in the parameter: %s\n",buffer);
-                            return SETTINGS_ERROR;
-                        }
-                        break;
-                        // ***
                         /// -V. Verbosity
                     case 'V':
                         if(sscanf(buffer+offset,"%u",verbosity)==0)
@@ -2717,7 +2719,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LB. Simulated locus tree. Birth rate.
                         case 'B':
-                            if(ParseSampling(buffer+offset+1,b_rate,sampling_vars)!=NO_ERROR)
+                            if(ParseSampling(buffer+offset+1,lb_rate,sampling_vars)!=NO_ERROR)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2727,7 +2729,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LD. Simulated locus tree. Death rate.
                         case 'D':
-                            if(ParseSampling(buffer+offset+1,d_rate,sampling_vars)!=NO_ERROR)
+                            if(ParseSampling(buffer+offset+1,ld_rate,sampling_vars)!=NO_ERROR)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2737,7 +2739,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LT. Simulated locus tree. Transfer rate.
                         case 'T':
-                            if(ParseSampling(buffer+offset+1,t_rate,sampling_vars)!=NO_ERROR)
+                            if(ParseSampling(buffer+offset+1,lt_rate,sampling_vars)!=NO_ERROR)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2747,7 +2749,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LG. Simulated locus tree. Gene conversion rate.
                         case 'G':
-                            if(ParseSampling(buffer+offset+1,gc_rate,sampling_vars)!=NO_ERROR)
+                            if(ParseSampling(buffer+offset+1,lgc_rate,sampling_vars)!=NO_ERROR)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2792,13 +2794,85 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                     }
                         break;
                         // ***
+                        /// <dl><dt>-Px. Hyperparameters.</dt><dd>
+                    case 'P':
+                        switch (sub_code)
+                    {
+                            // **
+                            /// -Pb. Locus tree birth rate hyperparameter.
+                        case 'B':
+                            if(ParseSampling(buffer+offset+1,b_rate,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // **
+                            /// -PD. Locus tree death rate hyperparameter.
+                        case 'D':
+                            if(ParseSampling(buffer+offset+1,d_rate,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // **
+                            /// -PT. Locus tree transfer rate hyperparameter.
+                        case 'T':
+                            if(ParseSampling(buffer+offset+1,t_rate,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // **
+                            /// -PG. Locus tree gene conversion rate hyperparameter.
+                        case 'G':
+                            if(ParseSampling(buffer+offset+1,gc_rate,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // **
+                            /// -PP. Hyperhyperparameter for the gene-tree-branch-specific rate heterogeneity.
+                        case 'P':
+                            if(ParseSampling(buffer+offset+1,salpha_g,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // **
+                            /// -PH. Hyperparameter for the gene-tree-branch-specific rate heterogeneity.</dd></dl>
+                        case 'H':
+                            if(ParseSampling(buffer+offset+1,lalpha_g,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+
+                        default:
+                            
+                            fprintf(stderr,"Unrecognized parameter: %s\n",buffer);
+                            return (SETTINGS_ERROR);
+                            break;
+                    }
+                        break;
+                        // ***
                         /// <dl><dt>-Cx. Global options.</dt><dd>
                     case 'C':
                         switch (sub_code)
                     {       // **
-                            /// -Cs. Seed for the random number generator.</dd></dl></dd></dl>
+                            /// -Cs. Seed for the random number generator.
                         case 'S':
-                        {
                             if(sscanf(buffer+offset,"%f",u_seed)==0)
                             {
                                 
@@ -2806,10 +2880,49 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                                 return (SETTINGS_ERROR);
                             }
                             
-                        }
+                            break;
+                            // ***
+                            /// -Cp. Haploid population size
+                        case 'P':
+                            if(ParseSampling(buffer+offset+1,Ne,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // ***
+                            /// -Cu. Global substitution rate
+                        case 'U':
+                            if(ParseSampling(buffer+offset+1,mu,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
+                            break;
+                            // ***
+                            /// -Ce. Epsilons for the bounded multispecies coalescent sampling
+                        case 'E':
+                            
+                            if(sscanf(buffer+offset,"%f",epsilon)==0 || *epsilon<0)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return (SETTINGS_ERROR);
+                            }
+                            break;
+                            // ***
+                            /// -Cg. Generation time (branch lengths as time instead of generations, input and output trees, inside the software, the trees are in generations)</dd></dl></dd></dl>
+                        case 'G':
+                            if(ParseSampling(buffer+offset+1,gen_time,sampling_vars)!=NO_ERROR)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return SETTINGS_ERROR;
+                            }
                             break;
                         default:
-                            
                             fprintf(stderr,"Unrecognized parameter: %s\n",buffer);
                             return (SETTINGS_ERROR);
                             break;
@@ -2980,7 +3093,7 @@ static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifi
                 sprintf(buffer,"%s","Not used");
             fprintf(file,"\n\t\t\t-Generations: %s",buffer);
         }
-        if ((is_variable(*lb_rate) && is_variable(*ld_rate) && is_variable(*lt_rate) && is_variable(*lgc_rate)) == 0)
+        if (!(is_variable(*lb_rate) || is_variable(*ld_rate) || is_variable(*lt_rate) || is_variable(*lgc_rate)))
         {
             Print_Sampling(nl_trees,buffer,stable);
             fprintf(file,"\n\t-Locus trees: %s directly obtained from each species tree (no birth-death process)\n",buffer);
@@ -3060,6 +3173,14 @@ static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifi
  *  Number of leaves of the desired species tree (stopping rule).
  * \param s_time
  *  Maximum length of the simulated species tree.
+ * \param b_rate
+ *  Birth rate hyperparameter of the locus tree simulation.
+ * \param d_rate
+ *  Death rate hyperparameter of the locus tree simulation.
+ * \param t_rate
+ *  Transfer rate hyperparameter of the locus tree simulation.
+ * \param gc_rate
+ *  Gene conversion rate hyperparameter of the locus tree simulation.
  * \param lb_rate
  *  Birth rate of the locus tree simulation.
  * \param ld_rate
@@ -3106,7 +3227,7 @@ static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifi
  *  Number of this replicate.
  *******************************************************************************/
 
-void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time,char *l_tree_newick, char *ltree_ifile, int n_iltrees,sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time,sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate,int t_kind,sampling_unit outgroup, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit salpha_g,float epsilon, int verbosity, char * out_file, int n_replicate)
+void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time,char *l_tree_newick, char *ltree_ifile, int n_iltrees,sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time,sampling_unit b_rate, sampling_unit d_rate, sampling_unit t_rate, sampling_unit gc_rate,sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate,int t_kind,sampling_unit outgroup, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit salpha_g,float epsilon, int verbosity, char * out_file, int n_replicate)
 {
     char * buffer=calloc(100,sizeof(char));
     
@@ -3222,16 +3343,16 @@ void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time,char *l_tre
                 printf("\n\t\t-Time units: generations\n");
             }
         }
-        if (get_sampling(lb_rate)==0 && get_sampling(ld_rate)==0 && get_sampling(lt_rate)==0 && get_sampling(lgc_rate)==0)
+        if (!(is_variable(lb_rate) || is_variable(ld_rate) || is_variable(lt_rate) || is_variable(lgc_rate)))
         {
-            printf("\n\t-%f Locus trees: directly obtained from the species tree (no birth-death process)\n",get_sampling(nl_trees));
+            printf("\n\t-%u Locus trees: directly obtained from the species tree (no birth-death process)\n",(unsigned int)get_sampling(nl_trees));
         }
         else
         {
-            printf("\n\t-%f Locus trees: birth-death simulation\n\t\t-Birth rate prior (per generation): %e",get_sampling(nl_trees),get_sampling(lb_rate));
-            printf("\n\t\t-Death rate prior (per generation): %e",get_sampling(ld_rate));
-            printf("\n\t\t-Transference rate prior (per generation): %e",get_sampling(lt_rate));
-            printf("\n\t\t-Gene conversion rate prior (per generation): %e",get_sampling(lgc_rate));
+            printf("\n\t-%u Locus trees: birth-death simulation\n\t\t-Birth rate prior (per generation): %e",(unsigned int)get_sampling(nl_trees),get_sampling(b_rate));
+            printf("\n\t\t-Death rate prior (per generation): %e",get_sampling(d_rate));
+            printf("\n\t\t-Transference rate prior (per generation): %e",get_sampling(t_rate));
+            printf("\n\t\t-Gene conversion rate prior (per generation): %e",get_sampling(gc_rate));
             printf("\n\t\t-Minimum number of leaves: %u\n\t\t-Minimum number of leaves from different species: %u\n",min_lleaves,min_lsleaves);
         }
     }

@@ -97,13 +97,21 @@ double brent_root (double (*f)(double value, int n, va_list ap), double a, doubl
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double bound_time);
+double CdfBoundedCoalescent(double w_time, int n_leaves,int pop_size, double bound_time);
+
+#ifdef __MPFR_H
+long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision);
+#endif
 
 /**
  * Sampler of a bounded coalescent process.
  *
  * \param w_time 
  *   Waiting time.
+ * \param n_arg
+ *   Number of arguments
+ * \param ap
+ *   Rest of arguments, they must be:
  * \param density
  *   Density (sampled uniform random number) of the w_time to find.
  * \param n_leaves
@@ -112,16 +120,12 @@ double cdf_bounded_coalescent(double w_time, int n_leaves,int pop_size, double b
  *   Ne of the branch.
  * \param bound_time
  *   Bound of the process (time).
- * \param precision
- *   Number of bits of the MPFR mantissa.
  * \return
  *   Cumulative density.
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-double sample_bounded_coalescent(double w_time, double density, int n_leaves, int pop_size, double bound_time, int precision);
-
-//long double cdf_bounded_coalescent_mpfr(long double time, int n_leaves,int pop_size, long double bound_time, int precision);
+double SampleBoundedCoalescent(double w_time, int n_arg, va_list ap);
 
 /**
  * Calculates de probability of going from x to y lineages along a locus tree branch, defined by a time and a population size.
