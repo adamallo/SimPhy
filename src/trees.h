@@ -16,7 +16,9 @@
 #ifndef trees_h
 #define trees_h
 #include <stdio.h>
+#ifndef stdlib_h
 #include <stdlib.h>
+#endif
 #include <memory.h>
 #include <math.h>
 #include <float.h>
@@ -36,9 +38,6 @@
 #endif
 #ifndef sampling_h
 #include "sampling.h"
-#endif
-#ifndef stdlib_h
-#include <stdlib.h>
 #endif
 #ifndef string_h
 #include <string.h>
@@ -246,8 +245,8 @@ struct l_node
     /// @{
     int n_child; ///< Number of children (offspring) of this node.
     int n_nodes; ///< Number of g_nodes wich are being pointed by this restriction tree (avaliable nodes).
-    int n_ilin; ///< Number of input lineages.
-    int n_olin; ///< Number of output lineages.
+    int n_ilin; ///< Number of input (backwards in time) lineages.
+    int n_olin; ///< Number of output (backwards in time) lineages.
     /// @}
     
     /** \name Data **/
@@ -264,7 +263,7 @@ struct l_node
     ///@{
     l_node **children; ///< Pointer to the array of children (pointers).
     l_node *anc_node; ///< Ancestor
-    l_node *lat_node; ///< Lateral node to do not use a big array of memory to save the avaliable locus nodes in the birth-death process of the locus tree creation.
+    l_node *lat_node; ///< Lateral node to not use a big array of memory to save the avaliable locus nodes in the birth-death process of the locus tree simulation.
     g_node **g_nodes; ///< Array of pointers to g_nodes (avaliable gene nodes).
     s_node *conts; ///< s_node that contains this g_node along his branch.
     double *i_probs; ///< Array of probabilities for each number of input lineages (0,1,2...)
@@ -879,17 +878,19 @@ long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, int tree_struct, int
 long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int relink);
 
 /**
- * Direct copy of a species tree into a locus tree (no dl)
+ * Direct copy of a species tree (pre or post-ordered) into a locus tree (post-ordered)
  *
  *
  * \param species_tree
  *  Collapsed species tree.
  * \param locus_tree
  *  Preallocated proper(same size) locus tree.
+ * \param no_reindex
+ * Logical flag. If reindex == 1 the resulting species tree will be reindexed in post-order (but not reordered in the array)
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-long int CopyStoLTree(s_tree *species_tree, l_tree *locus_tree);
+long int CopyStoLTree(s_tree *species_tree, l_tree *locus_tree, int reindex);
 //\cond DOXYGEN_EXCLUDE
 //// ** Tree edition ** //
 //
@@ -1082,6 +1083,20 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
  *  ocurrs.
  *******************************************************************************/
 long int CollapseSTree (s_tree * in_tree, int post_order);
+
+/**
+ * Reindex a s_tree using either a post-order or a pre-order.
+ *
+ * \param in_tree
+ *  Input s_tree.
+ * \param post_order
+ *  Logical flag. If post_order = 1, the new tree will be in a post-order. Else,
+ *  it will be in a pre-order.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \attention THIS FUNCTION GENERATES AN UNPROPER TREE WITH NODE INDEXES THAT DO NOT CORESPOND TO THE POSITION IN THE MEMORY ARRAY
+ *******************************************************************************/
+long int ReindexSTree (s_tree * in_tree, int post_order);
 
 /**
  * Collapse a sparse l_tree (root) in an l_tree with nodes in an array (m_node)

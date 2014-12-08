@@ -64,12 +64,15 @@ enum DISTRIBUTIONS {FIXED=0, UNIFORM=1, NORMAL=2, EXPONENTIAL=3, GAMMA=4, LOGNOR
  * \var D
  *  Double
  *******************************************************************************/
-enum TYPES{UI=0,D=1};
+enum TYPES{UI=0,D=1,SU=2};
 
 // *********************** Declaration of custom types ************************** //
 
 typedef union ui_d ui_d;
 typedef struct sampling_unit sampling_unit;
+typedef union u_idsu u_idsu;
+typedef struct sampling_duple sampling_duple;
+typedef struct sampling_table sampling_table;
 
 /**
  * Union of double and int
@@ -82,16 +85,48 @@ union ui_d
 };
 
 /**
+ * Union of int, double and sampling unit
+ *******************************************************************************/
+
+union u_idsu
+{
+    int i;
+    double d;
+    sampling_unit *p;
+};
+
+/**
  * Data struct to guide parameter sampling
  *******************************************************************************/
 
 struct sampling_unit
 {
     int distribution_code; ///< Distribution id
-    double params[5]; ///< parameters
+    u_idsu params[5]; ///< parameters
+    int params_type[5];
     ui_d value; ///< sampled value (current value)
     int vtype;
+    int dependent_index;
     
+};
+
+/**
+ * Data structure to allow sampling unit interdependence
+ *******************************************************************************/
+
+struct sampling_duple
+{
+    char name[2];
+    sampling_unit *p;
+};
+
+/**
+ * Data structure to allow sampling unit interdependence
+ *******************************************************************************/
+struct sampling_table
+{
+    sampling_duple *table;
+    int n_duples;
 };
 
 // *********************** Prototype of functions ******************************* //
@@ -102,13 +137,15 @@ struct sampling_unit
 
 void set_sampling_uint(sampling_unit *variable, int value);
 void set_sampling_double(sampling_unit *variable, double value);
+void set_sampling_pointeruint(sampling_unit *variable, sampling_unit *dependent);
+void set_sampling_pointerdouble(sampling_unit *variable, sampling_unit *dependent);
 long int sample_distr(gsl_rng *r, int n_arg,...);
-long int ParseSampling(char * p, sampling_unit * sample);
-void Print_Sampling(sampling_unit sample, char * buffer);
+long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sampling_vars);
+void Print_Sampling(sampling_unit *sample, char * buffer,const sampling_table stable);
+int is_variable(sampling_unit value);
 int is_sampling_set(sampling_unit value);
 
 ///@}
-
 
 #endif
 ///@}

@@ -74,7 +74,7 @@ static void FreeGNodes (g_node * node, int complete);
  *  Pointer where updating the index in each function call. Its value should be
  *  0 in the first call.
  *******************************************************************************/
-void PostReorderSNodes (s_node * node, int * index); ///\todo Undo this provisional trick (removing the static status) to have this function accesible from the main function of the program.
+static void PostReorderSNodes (s_node * node, int * index);
 
 /**
  * Reorders a group of l_node with tree structure in a post-order.
@@ -151,7 +151,7 @@ static void PreReorderGNodes (g_node * node, int * index);
  * of \ref s_node "s_nodes". This is an important part of \ref CollapseSTree public function.
  *
  * \param output
- *  Pre-allocated memory of s_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of s_nodes (with enough memory for the number of
  *  \ref s_node "s_nodes" present in the input).
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -162,6 +162,20 @@ static void PreReorderGNodes (g_node * node, int * index);
 static void PostCollapseSNodes(s_node *output,s_node *input);
 
 /**
+ * Copies a group of s_nodes (with tree structure) in an array of l_nodes
+ *
+ * \param output
+ *  Pre-allocated array of l_nodes (with enough memory for the number of
+ *  \ref s_node "s_nodes" present in the input).
+ * \param input
+ *  Node of the original group of nodes, to be copied into the output (root in
+ *  the first call).
+ * \param l_id
+ *  Pointer to set the l_nodes ids.
+ *******************************************************************************/
+static void CopyStoLNodes(l_node *output,s_node *input,int *l_id);
+
+/**
  * Copies a group of l_nodes (with tree structure) in an array of l_nodes following
  * a post-order.
  *
@@ -170,7 +184,7 @@ static void PostCollapseSNodes(s_node *output,s_node *input);
  * The l_node::g_nodes are also copied if there is allocated memory for them.
  *
  * \param output
- *  Pre-allocated memory of l_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of l_nodes (with enough memory for the number of
  *  \ref l_node "l_nodes" present in the input.
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -193,7 +207,7 @@ static void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int r
  * of \ref g_node "g_nodes". This is an important part of \ref CollapseGTree public function.
  *
  * \param output
- *  Pre-allocated memory of g_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of g_nodes (with enough memory for the number of
  *  \ref g_node "g_nodes" present in the input).
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -211,7 +225,7 @@ static void PostCollapseGNodes(g_node *output,g_node *input);
  * of \ref s_node "s_nodes". This is an important part of \ref CollapseSTree public function.
  *
  * \param output
- *  Pre-allocated memory of s_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of s_nodes (with enough memory for the number of
  *  \ref s_node "s_nodes" present in the input).
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -230,7 +244,7 @@ static void PreCollapseSNodes(s_node *output,s_node *input);
  * The l_node::g_nodes are also copied if there is allocated memory for them.
  *
  * \param output
- *  Pre-allocated memory of l_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of l_nodes (with enough memory for the number of
  *  \ref l_node "l_nodes" present in the input.
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -253,7 +267,7 @@ static void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int re
  * of \ref g_node "g_nodes". This is an important part of \ref CollapseGTree public function.
  *
  * \param output
- *  Pre-allocated memory of g_nodes (with enougth memory for the number of
+ *  Pre-allocated memory of g_nodes (with enough memory for the number of
  *  \ref g_node "g_nodes" present in the input).
  * \param input
  *  Node of the original group of nodes, to be copied into the output (root in
@@ -3258,7 +3272,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         case 2:
             break;
         case 3:
-            printf("\n\t%d-node species tree correctly simulated",(*out_tree)->n_nodes);
+            printf("\n\t%d-node species tree correctly simulated\n",(*out_tree)->n_nodes);
             break;
         default:
             printf("\n\t\t%d-node species tree correctly simulated: ",(*out_tree)->n_nodes);
@@ -4368,7 +4382,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
             
-            //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra for loop
+            //Here I'm not using NewPeriods to perform the initialization in a more efficient way, saving one extra loop
             periods=calloc(n_periods, sizeof(struct period));
             if (periods==NULL)
                 return MEM_ERROR;
@@ -4801,7 +4815,17 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     // ****
     /// Association between locus tree and gene tree and gene tree reset
+    if (verbosity>4)
+        printf("\n\t\t\tAssociation and initialization of gene tree and locus tree structures...");
+#ifdef DBG
+    fflush(stdout);
+#endif
     MatchTreesMSC(wlocus_tree,*gene_tree,1,simlosses);
+    if (verbosity>4)
+        printf("\n\t\t\tDone\n\t\t\tSampling the coalescent history along each branch of the locus tree...");
+#ifdef DBG
+    fflush(stdout);
+#endif
     
     w_gnodes=(*gene_tree)->m_node;
     next_avail_inode=wlocus_tree->n_gleaves;
@@ -4901,7 +4925,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         }
         
         // ***
-        /// <dl><dt> Coalescent simulation loop. Each iteration means one coalescence. Ends if the end of the branch has reached,there is no more posible coalescences (only 1 active g_node left) or a politomy is required</dt><dd>
+        /// <dl><dt> Coalescent simulation loop. Each iteration means one coalescence. Ends if the end of the branch has reached or there is no more posible coalescences (only 1 active g_node left)</dt><dd>
         
         for (j=0; j<max_coals;++j)
         {
@@ -5268,6 +5292,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
                 {
+#ifdef __MPFR_H
                     current_ngen=w_lnode->n_gen;
                     avail_leaves=w_lnode->n_ilin;
                     for (j=0;j<n_coals;++j)
@@ -5276,6 +5301,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                         current_ngen-=*(sampled_ngens+j);
                         --avail_leaves;
                     }
+#endif
                     if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
                         return UNEXPECTED_VALUE;
                 }
@@ -6228,7 +6254,7 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
     return NO_ERROR;
 }
 
-long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
+long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree, int reindex)
 {
     int i=0,j=0;
     s_node *w_snode=NULL;
@@ -6242,38 +6268,52 @@ long int CopyStoLTree(s_tree *sp_tree, l_tree *locus_tree)
     
     // *
     /// Tree equivalence 
-    if (sp_tree->m_node==NULL||sp_tree->max_children!=locus_tree->max_children||sp_tree->n_gleaves!=locus_tree->n_gleaves||sp_tree->n_leaves!=locus_tree->n_leaves||sp_tree->n_nodes!=locus_tree->n_nodes)
+    if (sp_tree->max_children!=locus_tree->max_children||sp_tree->n_gleaves!=locus_tree->n_gleaves||sp_tree->n_leaves!=locus_tree->n_leaves||sp_tree->n_nodes!=locus_tree->n_nodes)
         return MEM_ERROR;
-
-    // *
-    /// Tree copy loop
-    for (i=0;i<sp_tree->n_nodes;++i)
+    if (sp_tree->root==sp_tree->m_node)//Pre-order
     {
-        w_snode=sp_tree->m_node+i;
-        w_lnode=locus_tree->m_node+i;
-        w_lnode->sp_index=w_snode->sp_index;
-        w_lnode->n_child=w_snode->n_child;
-        w_lnode->n_nodes=w_snode->n_replicas;
-        w_lnode->Ne=w_snode->Ne;
-        w_lnode->n_gen=w_snode->n_gen;
-        w_lnode->time=w_snode->time;
-        w_lnode->gen_length=w_snode->gen_length;
-        w_lnode->conts=w_snode;
-        w_lnode->mu_mult=w_snode->mu_mult;
-        w_lnode->gtime_mult=w_snode->gtime_mult;
-        w_snode->n_lnodes=1;
-        w_snode->l_nodes=w_lnode;
-
-        for (j=0;j<w_lnode->n_child; ++j)
+        ReindexSTree(sp_tree, 1);
+        CopyStoLNodes(locus_tree->m_node,sp_tree->root,&i);///Do it using recursion
+        switch (reindex)
         {
-            *(w_lnode->children+j)=(locus_tree->m_node+((*(w_snode->children+j))->index));
+            case 1:
+                ReindexSTree(sp_tree, 0);
+                break;
         }
         
-        if (w_snode->anc_node != NULL)
-            w_lnode->anc_node=(locus_tree->m_node+(w_snode->anc_node->index));
-            
     }
-
+    else
+    {
+        // *
+        /// Tree copy loop
+        for (i=0;i<sp_tree->n_nodes;++i)
+        {
+            w_snode=sp_tree->m_node+i;
+            w_lnode=locus_tree->m_node+i;
+            w_lnode->sp_index=w_snode->sp_index;
+            w_lnode->n_child=w_snode->n_child;
+            w_lnode->n_nodes=w_snode->n_replicas;
+            w_lnode->Ne=w_snode->Ne;
+            w_lnode->n_gen=w_snode->n_gen;
+            w_lnode->time=w_snode->time;
+            w_lnode->gen_length=w_snode->gen_length;
+            w_lnode->conts=w_snode;
+            w_lnode->mu_mult=w_snode->mu_mult;
+            w_lnode->gtime_mult=w_snode->gtime_mult;
+            w_snode->n_lnodes=1;
+            w_snode->l_nodes=w_lnode;
+            
+            for (j=0;j<w_lnode->n_child; ++j)
+            {
+                *(w_lnode->children+j)=(locus_tree->m_node+((*(w_snode->children+j))->index));
+            }
+            
+            if (w_snode->anc_node != NULL)
+                w_lnode->anc_node=(locus_tree->m_node+(w_snode->anc_node->index));
+            
+        }
+    }
+    
     // *
     /// Tree info copy </dd></dl>
     locus_tree->root=sp_tree->root->l_nodes;
@@ -6952,6 +6992,17 @@ long int CollapseSTree (s_tree * in_tree, int post_order)
     
     return NO_ERROR;
     
+}
+
+long int ReindexSTree (s_tree * in_tree, int post_order)
+{
+    int i=0;
+    if (post_order==1)
+        PostReorderSNodes(in_tree->root,&i);
+    else
+        PreReorderSNodes(in_tree->root, &i);
+    
+    return NO_ERROR;
 }
 
 long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
@@ -8729,6 +8780,42 @@ void PostCollapseSNodes(s_node *output,s_node *input)
     
 }
 
+static void CopyStoLNodes(l_node *output,s_node *input, int *l_id)
+{
+    int i=0;
+    l_node *w_lnode=NULL;
+    
+    for (i=0; i<input->n_child;++i)
+    {
+        CopyStoLNodes(output, *(input->children+i),l_id);
+    }
+    w_lnode=output+*l_id;
+    w_lnode->sp_index=input->sp_index;
+    w_lnode->n_child=input->n_child;
+    w_lnode->n_nodes=input->n_replicas;
+    w_lnode->Ne=input->Ne;
+    w_lnode->n_gen=input->n_gen;
+    w_lnode->time=input->time;
+    w_lnode->gen_length=input->gen_length;
+    w_lnode->conts=input;
+    w_lnode->mu_mult=input->mu_mult;
+    w_lnode->gtime_mult=input->gtime_mult;
+    input->n_lnodes=1;
+    input->l_nodes=w_lnode;
+    
+    for (i=0;i<w_lnode->n_child; ++i)
+    {
+        *(w_lnode->children+i)=(output+((*(input->children+i))->index));
+    }
+    
+    if (input->anc_node != NULL)
+        w_lnode->anc_node=(output+(input->anc_node->index));
+    else
+        w_lnode->anc_node=NULL;
+    
+    ++*l_id;
+}
+
 void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral)
 {
     l_node * w_output=NULL;
@@ -8800,7 +8887,7 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
     }
     
     // *
-    /// g_nodes </dd></dl>
+    /// g_nodes
     if (g_backup != NULL)
     {
         w_output->g_nodes=g_backup;
@@ -9374,11 +9461,20 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
         switch (node->n_child)
         {
             case 0:
-                if (node->n_nodes==0)
+                switch (node->kind_node)
                 {
-                    node->n_nodes=ind_persp;
-                    node->n_ilin=ind_persp;
+                    case LOSS:
+                    case RTRFR:
+                    case RGC:
+                        node->n_nodes=0;
+                        node->n_ilin=0;
+                        break;
+                    default:
+                        node->n_nodes=ind_persp;
+                        node->n_ilin=ind_persp;
+                        break;
                 }
+  
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
                 node->time=node->anc_node->time+node->gen_length*node->gtime_mult*gen_time;
@@ -10791,7 +10887,7 @@ double CheckUltrametricityLNodes(l_node *node)
             for (i=1; i<node->n_child; ++i)
             {
                 n_time=CheckUltrametricityLNodes(*(node->children+i));
-                if(n_time == -1 || fabs(time-n_time)>DBL_EPSILON)
+                if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
                     return -1;
             }
         return time;

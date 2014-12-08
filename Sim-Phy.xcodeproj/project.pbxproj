@@ -36,6 +36,7 @@
 		F14CADCA183C046900A8F7AF /* sql_managing.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = sql_managing.h; sourceTree = "<group>"; };
 		F14CADCB183C046900A8F7AF /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
 		F14CADCC183C046900A8F7AF /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
+		F15233581A35D80C00DA53A9 /* test.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.conf; sourceTree = "<group>"; };
 		F186FEDF1857ECBB00E256BD /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -54,6 +55,7 @@
 		F14CADC3183C044C00A8F7AF /* src */ = {
 			isa = PBXGroup;
 			children = (
+				F15233581A35D80C00DA53A9 /* test.conf */,
 				F14CADC4183C046900A8F7AF /* main.c */,
 				F14CADC5183C046900A8F7AF /* num_methods.c */,
 				F14CADC6183C046900A8F7AF /* num_methods.h */,

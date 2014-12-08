@@ -64,11 +64,19 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/test_siavash.txt"
+            argument = "-i hand.conf"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-i test_siavash_nversion.txt"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-rs 1 -rl f1 -sr /Users/Diego/Desktop/dlcoal_sim/stree.tree.nex -lb f0.01 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 6 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i test.conf"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
