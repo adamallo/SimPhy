@@ -762,11 +762,14 @@ int main (int argc, char **argv)
         /// <dl><dt>If the locus tree is not fixed</dt><dd>
         if (locus_tree_str==NULL && n_iltrees==0)
         {
-            if(species_tree_str!=NULL || n_istrees>0)
+            if(species_tree_str!=NULL)
             {
+                if (n_istrees>0)
                 // *****
                 /// Species tree allocation (\ref ParseNexusSTree) and collapse-reallocation (\ref CollapseSTree) if it is fixed. Pre-order if the locus tree will be simulated, post-order if it will not.
-                sp_tree=ParseNexusSTree(species_tree_str,&names,verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
+                    sp_tree=ParseNexusSTree(species_tree_str,&names,verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
+                else
+                    sp_tree=ParseNewickSTree(species_tree_str, &names, verbosity, get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 
                 if (sp_tree->n_leaves<min_lleaves)
                     ErrorReporter(SETTINGS_ERROR,"\n\t\tERROR:The minimum number of locus tree leaves is bigger than the number of leaves of the fixed species tree. Please, check the -Ll parameter and the input species tree.\n");
@@ -981,11 +984,13 @@ int main (int argc, char **argv)
                 if (n_iltrees>0)
                 {
                     ErrorReporter(NextNexusTree(ltree_ifile,&locus_tree_str),": parsing the next Nexus tree");
+                    locus_tree=ParseNexusLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 }
+                else
+                    locus_tree=ParseNewickLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 
                 // ***
                 /// Locus tree allocation and collapse-reallocation (post-order)
-                locus_tree=ParseNexusLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 CollapseLTree(locus_tree,1,0,1);//Memory reallocation in post-order
                 
                 // ***
@@ -3444,7 +3449,7 @@ long int CheckSampledSettingsSloop(sampling_unit bds_leaves, sampling_unit bds_l
     }
     if (get_sampling(ind_per_sp)<1)
     {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -I, Number of individuals per species. Please, check your sampling settings and try again\n");
+        fprintf(stderr,"\n\tImproper value sampling the parameter -SI, Number of individuals per species. Please, check your sampling settings and try again\n");
         is_error=1;
     }
     if (get_sampling(nl_trees)<1)
@@ -3474,7 +3479,7 @@ long int CheckSampledSettingsSloop(sampling_unit bds_leaves, sampling_unit bds_l
     }
     if (get_sampling(Ne)<2)
     {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -P, Haploid population size. Please, check your sampling settings and try again\n");
+        fprintf(stderr,"\n\tImproper value sampling the parameter -CP, Haploid population size. Please, check your sampling settings and try again\n");
         is_error=1;
     }
     if (is_sampling_set(alpha_s)&&(get_sampling(alpha_s)<0))
@@ -3494,12 +3499,12 @@ long int CheckSampledSettingsSloop(sampling_unit bds_leaves, sampling_unit bds_l
     }
     if (is_sampling_set(mu)&&(get_sampling(mu)<=0))
     {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -U, Substitution rate. Please, check your sampling settings and try again\n");
+        fprintf(stderr,"\n\tImproper value sampling the parameter -CU, Substitution rate. Please, check your sampling settings and try again\n");
         is_error=1;
     }
     if (is_sampling_set(gen_time)&&(get_sampling(gen_time)<=0))
     {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -G, Generation time. Please, check your sampling settings and try again\n");
+        fprintf(stderr,"\n\tImproper value sampling the parameter -CG, Generation time. Please, check your sampling settings and try again\n");
         is_error=1;
     }
     

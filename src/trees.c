@@ -983,7 +983,7 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
     {
         if (ferror(ifile)!=0 || feof(ifile)!=0)
         {
-            fprintf(stderr,"Error in line: %s\n",buffer);
+            fprintf(stderr,"Improper Nexus trees input file: Error in line %s\n",buffer);
             return (SETTINGS_ERROR);
         }
         
@@ -998,7 +998,7 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
                     ++*n_trees;
                 else
                 {
-                    fprintf(stderr,"Error in line: %s\n",buffer);
+                    fprintf(stderr,"Improper Nexus trees input file: Error in line %s\n",buffer);
                     return (IO_ERROR);
                 }
                 
@@ -1170,8 +1170,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     char code=' ';
     int step=0, in_coment=0;
     int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
-    char *buffer=NULL;
-    char name_buffer[MAX_NAME];
+    char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
     // ****
@@ -1192,7 +1191,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     /// Buffer allocation and initialization
     reallocBuffer(&buffer, &tbuffer, tbuffer);
     ResetBuffer(buffer,tbuffer);
-    
+    name_buffer=calloc(MAX_NAME,sizeof(char));
     // ***
     /// First read of the Nexus tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(")).
     while (*(nexus+step)!=';')
@@ -1428,6 +1427,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
     free(buffer);
+    free(name_buffer);
     buffer=NULL;
     
     if (verbosity>2)
@@ -1453,8 +1453,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     char code=' ';
     int step=0;
     int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, n_priv_ngleaves=0;
-    char *buffer=NULL;
-    char name_buffer[MAX_NAME];
+    char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
     /// \attention Changes on buffer managing applied like in Nexus parsers but without posterior testting.
@@ -1478,6 +1477,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     
     reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer, tbuffer);
+    name_buffer=calloc(MAX_NAME,sizeof(char));
     
     // ***
     /// First read of the Newick tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(") and s_tree::n_gleaves (s_tree::n_leaves + (replicas "/" -1 for each node)).
@@ -1844,6 +1844,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
     free(buffer);
+    free(name_buffer);
     buffer=NULL;
     
     if (verbosity>2)
@@ -1869,9 +1870,8 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     char code=' ';
     int step=0, in_coment=0;
     int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
-    char *buffer=NULL;
+    char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
-    char name_buffer[MAX_NAME];
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -1892,6 +1892,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     
     reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer,tbuffer);
+    name_buffer=calloc(MAX_NAME,sizeof(char));
     
     // ***
     /// First read of the Nexus tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(")).
@@ -2128,6 +2129,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
     free(buffer);
+    free(name_buffer);
     buffer=NULL;
     
     if (verbosity>2)
@@ -2153,9 +2155,8 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     char code=' ';
     int register step=0;
     int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, is_dup=0, n_paralog=0, n_priv_ngleaves=0;
-    char *buffer=NULL;
+    char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
-    char name_buffer[MAX_NAME];
     
     /// \attention Changes on buffer managing applied like in Nexus parsers but without posterior testting.
     
@@ -2178,6 +2179,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     
     reallocBuffer(&buffer,&tbuffer,tbuffer);
     ResetBuffer(buffer,tbuffer);
+    name_buffer=calloc(MAX_NAME,sizeof(char));
     
     // ***
     /// First read of the Newick tree. Obtains the number of internal nodes (")"), s_tree::n_leaves ("(" or "," not followed by "(") and s_tree::n_gleaves (s_tree::n_leaves + (replicas "/" -1 for each node)).
@@ -2617,6 +2619,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
     free(buffer);
+    free(name_buffer);
     buffer=NULL;
     
     if (verbosity>2)
@@ -2710,7 +2713,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         eq_rates=1;
     
     // ******
-    /// Method election, BDSA or SSA algorithms.
+    /// Method selection, BDSA or SSA algorithms.
     
     if (leaves>0)
     {
