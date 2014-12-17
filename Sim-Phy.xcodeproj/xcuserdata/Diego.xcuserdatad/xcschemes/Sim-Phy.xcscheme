@@ -64,8 +64,16 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-rs 100 -rl u:10,501 -rg 1 -sb l:-14,1 -sl u:10,51 -st u:100000,10000000 -si u:1,6 -so l:0,0.1 -ld f:0.0000001 -lb f:0.0000001 -lt f:0.0000001 -cp l:12,0.5 -cg f:1 -hs l:1.5,1 -hl l:1.2,1 -hg L:1.4,1 -cu e:10000000 -o SimPhy_complex -os 1 -or 1 -v 2 -od 1 -cs 22"
+            argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:10000 -si f:4 -v 6"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-rs 100 -rl u:10,501 -rg 1 -sb l:-14,1 -sl u:10,51 -st u:100000,10000000 -si u:1,6 -so l:0,0.1 -ld f:0.0000001 -lb f:0.0000001 -lt f:0.0000001 -cp l:12,0.5 -cg f:1 -hs l:1.5,1 -hl l:1.2,1 -hg L:1.4,1 -cu e:10000000 -o SimPhy_complex -os 1 -or 1 -v 2 -od 1 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-rs 10 -rl U:1000,1000 -rg 1 -st U:500000,500000 -si U:1,1 -sl U:50,50 -sb U:0.000001,0.000001 -cp U:200000,200000 -hs L:1.5,1 -hl L:1.2,1 -hg l:1.4,1 -cu E:10000000 -so U:1,1 -od 1 -or 0 -v 6 -cs 293745 -o ruthtest -lt U:0.00000001,0.00000001 -lk 1"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sr trees.test -cp f:10 -v 6"

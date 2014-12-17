@@ -190,7 +190,7 @@ int main (int argc, char **argv)
     
     // ******
     /// Configuration variables
-    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=2,min_lsleaves=3, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
+    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=0,min_lsleaves=0, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
     float epsilon_brent=0.000001, u_seed=(time (NULL) * clock());
     char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*confile_name=NULL;
     char *buffer=NULL;
@@ -987,7 +987,7 @@ int main (int argc, char **argv)
                     locus_tree=ParseNexusLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 }
                 else
-                    locus_tree=ParseNewickLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
+                    locus_tree=ParseNewickLTree(locus_tree_str, &names, 0,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
                 
                 // ***
                 /// Locus tree allocation and collapse-reallocation (post-order)
@@ -999,9 +999,8 @@ int main (int argc, char **argv)
                 {
                     st_leaves=locus_tree->n_leaves;
                     st_gleaves=locus_tree->n_gleaves;
-                    ErrorReporter(Count_duplications(locus_tree,&st_dups),NULL);
                 }
-                
+                ErrorReporter(Count_duplications(locus_tree,&st_dups),NULL);
                 // ****
                 /// Gene tree allocation
                 gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_children,locus_tree->gen_time);
@@ -2212,7 +2211,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
         /// Superfluous locus tree simulation parameters check if the locus tree is fixed.</dd></dl>
         if(*newick_ltree!=NULL || *n_iltrees>0)
         {
-            if ((is_sampling_set(*b_rate) || is_sampling_set(*d_rate) || is_sampling_set(*t_rate) || is_sampling_set(*gc_rate) || *min_lleaves>1|| *min_lsleaves>1))
+            if (is_variable(*b_rate) || is_variable(*d_rate) || is_variable(*t_rate) || is_variable(*gc_rate) || *min_lleaves>1|| *min_lsleaves>1)
             {
                 fprintf(stderr,"\n\tWARNING!!! Using locus tree birth-death parameters with a fixed locus tree has no sense, and these parameters (birth, death and minimum number of leaves) will be ignored\n");
                 ParseSampling("f0", b_rate,sampling_vars);
