@@ -53,18 +53,10 @@ extern int MAX_IT;
  *   Point a.
  * \param b
  *   Point b.
- * \param c1
- *   Constant 1.
- * \param c2
- *   Constant 2.
- * \param c3
- *   Constant 3.
- * \param c4
- *   Constant 4.
- * \param c5
- *   Constant 5.
  * \param epsilon
  *   Convergence value.
+ * \param result
+ *   Pointer to return the result.
  * \param verbosity
  *   How many info to display by stdout.
  * \return
@@ -72,7 +64,7 @@ extern int MAX_IT;
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
 
-double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...);
+long int brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, double *result, int verbosity, int n_arg, ...);
 
 ///@}
 

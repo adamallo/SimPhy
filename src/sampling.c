@@ -378,7 +378,6 @@ void Print_Sampling(sampling_unit *sample, char * buffer, const sampling_table s
             sprintf(buffer+strlen(buffer)-1, ")");
             break;
         case FIXED:
-            sprintf(buffer+strlen(buffer)-1, "");
             break;
     }
 }

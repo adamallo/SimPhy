@@ -325,12 +325,25 @@ int main (int argc, char **argv)
     double *dupdistances=NULL,*gcdistances=NULL,*trfrdistances=NULL;
     //
 #endif
+    
     // *******
-    /// <dl><dt>Statistical variables</dt><dd></dd></dl></dd></dl>
-    long double t_height_cu=0,t_height_bl=0,height_cu=0,height_bl=0,st_height=0,st_length=0,length_bl=0;
+    /// Process non-sampled variables
     double gamma_l=0;
-    int st_lcoals=0,st_dups=0,st_losses=0,st_transf=0,st_gc=0,st_leaves=0,st_gleaves=0;
-    unsigned long long t_lcoals=0,t_n_ltree=0;
+    
+    // *******
+    /// DB exclusive variables
+    unsigned long long t_n_ltree=0;
+    
+    // *******
+    /// Statistical output exclusive variables
+    unsigned long long st_locustsumextralin=0;
+    long double st_locustsum_height_cu=0,st_locustsum_height_bl=0;
+    int st_lleaves=0,st_gleaves=0;
+    
+    // *******
+    /// <dl><dt>Loging variables</dt><dd></dd></dl></dd></dl>
+    long double height_bl=0,height_cu=0,st_height=0,st_length=0,length_bl=0;
+    int n_extralin=0,n_dups=0,n_losses=0,n_trans=0,n_gc=0;
     
     // ********
     /// <dl><dt>Main program</dt><dd>
@@ -915,6 +928,7 @@ int main (int argc, char **argv)
         {
             ErrorReporter(sample_distr(r,5,&lb_rate,&ld_rate,&lt_rate,&lgc_rate,&lalpha_g),": sampling distributions");
             ErrorReporter(CheckSampledSettingsLloop(lb_rate,ld_rate,lt_rate,lgc_rate,lalpha_g), ": improper sampled values");
+            n_dups=n_losses=n_trans=n_gc=st_lleaves=st_gleaves=n_extralin=0;
             
             if(get_sampling(alpha_l)!=0)
                 gamma_l=gsl_ran_gamma(r, get_sampling(alpha_l), 1/(get_sampling(alpha_l)));
@@ -941,7 +955,7 @@ int main (int argc, char **argv)
 
                 // ******
                 /// Locus tree simulation
-                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &st_losses, &st_dups, &st_transf, &st_gc, &st_leaves, &st_gleaves), ": simulating a locus tree");
+                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &n_losses, &n_dups, &n_trans, &n_gc, &st_lleaves, &st_gleaves), ": simulating a locus tree");
                 
                 // ******
                 /// Species tree reindexation in post-order
@@ -949,10 +963,8 @@ int main (int argc, char **argv)
 
                 // ******
                 /// Reallocation of locus tree in post-order and reconciliation output (if necessary)
-                if (recon>1) //If I used includelosses (more than one extra lineage per loss), this should be st_losses*includelosses
-                    locus_tree->n_gleaves+=st_losses;
-                
-                ErrorReporter(CollapseLTree(locus_tree,1,0,(st_dups==0 && st_transf==0 && st_gc==0)?0:1), NULL);
+                if (recon>1) //If I used includelosses (more than one extra lineage per loss), this should be n_losses*includelosses
+                    locus_tree->n_gleaves+=n_losses;
 #ifndef NO_OUT
                 if (recon>0 && recon!=2)
                 {
@@ -984,10 +996,10 @@ int main (int argc, char **argv)
                 if (n_iltrees>0)
                 {
                     ErrorReporter(NextNexusTree(ltree_ifile,&locus_tree_str),": parsing the next Nexus tree");
-                    locus_tree=ParseNexusLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
+                    locus_tree=ParseNexusLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp),&n_dups,&n_losses,&n_trans,&n_gc);
                 }
                 else
-                    locus_tree=ParseNewickLTree(locus_tree_str, &names, 0,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp));
+                    locus_tree=ParseNewickLTree(locus_tree_str, &names, verbosity,get_sampling(gen_time)!=1?get_sampling(gen_time):1,get_sampling(Ne),get_sampling(mu),get_sampling(ind_per_sp),&n_dups,&n_losses,&n_trans,&n_gc);
                 
                 // ***
                 /// Locus tree allocation and collapse-reallocation (post-order)
@@ -997,10 +1009,10 @@ int main (int argc, char **argv)
                 /// Statistical measurements
                 if (stats==1)
                 {
-                    st_leaves=locus_tree->n_leaves;
+                    st_lleaves=locus_tree->n_leaves;
                     st_gleaves=locus_tree->n_gleaves;
                 }
-                ErrorReporter(Count_duplications(locus_tree,&st_dups),NULL);
+                
                 // ****
                 /// Gene tree allocation
                 gene_tree=NewGTree((locus_tree->n_gleaves*2)-1,locus_tree->max_children,locus_tree->gen_time);
@@ -1014,7 +1026,7 @@ int main (int argc, char **argv)
                 
                 // ****
                 /// Locus tree and working locus tree allocation
-                locus_tree=NewLTree(sp_tree->n_nodes, sp_tree->n_leaves, sp_tree->n_gleaves, sp_tree->max_children,sp_tree->gen_time, sp_tree->Ne, sp_tree->mu,0);
+                locus_tree=NewLTree(sp_tree->n_nodes, sp_tree->n_leaves, sp_tree->n_gleaves, sp_tree->max_children,sp_tree->gen_time, sp_tree->Ne, sp_tree->mu);
                 
                 // ****
                 /// Gene tree allocation
@@ -1036,7 +1048,7 @@ int main (int argc, char **argv)
                 /// Statistical measurements </dd></dl>
                 if (stats==1)
                 {
-                    st_leaves=locus_tree->n_leaves;
+                    st_lleaves=locus_tree->n_leaves;
                     st_gleaves=locus_tree->n_gleaves;
                 }
             }
@@ -1098,15 +1110,15 @@ int main (int argc, char **argv)
 
             if (db>0)
             {
-                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),locus_tree->n_leaves, st_dups, st_losses,st_transf,st_gc,gamma_l,get_sampling(lalpha_g)),": writting the locus tree rable");
+                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),locus_tree->n_leaves, n_dups, n_losses,n_trans,n_gc,gamma_l,get_sampling(lalpha_g)),": writting the locus tree rable");
                 t_n_ltree++;
             }
             
             if (stats==1)
             {
-                t_height_bl=0;
-                t_height_cu=0;
-                t_lcoals=0;
+                st_locustsum_height_bl=0;
+                st_locustsum_height_cu=0;
+                st_locustsumextralin=0;
             }
             
             // *******
@@ -1179,7 +1191,7 @@ int main (int argc, char **argv)
                         printf("\tSimulating gene tree %d... ",(curr_ltree-1)*ng_trees+curr_gtree);
                         break;
                     default:
-                        printf("\n\t\tSimulating gene tree %d using a %s process...",curr_gtree,(st_dups==0 && st_transf==0 && st_gc==0)?"multispecies coalescent":"multilocus coalescent");
+                        printf("\n\t\tSimulating gene tree %d using a %s process...",curr_gtree,(n_dups==0 && n_trans==0 && n_gc==0)?"multispecies coalescent":"multilocus coalescent");
                         break;
                 }
 #ifdef DBG
@@ -1188,10 +1200,10 @@ int main (int argc, char **argv)
 
                 // ****
                 /// Gene tree simulation
-                if (st_dups==0 && st_transf==0 && st_gc==0)
-                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
+                if (n_dups==0 && n_trans==0 && n_gc==0)
+                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 else
-                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&st_lcoals,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
+                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>
@@ -1273,11 +1285,11 @@ int main (int argc, char **argv)
                         ErrorReporter(IO_ERROR);
                     }
 #endif
-                    if (st_dups>0)
+                    if (n_dups>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, st_dups, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, n_dups, GL));
 
-                        for (i=0; i<st_dups; ++i)
+                        for (i=0; i<n_dups; ++i)
                         {
 #ifndef NO_OUT
                             fprintf(sorthologs_outfile,"DUP\t%lf\n",*(dupdistances+i));
@@ -1289,11 +1301,11 @@ int main (int argc, char **argv)
                             }
                         }
                     }
-                    if (st_gc>0)
+                    if (n_gc>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,GC,&gcdistances, st_gc, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,GC,&gcdistances, n_gc, GL));
 
-                        for (i=0; i<st_gc; ++i)
+                        for (i=0; i<n_gc; ++i)
                         {
 #ifndef NO_OUT
                             fprintf(sorthologs_outfile,"GC\t%lf\n",*(gcdistances+i));
@@ -1306,11 +1318,11 @@ int main (int argc, char **argv)
                         }
 
                     }
-                    if (st_transf>0)
+                    if (n_trans>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,TRFR,&trfrdistances, st_transf, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,TRFR,&trfrdistances, n_trans, GL));
 
-                        for (i=0; i<st_transf; ++i)
+                        for (i=0; i<n_trans; ++i)
                         {
 #ifndef NO_OUT
                             fprintf(sorthologs_outfile,"TRFR\t%lf\n",*(trfrdistances+i));
@@ -1338,14 +1350,14 @@ int main (int argc, char **argv)
                 if (stats>0)
                 {
                     Measure_GT_height(gene_tree,&height_bl,1);
-                    t_height_cu+=height_cu;
-                    t_height_bl+=height_bl;
-                    t_lcoals+=st_lcoals;
+                    st_locustsum_height_cu+=height_cu;
+                    st_locustsum_height_bl+=height_bl;
+                    st_locustsumextralin+=n_extralin;
                 }
 #ifndef NO_OUT
                 if (db>0)
                 {
-                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, get_sampling(alpha_g),locus_tree->n_gleaves, st_lcoals, height_cu, length_bl),": writting gene tree table");
+                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, get_sampling(alpha_g),locus_tree->n_gleaves, n_extralin, height_cu, length_bl),": writting gene tree table");
                 }
                 
 #endif
@@ -1357,7 +1369,7 @@ int main (int argc, char **argv)
             /// Statistical output </dd></dl>
             if (stats==1)
             {
-                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Le;%Le;%Le\n",n_ldigits,curr_ltree,st_losses,st_dups,st_transf,st_leaves,st_gleaves,t_height_cu/ng_trees,t_height_bl/ng_trees,((long double)t_lcoals)/ng_trees);
+                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Le;%Le;%Le\n",n_ldigits,curr_ltree,n_losses,n_dups,n_trans,st_lleaves,st_gleaves,st_locustsum_height_cu/ng_trees,st_locustsum_height_bl/ng_trees,((long double)st_locustsumextralin)/ng_trees);
             }
             // *******
             /// Gene tree I/O close</dd></dl>
@@ -1863,7 +1875,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         }
                         break;
                         // *
-                        /// -SO. Deviation of a half of the ingroup heigth for the new internal branch due to the outgroup addition
+                        /// -SO. Deviation of a half of the ingroup height for the new internal branch due to the outgroup addition
                     case 'O':
                         if(ParseSampling(argv[i],outgroup,sampling_vars)!=NO_ERROR)
                         {
@@ -2666,7 +2678,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             }
                             break;
                             // *
-                            /// -SO. Deviation of a half of the ingroup heigth for the new internal branch due to the outgroup addition
+                            /// -SO. Deviation of a half of the ingroup height for the new internal branch due to the outgroup addition
                         case 'O':
                             if(ParseSampling(buffer+offset+1,outgroup,sampling_vars)!=NO_ERROR)
                             {

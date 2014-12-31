@@ -247,6 +247,7 @@ struct l_node
     int n_nodes; ///< Number of g_nodes wich are being pointed by this restriction tree (avaliable nodes).
     int n_ilin; ///< Number of input (backwards in time) lineages.
     int n_olin; ///< Number of output (backwards in time) lineages.
+    int fmax_nlin; ///< Number of maximum gene lineages coming in and out from this locus tree branch (only used for bounded subtrees).
     /// @}
     
     /** \name Data **/
@@ -267,6 +268,7 @@ struct l_node
     g_node **g_nodes; ///< Array of pointers to g_nodes (avaliable gene nodes).
     s_node *conts; ///< s_node that contains this g_node along his branch.
     double *i_probs; ///< Array of probabilities for each number of input lineages (0,1,2...)
+    double *i_combprobs; ///< Array of probabilities for each combination of input lineages coming from it children (1:1,1:2,2:1...)
     double *o_probs; ///< Array of probabilities for each number of output lineages (0,1,2...)
     ///@}
     
@@ -435,12 +437,10 @@ s_node * NewSNodes (int n_nodes,int max_children);
  *  where these new nodes will point. It is used to allocate l_node::g_node.
  * \param max_children
  *  Number of maximum children in each node. It is used to allocate l_node::children.
- * \param probs
- *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
  * \return l_node pointer to the allocated memory.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-l_node * NewLNodes (int n_nodes,int n_treeleaves,int max_children, int probs);
+l_node * NewLNodes (int n_nodes,int n_treeleaves,int max_children);
 
 /**
  * Creates a memory block of n g_nodes, and initializes it. 
@@ -475,8 +475,55 @@ period * NewPeriods(int n_periods, int max_nodes);
 long double NNexusTrees(FILE *ifile, int *n_trees);
 long double InitNexusParser(FILE *ifile);
 long double NextNexusTree(FILE *ifile,char **species_tree_str);
-s_tree *ParseNexusSTree(char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp);
-l_tree *ParseNexusLTree(char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp);
+
+s_tree *ParseNexusSTree(char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu,int ind_persp);
+
+/**
+ * Tree parser, from a NEXIS tree to l_tree with spread nodes.
+ *
+ * Reads a string with a NEXUS tree and converts it in a l_tree, with
+ * a l_tree::max_children given by \ref LIMITS::MAX_CHILDREN, and their names stored in
+ * a name_c variable.
+ * The resulting l_tree has the correct values of l_tree::max_children.
+ * Thus, when the tree is converted in a l_tree with clustered nodes, this new tree becomes more memory
+ * efficient. The name_c variable is reallocated for memory efficience
+ * within this function (at the start, a name_c with \ref LIMITS::MAX_NAME is used). Moreover, count probabilities
+ * are also calculated.
+ *
+ * \param nexus
+ *  String with a nexus tree.
+ * \param names
+ *  name_c ** where save the taxa names (it allocates the memory and fills it).
+ * \param verbosity
+ *  Code of the amount of communication with the user.
+ * \param gen_time
+ *  Gen time is going to be used to convert time in generations (1 if the newick tree
+ *  has been already given in number of generations).
+ * \param Ne
+ *   Global effective population size.
+ * \param mu
+ *   Global substitution rate.
+ * \param ind_persp
+ *  Common number of desired individuals per species (only applicable for external nodes without a private value specified by the Newick tree)
+ * \param n_dup
+ * Pointer to get the number of duplications.
+ * \param n_loss
+ * Pointer to get the number of losses.
+ * \param n_trans
+ * Pointer to get the number of transferences.
+ * \param n_gc
+ * Pointer to get the number of gene conversions.
+ * \return New readed l_tree.
+ * \note If an error ocurrs, it exits by \ref ErrorReporter.
+ * \attention NEXUS FORMAT:
+ * This function requires rooted NEXUS trees, with branch lengths in all but the
+ * root node. <B>It parses Ne, generation times and number of replicates. This has
+ * only biological sense if all the nodes of the same branch of the species tree
+ * have the same info of Ne & number of replicas, and this is not checked!!!</B>
+ * This biological info should be specified as nexus comments. 
+ * See the manual and/or program usage for more info.
+ *******************************************************************************/
+l_tree *ParseNexusLTree(char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp, int *n_dup, int *n_loss, int *n_trans, int *n_gc);
 
 ///@}
 
@@ -529,7 +576,8 @@ s_tree * ParseNewickSTree(char* newick,name_c ** names,int verbosity, double gen
  * The resulting l_tree has the correct values of l_tree::max_children.
  * Thus, when the tree is converted in a l_tree with clustered nodes, this new tree becomes more memory
  * efficient. The name_c variable is reallocated for memory efficience
- * within this function (at the start, a name_c with \ref LIMITS::MAX_NAME is used).
+ * within this function (at the start, a name_c with \ref LIMITS::MAX_NAME is used). Moreover, count probabilities
+ * are also calculated.
  *
  * \param newick
  *  String with a Newick tree.
@@ -546,19 +594,25 @@ s_tree * ParseNewickSTree(char* newick,name_c ** names,int verbosity, double gen
  *   Global substitution rate.
  * \param ind_persp
  *  Common number of desired individuals per species (only applicable for external nodes without a private value specified by the Newick tree)
+ * \param n_dup
+ * Pointer to get the number of duplications.
+ * \param n_loss
+ * Pointer to get the number of losses.
+ * \param n_trans
+ * Pointer to get the number of transferences.
+ * \param n_gc
+ * Pointer to get the number of gene conversions.
  * \return New readed l_tree.
  * \note If an error ocurrs, it exits by \ref ErrorReporter.
  * \attention NEWICK FORMAT:
- * This function requires rooted Newick trees, with branch lengths in all but
- * root node, and the duplication nodes marked with %1. <B>It allows Ne info in
- * each node, and various replicas of each taxa (only in the leaves). This has
+ * This function requires rooted Newick trees, with branch lengths in all but the
+ * root node. <B>It parses Ne, generation times and number of replicates. This has
  * only biological sense if all the nodes of the same branch of the species tree
- * have the same info of Ne & || number of replicas, and these is not checked!!!</B>
- * This biological info should be written in the same position of branch lengths,
- * just after or before it. Ne is indicated with a # and * the number of replicas
- * with a /. Example: A:200#2000/3 its the same as A/3#2000:200.
+ * have the same info of Ne & number of replicas, and this is not checked!!!</B>
+ * This biological info should be written in the same position as branch lengths,
+ * just after or before it. Example: A:200#2000/3. See the manual and/or program usage for more info.
  *******************************************************************************/
-l_tree * ParseNewickLTree(char* newick,name_c ** names,int verbosity, double gen_time, int Ne, double mu, int ind_persp);
+l_tree * ParseNewickLTree(char* newick,name_c ** names,int verbosity, double gen_time, int Ne, double mu, int ind_persp, int *n_dup, int *n_loss, int *n_trans, int *n_gc);
 
 ///@}
 
@@ -802,13 +856,11 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  *   Global effective population size.
  * \param mu
  *   Global substitution rate.
- * \param probs
- *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
  * \return
  *   l_tree pointer to the allocated memory.
  *  \note If an error ocurrs, it exits by \ref ErrorReporter.
  *******************************************************************************/
-l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu, int probs);
+l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu);
 
 /**
  * Creates a new g_tree and initializes it.
@@ -856,7 +908,7 @@ long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, int tree_struct, int
  *
  * This function clones a l_tree in a new or old l_tree pointer (in the first case
  * allocating new memory, in the second case rewriting tree values). It can
- * copy only the main values, and/or the pointers of the tree structure and the
+ * copy just the main values, or also the pointers of the tree structure and the
  * pointer of g_tree association. If the input tree has sparse nodes, it is 
  * collapsed by \ref CollapseLTree .
  *
@@ -870,12 +922,16 @@ long int CopySTree (s_tree **out_tree_ptr, s_tree *in_tree, int tree_struct, int
  *  Logical flag. If =0 the l_node pointers (\ref l_node::lat_node) are not copied.
  * \param g_nodes_ptr
  *  Logical flag. If =0 the g_node pointers (\ref l_node::g_nodes) are not copied.
+ * \param probs
+ *  Logical flag. If =0 the l_node::i_probs, l_node::i_combprobs and l_node::o_probs will not be copied.
  * \param relink
  *  Logical flag. If relink = 1, the \ref s_node::l_nodes pointer of the \ref l_node::conts nodes will be updated linking the new locus tree to the species tree.
+ * \param preserve
+ *  Logical flag. If preserve =1, the original tree (in_tree) will not be modified. It it is 0 certain memory will be dereferenced in the in_tree and referenced by the out_tree in order to save time and memory.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
-long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int relink);
+long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int probs, int relink, int preserve);
 
 /**
  * Direct copy of a species tree (pre or post-ordered) into a locus tree (post-ordered)
@@ -1109,7 +1165,7 @@ long int ReindexSTree (s_tree * in_tree, int post_order);
  * \param relink
  *  Logical flag. If relink = 1, the \ref l_node::lat_node and \ref s_node::l_nodes pointer of the \ref l_node::conts nodes will be updated. If = 0, the \ref l_node::lat_node will be erased to avoid malfunctioning due to the reference of freed memory.
  * \param probs
- *  Logical flag. If probs = 1, the new tree will have allocated the l_tree::i_probs and l_tree::o_probs.
+ *  Logical flag. If probs = 1, the new tree will have updated the l_tree::i_probs, l_tree::o_probs and ltree::i_combprobs.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *******************************************************************************/
@@ -1237,6 +1293,30 @@ long int Rateheter_GTbranchspec(g_tree *tree,double alpha, gsl_rng *seed,FILE * 
  *  ocurrs.
  *******************************************************************************/
 long int Count_duplications(l_tree *tree, int *n_dup);
+
+/**
+ * Counts the number of transfers in a locus tree.
+ *
+ * \param tree
+ *  locus tree to be analyzed.
+ * \param n_dup
+ *  number of transfers (result).
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ *******************************************************************************/
+long int Count_transfers(l_tree *tree, int *n_trans);
+
+/**
+ * Counts the number of gene conversions in a locus tree.
+ *
+ * \param tree
+ *  locus tree to be analyzed.
+ * \param n_dup
+ *  number of gene conversions (result).
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ *******************************************************************************/
+long int Count_gc(l_tree *tree, int *n_gc);
 
 /**
  * Counts the number of losses in a locus tree.

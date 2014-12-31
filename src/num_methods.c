@@ -50,7 +50,7 @@ static double biomcmc_log1p(double x);
  *******************************************************************************/
 ///@{
 
-double brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, int verbosity, int n_arg, ...)
+long int brent_root (double (*f)(double value, int n, va_list ap), double a, double b, float epsilon, double *result, int verbosity, int n_arg, ...)
 {
     
     va_list ap;
@@ -71,7 +71,15 @@ double brent_root (double (*f)(double value, int n, va_list ap), double a, doubl
 
     //Checking a and b points
     if (fa*fb>=0)
-        ErrorReporter(UNEXPECTED_VALUE,"Root-finding function error, root (0) not bracketed\n");
+    {
+        //ErrorReporter(UNEXPECTED_VALUE,"Root-finding function error, root (0) not bracketed\n");
+        fprintf(stderr, "Root-finding function error, root (0) not bracketed\n");
+#ifdef DBG
+        fflush(stderr);
+#endif
+        *result=b;
+        return UNEXPECTED_VALUE;
+    }
     
     if (fabs(fa)<fabs(fb))
     {
@@ -151,10 +159,14 @@ double brent_root (double (*f)(double value, int n, va_list ap), double a, doubl
         ++i;
         
         if(i>MAX_IT)
-            ErrorReporter(LOOP_ERROR, ": solving a function using the Brent's rooting method");
+        {
+            *result=b;
+            return UNEXPECTED_VALUE;
+        }
         
     }
-    return(b);
+    *result=b;
+    return NO_ERROR;
 }
 //@}
 
@@ -584,7 +596,7 @@ double LogscaleProbCoalFromXtoYLineages(int i_lin, int o_lin, double bound_time,
 
 double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity)
 {
-    double lambda_i=0, lambda_o=0, C0=1, out_sum=0;
+    double lambda_i=0, lambda_o=0, C0=1, out_sum=0, ret_value=0;
     int i=0;
     
     lambda_i= -i_lin*(i_lin-1)/(double)(2*pop_size);
@@ -595,10 +607,14 @@ double SampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time
     }
     
     if (o_lin>GSL_SF_FACT_NMAX)
-        ErrorReporter(UNEXPECTED_VALUE,"Error using a factorial function. A big numbers factorial library should be used\n");
+        return bound_time+1;
     
     out_sum=(-lambda_i)/(gsl_sf_fact(o_lin)*KahanLogscaleProbCoalFromXtoYLineages(i_lin, o_lin, bound_time, pop_size)); /// \todo test if this is the proper order to avoid precision errors.
-    return brent_root(*(SampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,verbosity,9,i_lin,o_lin,bound_time,pop_size,lambda_i,lambda_o,C0,out_sum,density);
+    
+    if (brent_root(*(SampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,&ret_value,verbosity,9,i_lin,o_lin,bound_time,pop_size,lambda_i,lambda_o,C0,out_sum,density)!=NO_ERROR)
+        return bound_time+1;
+    else
+        return ret_value;
 }
 
 #ifdef __MPFR_H
@@ -627,7 +643,7 @@ double MPFRSampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_
     mpfr_fac_ui(fact, o_lin, MPFR_RNDN);
     mpfr_div(out_sum,out_sum,fact,MPFR_RNDN);
     mpfr_mul_si(out_sum, out_sum, -1, MPFR_RNDN);
-    result=brent_root(*(MPFRSampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,verbosity,10,i_lin,o_lin,bound_time,pop_size,(mpfr_ptr)&lambda_i,(mpfr_ptr)&lambda_o,(mpfr_ptr)&C0,(mpfr_ptr)&out_sum,density,precision);
+    ErrorReporter(brent_root(*(MPFRSampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,&result,verbosity,10,i_lin,o_lin,bound_time,pop_size,(mpfr_ptr)&lambda_i,(mpfr_ptr)&lambda_o,(mpfr_ptr)&C0,(mpfr_ptr)&out_sum,density,precision),"Error rooting the MPFRCDFCoalTimeFromXtoYLineages\n");
     mpfr_clears(Cx,fact,lambda_i,lambda_o,C0,out_sum,NULL);
      return result;
 }
@@ -635,7 +651,7 @@ double MPFRSampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_
 
 double LogscaleSampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bound_time, int pop_size, double brent_epsilon, double density, int verbosity)
 {
-    double lambda_i=0, lambda_o=0, logC0=0, logoutsum=0;
+    double lambda_i=0, lambda_o=0, logC0=0, logoutsum=0, result=0;
     int i=0;
     
     lambda_i= -i_lin*(i_lin-1)/(double)(2*pop_size);
@@ -647,13 +663,16 @@ double LogscaleSampleCoalTimeMLCFromXtoYLineages(int i_lin, int o_lin, double bo
     
     logoutsum=log(-lambda_i)-LogscaleFact(o_lin)-KahanLogscaleLogProbCoalFromXtoYLineages(i_lin, o_lin, bound_time, pop_size);
     
-    return brent_root(*(LogscaleSampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,verbosity,9,i_lin,o_lin,bound_time,pop_size,lambda_i,lambda_o,logC0,logoutsum,density);
+    if(brent_root(*(LogscaleSampleCDFCoalTimeMLCFromXtoYLineages),0.0,bound_time,brent_epsilon,&result,verbosity,9,i_lin,o_lin,bound_time,pop_size,lambda_i,lambda_o,logC0,logoutsum,density)!=NO_ERROR)
+        return bound_time+1;
+    else
+        return result;
 }
 
 
 double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap)
 {
-    double C=0,sum=0,lambda_k=0,bound_time=0,lambda_i=0,lambda_o=0,out_sum=0,density=0,cprob=0;
+    double C=0,sum=0,lambda_k=0,bound_time=0,lambda_i=0,lambda_o=0,out_sum=0,density=0;//,cprob=0;
     int k=0,k1=0,i=0,i_lin=0,o_lin=0,pop_size=0;
     
     if (n_arg!=9)
@@ -721,7 +740,7 @@ double SampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap
             C=(o_lin+k1)*(i_lin-1-k1)/(double)(i_lin-1+k1)/(o_lin-k)*C;
             sum += exp(lambda_k*bound_time)*(exp((lambda_i-lambda_k)*w_time)-1)/(lambda_i-lambda_k)*(2*k-1)/(k1+o_lin)*C;
         }
-        cprob=sum*out_sum;
+//        cprob=sum*out_sum;
 //        printf("original cpprob %lf\n",cprob);
 //        fflush(stdout);
         return sum*out_sum-density;
@@ -828,9 +847,9 @@ double LogscaleSampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va
 double MPFRSampleCDFCoalTimeMLCFromXtoYLineages(double w_time, int n_arg, va_list ap)
 {
     double bound_time=0,density=0,cprob=0;
-    mpfr_ptr lambda_i, lambda_o, initC, out_sum;
+    mpfr_ptr lambda_i=NULL, lambda_o=NULL, initC=NULL, out_sum=NULL;
     mpfr_t lambda_k,sum,dif_lambdas,nsum,t2,Cx,C;
-    int k=0,k1=0,i=0,i_lin=0,o_lin=0,pop_size=0,precision;
+    int k=0,k1=0,i=0,i_lin=0,o_lin=0,pop_size=0,precision=512;
     
     if (n_arg!=10)
         ErrorReporter(UNEXPECTED_VALUE,NULL);

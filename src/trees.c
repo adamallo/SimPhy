@@ -194,10 +194,12 @@ static void CopyStoLNodes(l_node *output,s_node *input,int *l_id);
  *  l_node::g_nodes.
  * \param retain_lateral
  *  Logical flag. If retain_lateral = 1, the \ref l_node::lat_node will not be set as NULL, retained an outdated value (DANGEROUS).
+ * \param probs
+ *  Logical flag. If probs = 1,l_tree::i_probs, l_tree::o_probs and ltree::i_combprobs will be copied with the rest of the tree.
  *
  * \attention It requires that the group of l_nodes have their index in a post-order.
  *******************************************************************************/
-static void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral);
+static void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral, int probs);
 
 /**
  * Copies a group of g_nodes (with tree structure) in an array of g_nodes following
@@ -254,10 +256,12 @@ static void PreCollapseSNodes(s_node *output,s_node *input);
  *  l_node::g_nodes.
  * \param retain_lateral
  *  Logical flag. If retain_lateral = 1, the \ref l_node::lat_node will not be set as NULL, retained an outdated value (DANGEROUS).
+ * \param probs
+ *  Logical flag. If probs = 1,l_tree::i_probs, l_tree::o_probs and ltree::i_combprobs will be copied with the rest of the tree.
  *
  * \attention It requires that the group of l_nodes have their index in a pre-order.
  *******************************************************************************/
-static void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral);
+static void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral, int probs);
 
 /**
  * Copies a group of g_nodes (with tree structure) in an array of g_nodes following
@@ -288,6 +292,27 @@ static void PreCollapseGNodes(g_node *output,g_node *input);
  *  Number of duplications.
  *******************************************************************************/
 static int Count_duplications_lnodes(l_node *node);
+
+
+/**
+ * Gets the number of transfers of a bunch of l_nodes following a post-order recursion.
+ *
+ * \param node
+ *  l_node to analyze.
+ * \return
+ *  Number of transfers.
+ *******************************************************************************/
+static int Count_transfers_lnodes(l_node *node);
+
+/**
+ * Gets the number of gene conversions of a bunch of l_nodes following a post-order recursion.
+ *
+ * \param node
+ *  l_node to analyze.
+ * \return
+ *  Number of gene conversions.
+ *******************************************************************************/
+static int Count_gc_lnodes(l_node *node);
 
 /**
  * Gets the number of losses of a bunch of l_nodes following a post-order recursion.
@@ -445,8 +470,16 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time);
  *  Number of individuals for nodes without a pre-specified l_node::n_nodes.
  * \param gen_time
  *  Generation time.
+ * \param n_dup
+ * Pointer to get the number of duplications.
+ * \param n_loss
+ * Pointer to get the number of losses.
+ * \param n_trans
+ * Pointer to get the number of transferences.
+ * \param n_gc
+ * Pointer to get the number of gene conversions.
  *******************************************************************************/
-static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time);
+static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time, int *n_dup, int *n_loss, int *n_trans, int *n_gc);
 
 //\cond DOXYGEN_EXCLUDE
 ///**
@@ -492,19 +525,65 @@ static void TemporalizeLNodes(l_node *node, double gen_time);
 // ** Multilocus Coalescent related functions ** //
 
 /**
- * Calculates input and output probabilities for the different possible number of lineages.
+ * Calculates input and output probabilities for the different possible number of lineages performing a pre-order traversal.
  *
  * \param node
- *  l_tree (locus tree).
+ *  Current locus tree node (root in the first call).
  * \param Ne
  *  Global population size.
+ * \param in_suntree
+ *  Logical flag. If =0 probs are not calculated for the current node.
  * \param verbosity
  *  Verbosity level.
  * \param includelosses
  *  Number of g_nodes associated to each lost l_node (0= normal behaviour, 1= simulate lost lineages).
  * \return maximum number of possible gene tree lineages going out from this node.
  *******************************************************************************/
-static int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity);
+static int CalcProbsNLineagesLTree(l_node *node, int Ne, int in_subtree, int verbosity);
+
+/**
+ * Sample a candidate number of output lineages for a given node using the precalculated probabilities,
+ *
+ * \param node
+ *  Node of interest.
+ * \param n_gleaves
+ *  Number of gene tree leaves of the considered subtree (the full tree can be used as an upper-bound).
+ * \param seed
+ *  Random number generator's seed.
+ *******************************************************************************/
+static int SampleNLineagesLNode(l_node *node,int n_gleaves, gsl_rng *seed);
+
+/**
+ * Sample locus tree lineage counts based on the precalculated probabilities using a rejection sampling algorithm.
+ *
+ * \param node
+ *  Locus tree node (root in the first call).
+ * \param n_gleaves
+ *  Number of gene tree leaves.
+ * \param Ne
+ *  Common population size.
+ * \param verbosity
+ *  Verbosity level.
+ * \param seed
+ *  Random number generator's seed.
+ *******************************************************************************/
+static void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed);
+
+/**
+ * Sample locus tree lineage counts based on the precalculated probabilities sampling the CDF of a given number of input lineages given the output count and the trees.
+ *
+ * \param node
+ *  Locus tree node (root in the first call).
+ * \param n_gleaves
+ *  Number of gene tree leaves.
+ * \param Ne
+ *  Common population size.
+ * \param verbosity
+ *  Verbosity level.
+ * \param seed
+ *  Random number generator's seed.
+ *******************************************************************************/
+static void SampleNLineagesCDFLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed);
 
 /**
  * Calculates input and output probabilities for the different possible number of lineages.
@@ -777,7 +856,7 @@ s_node * NewSNodes(int n_nodes, int max_children)
 }
 
 // ** L_Node creation ** //
-l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
+l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children)
 {
     l_node * nodes=NULL, *w_node=NULL;
     int i=0,j=0;
@@ -805,10 +884,14 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
          w_node->kind_node=SP;
          w_node->paralog=0;
         w_node->n_ilin=0;
-        w_node->n_olin=0;*/ // Implicit in calloc
+        w_node->n_olin=0;
+        w_node->fmax_nlin=0;*/ // Implicit in calloc
         w_node->anc_node=NULL;
         w_node->lat_node=NULL;
         w_node->conts=NULL;
+        w_node->i_probs=NULL;
+        w_node->i_combprobs=NULL;
+        w_node->o_probs=NULL;
         w_node->gen_length=0.0;
         w_node->n_gen=0.0;
         w_node->time=0.0;
@@ -826,57 +909,20 @@ l_node * NewLNodes(int n_nodes, int n_gleaves, int max_children, int probs)
         }
         
         // *
-        /// l_node::g_nodes, l_node::i_probs and l_node::o_probs allocation and initialization (if required)</dd></dl></dd></dl>
+        /// l_node::g_nodes allocation and initialization (if required)</dd></dl></dd></dl>
         
-        if (n_gleaves!=0 && probs!=0)
-        {
-            w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
-            ErrorReporter((long int)w_node->g_nodes, NULL);
-            w_node->i_probs=calloc(n_gleaves+1,sizeof(double));
-            ErrorReporter((long int)w_node->i_probs, NULL);
-            w_node->o_probs=calloc(n_gleaves+1,sizeof(double));
-            ErrorReporter((long int)w_node->o_probs, NULL);
-            
-            for (j=0; j<n_gleaves; ++j)
-            {
-                *(w_node->g_nodes+j)=NULL;
-                *(w_node->o_probs+j)=0;
-                *(w_node->i_probs+j)=0;
-            }
-        }
-        else if (n_gleaves!=0)
+        if (n_gleaves!=0)
         {
             w_node->g_nodes=calloc(n_gleaves,sizeof(g_node *));
             ErrorReporter((long int)w_node->g_nodes,NULL);
-            w_node->i_probs=NULL;
-            w_node->o_probs=NULL;
             
             for (j=0; j<n_gleaves; ++j)
             {
                 *(w_node->g_nodes+j)=NULL;
             }
         }
-        else if (probs!=0)
-        {
-            w_node->i_probs=calloc(n_gleaves+1,sizeof(double));
-            ErrorReporter((long int)w_node->i_probs,NULL);
-            w_node->o_probs=calloc(n_gleaves+1,sizeof(double));
-            ErrorReporter((long int)w_node->o_probs,NULL);
-            w_node->g_nodes=NULL;
-            
-            for (j=0; j<n_gleaves; ++j)
-            {
-                *(w_node->o_probs+j)=0;
-                *(w_node->i_probs+j)=0;
-            }
-            
-        }
         else
-        {
             w_node->g_nodes=NULL;
-            w_node->i_probs=NULL;
-            w_node->o_probs=NULL;
-        }
         
         
     }
@@ -1862,7 +1908,7 @@ s_tree * ParseNewickSTree (char * newick,name_c **names_ptr, int verbosity, doub
     return (tree);
 }
 
-l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp, int *n_dup, int *n_loss, int *n_trans, int *n_gc)
 {
     l_node *current_node=NULL, *anc_node=NULL,*root=NULL;
     l_tree *tree=NULL;
@@ -1951,7 +1997,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                     anc_node=current_node;
                     // *
                     /// New s_node by \ref NewSNodes
-                    current_node=NewLNodes(1,0,max_children,0);
+                    current_node=NewLNodes(1,0,max_children);
                     // *
                     /// Points the pointers of this new node and its ancestor
                     *(anc_node->children+anc_node->n_child)=current_node;
@@ -1967,7 +2013,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 }
                 else //New root node
                 {
-                    current_node=NewLNodes(1,0,max_children,0);
+                    current_node=NewLNodes(1,0,max_children);
                     root=current_node;
                 }
                 
@@ -2069,7 +2115,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 // *
                 /// New s_node by \ref NewSNodes
                 anc_node=current_node;
-                current_node=NewLNodes(1,0,max_children,0);
+                current_node=NewLNodes(1,0,max_children);
                 ++n_gleaves;
                 // *
                 /// Points the pointers of this new node and its ancestor
@@ -2100,8 +2146,28 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Refines the readed nodes by \ref RefineLNodes
     
-    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
+    RefineLNodes(root,n_gleaves,ind_persp,gen_time,n_dup,n_loss,n_trans,n_gc);
     max_lname++; //One extra character for \0.
+    
+    // ***
+    /// Calculate the count probabilities by \ref RefineLNodes
+    if (verbosity>4)
+    {
+        printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
+    
+    CalcProbsNLineagesLTree(root,Ne, 0, verbosity);//I should try to extend it for using polytomies
+    
+    if (verbosity>4)
+    {
+        printf("\n\t\tDone\n");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
     
     // ***
     /// Reallocates the name_c memory by \ref ReallocNames
@@ -2110,7 +2176,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     // ***
     /// Allocates memory for the readed tree and completes it.
     
-    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu,0); //Nodes have already been allocated.
+    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu); //Nodes have already been allocated.
     tree->root=root;
     tree->n_nodes=n_nodes;
     tree->species_tree=NULL;
@@ -2147,7 +2213,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     return (tree);
 }
 
-l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp)
+l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, double gen_time, int Ne, double mu, int ind_persp, int *n_dup, int *n_loss, int *n_trans, int *n_gc)
 {
     l_node *current_node=NULL, *anc_node=NULL,*root=NULL;
     l_tree *tree=NULL;
@@ -2246,7 +2312,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     anc_node=current_node;
                     // *
                     /// New l_node by \ref NewLNodes
-                    current_node=NewLNodes(1, 0, max_children,0);
+                    current_node=NewLNodes(1, 0, max_children);
                     // *
                     /// Points the pointers of this new node and its ancestor
                     *(anc_node->children+anc_node->n_child)=current_node;
@@ -2262,7 +2328,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 }
                 else //New root node
                 {
-                    current_node=NewLNodes(1,0,max_children,0);
+                    current_node=NewLNodes(1,0,max_children);
                     root=current_node;
                 }
                 
@@ -2560,7 +2626,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                 // *
                 /// New l_node by \ref NewLNodes
                 anc_node=current_node;
-                current_node=NewLNodes(1,0,max_children,0);
+                current_node=NewLNodes(1,0,max_children);
                 // *
                 /// Points the pointers of this new node and its ancestor
                 *(anc_node->children+anc_node->n_child)=current_node;
@@ -2590,7 +2656,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Refines the readed nodes by \ref RefineLNodes
     
-    RefineLNodes(root,n_gleaves,ind_persp,gen_time);
+    RefineLNodes(root,n_gleaves,ind_persp,gen_time,n_dup,n_loss,n_trans,n_gc);
     max_lname++; //One extra character for \0.
     
     // ***
@@ -2600,7 +2666,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     // ***
     /// Allocates memory for the readed tree and completes it.
     
-    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu,0);//Nodes have already been allocated.
+    tree=NewLTree(0, n_leaves, n_gleaves, max_children, gen_time, Ne, mu);//Nodes have already been allocated.
     tree->root=root;
     tree->n_nodes=n_nodes;
     tree->species_tree=NULL;
@@ -2615,6 +2681,26 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     
     if(CheckUltrametricityLTree(tree)==-1)
         ErrorReporter(UNEXPECTED_VALUE,"The species tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+    
+    // ***
+    /// Calculate the count probabilities by \ref RefineLNodes
+    if (verbosity>4)
+    {
+        printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
+    
+    CalcProbsNLineagesLTree(root,Ne, 0, verbosity);//I should try to extend it for using polytomies
+    
+    if (verbosity>4)
+    {
+        printf("\n\t\tDone\n");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
     
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
@@ -3321,7 +3407,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
         /// Locus tree re/initialization
         if (*wlocus_tree!=NULL)
             FreeLTree(wlocus_tree);
-        *wlocus_tree=NewLTree(1, 0, 0, wsp_tree->max_children,wsp_tree->gen_time,wsp_tree->Ne,wsp_tree->mu,0); //Tree with only a root node and without g_node pointers
+        *wlocus_tree=NewLTree(1, 0, 0, wsp_tree->max_children,wsp_tree->gen_time,wsp_tree->Ne,wsp_tree->mu); //Tree with only a root node and without g_node pointers
         
         // ******
         /// Species tree reset by \ref ResetSTreeSimL
@@ -3409,7 +3495,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                     // ****
                     /// New l-node allocation and configuration if there is neither birth nor death events along this branch
                     
-                    w_lnode=NewLNodes(1, 0, wsp_tree->max_children,0); //New node
+                    w_lnode=NewLNodes(1, 0, wsp_tree->max_children); //New node
                     //Locus tree pointers
                     w_lnode->anc_node=anc_lnode;
                     *(anc_lnode->children+anc_lnode->n_child)=w_lnode;
@@ -3473,7 +3559,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                     // ****
                     /// Iteration-dependent variable initialization
                     
-                    w_lnode=NewLNodes(1,0,wsp_tree->max_children,0); //New node
+                    w_lnode=NewLNodes(1,0,wsp_tree->max_children); //New node
                     
                     //Pointers
                     w_lnode->anc_node=anc_lnode;
@@ -3515,8 +3601,8 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
                             
                             // *
                             /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
-                            w_lnode=NewLNodes(1,0,wsp_tree->max_children,0);
-                            w_lnode2=NewLNodes(1,0,wsp_tree->max_children,0);
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_children);
+                            w_lnode2=NewLNodes(1,0,wsp_tree->max_children);
                             
                             //Tree pointers and branch lengths reconfiguration
                             anc_lnode=*(node_ptrs+node_index);
@@ -3766,6 +3852,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
         (*wlocus_tree)->n_gleaves=*st_gleaves;
         (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
+        ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0), NULL);
         return (NO_ERROR);
     }
     
@@ -3801,7 +3888,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         /// Locus tree re/initialization
         if (*wlocus_tree!=NULL)
             FreeLTree(wlocus_tree);
-        *wlocus_tree=NewLTree(1, 0, 0, wsp_tree->max_children,wsp_tree->gen_time,wsp_tree->Ne,wsp_tree->mu,0); //Tree with only a root node and without g_node pointers
+        *wlocus_tree=NewLTree(1, 0, 0, wsp_tree->max_children,wsp_tree->gen_time,wsp_tree->Ne,wsp_tree->mu); //Tree with only a root node and without g_node pointers
         
         // ******
         /// Species tree reset by \ref ResetSTreeSimL
@@ -3904,7 +3991,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     // ****
                     /// New l-node allocation and configuration if there are no events along this branch
                     
-                    w_lnode=NewLNodes(1, 0, wsp_tree->max_children,0); //New node
+                    w_lnode=NewLNodes(1, 0, wsp_tree->max_children); //New node
                     //Locus tree pointers
                     w_lnode->anc_node=anc_lnode;
                     *(anc_lnode->children+anc_lnode->n_child)=w_lnode;
@@ -3938,6 +4025,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     w_lnode->gtime_mult=w_snode->gtime_mult;
                     w_lnode->paralog=w_lnode->anc_node->paralog;
                     w_lnode->n_nodes=w_snode->n_replicas;
+                    w_lnode->n_ilin=w_snode->n_replicas;
                     w_lnode->time=w_snode->time;
                     if (max_time<w_lnode->time)
                         max_time=w_lnode->time;
@@ -3971,7 +4059,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                     // ****
                     /// Iteration-dependent variable initialization
                     
-                    w_lnode=NewLNodes(1,0,wsp_tree->max_children,0); //New node
+                    w_lnode=NewLNodes(1,0,wsp_tree->max_children); //New node
                     
                     //Pointers
                     w_lnode->anc_node=anc_lnode;
@@ -4013,8 +4101,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             ++slice_leaves;
                             // *
                             /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
-                            w_lnode=NewLNodes(1,0,wsp_tree->max_children,0);
-                            w_lnode2=NewLNodes(1,0,wsp_tree->max_children,0);
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_children);
+                            w_lnode2=NewLNodes(1,0,wsp_tree->max_children);
                             
                             //Tree pointers and branch lengths reconfiguration
                             anc_lnode=*(node_ptrs+node_index);
@@ -4038,6 +4126,9 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             //New nodes info
                             w_lnode->paralog=anc_lnode->paralog;
                             w_lnode2->paralog=next_paralog;
+                            w_lnode2->fmax_nlin=1;
+                            w_lnode2->n_olin=1;
+                            
                             ++next_paralog;
                             
                             //New leaves addition
@@ -4091,6 +4182,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             w_lnode->mu_mult=w_snode->mu_mult;
                             w_lnode->gtime_mult=w_snode->gtime_mult;
                             w_lnode->n_nodes=0;
+                            w_lnode->n_ilin=0;
+                            w_lnode->n_olin=0;
                             w_lnode->conts=w_snode;
                             n_nodes-=2; //2 true nodes lost (w_lnode an its ancestor) becoming extra_nodes (they have allocated memory, and are part of the l_tree, but they will not be represented in the g_tree)
                             extra_nodes+=2;
@@ -4119,7 +4212,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             // *
                             /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
-                            w_lnode=NewLNodes(1,0,wsp_tree->max_children,0);
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_children);
                             
                             //Tree pointers and branch lengths reconfiguration
                             anc_lnode=*(node_ptrs+node_index);
@@ -4170,7 +4263,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             
                             // *
                             /// New nodes allocation and reconfiguration of tree pointers/info</dd></dl>
-                            w_lnode=NewLNodes(1,0,wsp_tree->max_children,0);
+                            w_lnode=NewLNodes(1,0,wsp_tree->max_children);
                             
                             //Tree pointers and branch lengths reconfiguration
                             anc_lnode=*(node_ptrs+node_index);
@@ -4246,6 +4339,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                             w_lnode->mu_mult=w_snode->mu_mult;
                             w_lnode->gtime_mult=w_snode->gtime_mult;
                             w_lnode->n_nodes=w_snode->n_replicas;
+                            w_lnode->n_ilin=w_lnode->n_nodes;
                             w_lnode->conts=w_snode;
                             if (max_time<w_lnode->time)
                                 max_time=w_lnode->time;
@@ -4276,6 +4370,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                         w_lnode->mu_mult=w_snode->mu_mult;
                         w_lnode->gtime_mult=w_snode->gtime_mult;
                         w_lnode->n_nodes=w_snode->n_replicas;
+                        w_lnode->n_ilin=w_lnode->n_nodes;
                         w_lnode->conts=w_snode;
                         if (max_time<w_lnode->time)
                             max_time=w_lnode->time;
@@ -4631,6 +4726,9 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 w_lnode3->sp_index=w_lnode3->conts->sp_index;
                                 //w_lnode3->n_child=0; Implicit.
                                 //w_lnode3->n_nodes=0;
+                                //w_lnode3->fmax_nlin=0;
+                                //w_lnode3->n_ilin=0;
+                                //w_lnode3->n_olin=0;
                                 
                                 for (k=0; k<anc_lnode->n_child; ++k)
                                 {
@@ -4640,6 +4738,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                                 
                                 w_lnode2->gen_length=w_lnode2->n_gen-w_lnode3->n_gen;
                                 w_lnode2->anc_node=w_lnode;
+                                w_lnode2->fmax_nlin=1;
+                                w_lnode2->n_olin=1;
                                 
                                 
                                 *(w_lnode->children+1)=w_lnode2; //The second node in a TRFR node is allways the transfered lineage (bound!!).
@@ -4768,14 +4868,41 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
         
-
         if (verbosity>4)
         {
-            printf("\n\t\tDone\n");
+            printf("\n\t\tDone");
 #ifdef DBG
             fflush(stdout);
 #endif
         }
+        
+        if (*st_dups>0 || *st_transfr>0 || *st_gc>0)
+        {
+            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,1), NULL);
+            if (verbosity>4)
+            {
+                printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+            
+            // ****
+            /// Calculation of the probability of each possible number of lineages entering and exiting every locus tree branch
+            
+            CalcProbsNLineagesLTree((*wlocus_tree)->root, (*wlocus_tree)->Ne, 0, verbosity);//I should try to extend it for using polytomies
+            
+            if (verbosity>4)
+            {
+                printf("\n\t\tDone\n");
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+        }
+        else
+            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0), NULL);
+        
         return (NO_ERROR);
     }
     
@@ -4958,7 +5085,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 if (verbosity==6)
                 {
-                    printf("\n\t\t\t %d extra lineages going deeper, max coalescent time %f, proposed coalescent time %f",avail_leaves-1,min_ngen,current_ngen);
+                    printf("\n\t\t\t %d extra lineages going deeper, min coalescent age %f, proposed coalescent time %f",avail_leaves-1,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -5037,7 +5164,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 else
                 {
-                    printf("\n\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
+                    printf("\n\t\t\tNew coalescence, nodes %u and %u, min coalescent age %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -5103,17 +5230,18 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     // ******
     /// IO related
     char  *iobuffer=NULL;
+    char b_subtree[19]=" (bounded subtree)";
     
     // ******
     /// Values
-    int next_avail_inode=0,n_coals=0,n_anc_nodes=0,p_Ne=0;
+    int next_avail_inode=0,n_coals=0,n_anc_nodes=0,p_Ne=0,no_counts=0;
     double p_mu=0;
     double sampled_ngen=0, min_ngen=0, current_ngen=0, *sampled_ngens=NULL;
     int avail_leaves=0,node_index=0;
     
     // ******
     /// Loop related variables</dd></dl>
-    int i=0,j=0,pn_ilin=0;
+    int i=0,j=0,pn_nodes=0;
     
     // ******
     /// Initialization of other general variables</dd></dl>
@@ -5123,7 +5251,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         if (iobuffer==NULL)
             return MEM_ERROR;
     }
-    sampled_ngens=calloc(wlocus_tree->n_gleaves-1, sizeof(double));
+    sampled_ngens=calloc(wlocus_tree->n_gleaves, sizeof(double));
     if (sampled_ngens==NULL)
         return MEM_ERROR;
     
@@ -5136,23 +5264,15 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
 #endif
     MatchTreesMLC(wlocus_tree,*gene_tree,1,simlosses);
     if (verbosity>4)
-        printf("Done\n\t\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch...");
-#ifdef DBG
-    fflush(stdout);
-#endif
-    // ****
-    /// Calculation of the probability of each possible number of lineages entering and exiting every locus tree branch
-    CalcProbsNLineagesLTree(wlocus_tree->root,wlocus_tree->Ne,verbosity); //I should try to extend it for using polytomies
-    if (verbosity>4)
-        printf("\n\t\t\tDone\n\t\t\tSampling the number of lineages using the just calculated probabilities and a rejection sampling algorithm...");
+        printf("Done\n\t\t\tSampling the number of lineages using the probabilities of lineage counts...");
 #ifdef DBG
     fflush(stdout);
 #endif
     // ****
     /// Sampling of the number of lineages entering and exiting every locus tree branch
-    SampleNLineagesLTree(wlocus_tree->root,wlocus_tree->n_gleaves,wlocus_tree->Ne,verbosity,seed); //I should try to extend it for using polytomies
+    SampleNLineagesCDFLTree(wlocus_tree->root, wlocus_tree->n_gleaves, wlocus_tree->Ne, verbosity, seed); //I should try to extend it for using polytomies
     if (verbosity>4)
-        printf("\n\t\t\tDone\n\t\t\tSampling the coalescent history along each branch of the locus tree, using the sampled counts...");
+        printf("\n\t\t\tDone\n\t\t\tSampling the coalescent history along each branch of the locus tree, using either the sampled counts or the common multispecies coalescent simulation strategy depending on the presence of bounds...");
 #ifdef DBG
     fflush(stdout);
 #endif
@@ -5173,42 +5293,40 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         
         // ** Taking into account a new locus tree node ** //
         w_lnode=(wlocus_tree->m_node+i);
-        switch (w_lnode->n_ilin)
+        
+        switch (w_lnode->n_nodes)
         {
             case 0:
-                pn_ilin=0;
+                pn_nodes=0;
                 continue;
                 break;
-            case 1:
-                n_coals=0;
+        }
+        switch (w_lnode->n_olin)
+        {
+            case 0:
+                n_coals=w_lnode->n_nodes-1;
+                no_counts=1;
                 break;
             default:
-                switch (w_lnode->n_olin)
-                {
-                    case 0:
-                        n_coals=w_lnode->n_ilin-1;
-                        break;
-                    default:
-                        n_coals=w_lnode->n_ilin-w_lnode->n_olin;
-                        *tn_lcoals+=w_lnode->n_olin-1;
-                        break;
-                }
+                no_counts=0;
+                n_coals=w_lnode->n_nodes-w_lnode->n_olin;
+                *tn_lcoals+=w_lnode->n_olin-1;
                 break;
         }
         
         anc_lnode=w_lnode->anc_node;
-        avail_leaves=w_lnode->n_ilin;
+        avail_leaves=w_lnode->n_nodes;
         
-        if (pn_ilin!=w_lnode->n_ilin)
+        if (pn_nodes<w_lnode->n_nodes)
         {
-            w_gnodes_ptr=realloc(w_gnodes_ptr, sizeof(g_node *)*w_lnode->n_ilin);
+            w_gnodes_ptr=realloc(w_gnodes_ptr, sizeof(g_node *)*w_lnode->n_nodes);
             if (w_gnodes_ptr==NULL)
                 return MEM_ERROR;
         }
         
-        pn_ilin=w_lnode->n_ilin;
+        pn_nodes=w_lnode->n_nodes;
         
-        memcpy(w_gnodes_ptr,w_lnode->g_nodes,sizeof(g_node *)*w_lnode->n_ilin);
+        memcpy(w_gnodes_ptr,w_lnode->g_nodes,sizeof(g_node *)*w_lnode->n_nodes);
         
         if(w_lnode->Ne!=0) //Node with a private Ne.
             p_Ne=w_lnode->Ne;
@@ -5227,21 +5345,21 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             if (w_lnode->conts==NULL) //There is no species tree
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tLocus tree node %s_%d%s... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tLocus tree node %s_%d%s... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
                 }
             }
             
@@ -5255,21 +5373,21 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             if (w_lnode->conts==NULL)
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tLocus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tLocus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
                 }
             }
             else
             {
                 if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
                 else
                 {
                     sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, w_lnode->n_ilin);
+                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
                 }
             }
             
@@ -5287,27 +5405,48 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             if (w_lnode->gen_length!=0)
             {
-                for (j=0;j<n_coals;++j)
+                switch (no_counts)
                 {
-                    *(sampled_ngens+j)=SampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity);
-                    current_ngen-=*(sampled_ngens+j);
-                    --avail_leaves;
-                }
-                if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
-                {
+                    case 1:
+                        j=0;
+                        *(sampled_ngens+0)=((-log(gsl_rng_uniform_pos(seed)))*(2*p_Ne))/(avail_leaves*(avail_leaves-1));// - (1/lambda) * ln uniform random variable. Lambda = parameter (k over 2). K, number of nodes avaliable to coalesce.
+                        while (j<n_coals && current_ngen-*(sampled_ngens+j)>min_ngen)
+                        {
+                            current_ngen-=*(sampled_ngens+j);
+                            --avail_leaves;
+                            ++j;
+                            *(sampled_ngens+j)=((-log(gsl_rng_uniform_pos(seed)))*(2*p_Ne))/(avail_leaves*(avail_leaves-1));// - (1/lambda) * ln uniform random variable. Lambda = parameter (k over 2). K, number of nodes avaliable to coalesce.
+                        }
+                        n_coals=j;
+                        break;
+                        
+                    default:
+                        for (j=0;j<n_coals;++j)
+                        {
+                            *(sampled_ngens+j)=SampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity);
+                            current_ngen-=*(sampled_ngens+j);
+                            if (current_ngen-epsilon_brent<=min_ngen)
+                                break;
+                            --avail_leaves;
+                        }
+                        if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
+                        {
 #ifdef __MPFR_H
-                    current_ngen=w_lnode->n_gen;
-                    avail_leaves=w_lnode->n_ilin;
-                    for (j=0;j<n_coals;++j)
-                    {
-                        *(sampled_ngens+j)=MPFRSampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity,512);
-                        current_ngen-=*(sampled_ngens+j);
-                        --avail_leaves;
-                    }
+                            current_ngen=w_lnode->n_gen;
+                            avail_leaves=w_lnode->n_ilin;
+                            for (j=0;j<n_coals;++j)
+                            {
+                                *(sampled_ngens+j)=MPFRSampleCoalTimeMLCFromXtoYLineages(avail_leaves, w_lnode->n_olin, current_ngen-min_ngen,p_Ne, epsilon_brent, gsl_rng_uniform_pos(seed), verbosity,512);
+                                current_ngen-=*(sampled_ngens+j);
+                                --avail_leaves;
+                            }
 #endif
-                    if(*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen)
-                        return UNEXPECTED_VALUE;
+                        }
+                        break;
                 }
+                if(n_coals>1 && (*(sampled_ngens+n_coals-1)<=0 || current_ngen-epsilon_brent<=min_ngen))
+                    return UNEXPECTED_VALUE;
+
             }
             else
             {
@@ -5320,7 +5459,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             }
             
             current_ngen=w_lnode->n_gen;
-            avail_leaves=w_lnode->n_ilin;
+            avail_leaves=w_lnode->n_nodes;
             min_ngen=current_ngen-w_lnode->gen_length;
         }
 
@@ -5403,7 +5542,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
                 }
                 else
                 {
-                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, max coalescent time %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
+                    printf("\n\t\t\t\t\tNew coalescence, nodes %u and %u, min coalescent age %f, coalescent time %f",off1->index, off2->index,min_ngen,current_ngen);
 #ifdef DBG
                     fflush(stdout);
 #endif
@@ -5412,13 +5551,26 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
             
         }
         
-        if (n_coals==0 && verbosity>4)
+        if(w_lnode->n_nodes>1)
         {
-            printf("\n\t\t\t\t\tNo coalescences");
+            if (verbosity==6 && no_counts==1)
+            {
+                printf("\n\t\t\t\t\t %d extra lineages going deeper, min coalescent age %f, proposed coalescent time %f",avail_leaves-1,min_ngen,current_ngen-*(sampled_ngens+j));
 #ifdef DBG
-            fflush(stdout);
+                fflush(stdout);
 #endif
+            }
+            else if (verbosity>4)
+            {
+                printf("\n\t\t\t\t\t %d extra lineages going deeper",avail_leaves-1);
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+
         }
+        if (no_counts==1)
+            (*tn_lcoals)+=(avail_leaves-1);
         
         // ***
         /// Configuration of the current l_node ancestor with the new g_nodes due to the current coalescent process</dd></dl>
@@ -5464,124 +5616,221 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     return(NO_ERROR);
 }
 
-int CalcProbsNLineagesLTree(l_node *node, int Ne, int verbosity)
+int CalcProbsNLineagesLTree(l_node *node, int Ne, int in_subtree ,int verbosity)
 {
     // **
     /// Variable declaration
-    int *max_nlin=NULL, i=0,j=0, fmax_nlin=0, nbranch_wlin=0, full_prob=0;
+    int *max_nlin=NULL, i=0,j=0,k=0, fmax_nlin=0,combfmax_nlin=1,return_nlin=0, nbranch_wlin=0;
     //Kahan summation
-    double comp=0,comp_opsum=0,o_prob_sum=0;
+    double comp=0,comp_opsum=0,o_prob_sum=0,bkp_prob=0;
     
     // *
     /// Obtaining number of lineages and input probabilities using combinatorics and data of output lineages/probabilities of children
-    if (node->n_child>0)
+    switch (node->n_child)
     {
-        max_nlin=calloc(node->n_child,sizeof(int));
-        ErrorReporter((long int)max_nlin,NULL);
-        
-        for (i=0; i<node->n_child; ++i)
-        {
-            *(max_nlin+i)=CalcProbsNLineagesLTree(*(node->children+i),Ne,verbosity);
-            fmax_nlin+=*(max_nlin+i);
-            if (*(max_nlin+i)>0)
-                ++nbranch_wlin;
-        }
-        switch (nbranch_wlin)
-        {
-            case 2:
-                for (i=2; i<=fmax_nlin; ++i)
-                    for (j=1; j<i; ++j)
-                    {
-                        if (j<=*(max_nlin+0) && (i-j)<=*(max_nlin+1))
-                            *(node->i_probs+i)+= *((*(node->children+0))->o_probs+j) * *((*(node->children+1))->o_probs+(i-j));
-                    }
-                break;
-            case 1:
-                for (j=0; j<node->n_child; ++j)
+        default:
+            max_nlin=calloc(node->n_child,sizeof(int));
+            ErrorReporter((long int)max_nlin,NULL);
+            
+            for (i=0; i<node->n_child; ++i)
+            {
+                if (i==1 && (node->kind_node==DUP || node->kind_node==TRFR || node->kind_node==GC))
                 {
-                    if (*(max_nlin+j)!=0)
-                    {
-                        for (i=1; i<=fmax_nlin; ++i)
-                        {
-                            *(node->i_probs+i)=*((*(node->children+j))->o_probs+i);
-                        }
-                        continue;
-                    }
+                    *(max_nlin+i)=CalcProbsNLineagesLTree(*(node->children+i),Ne,1,verbosity);
                 }
-                break;
-            case 0:
-                fmax_nlin=0;
-                *(node->i_probs)=1;
-                *(node->o_probs)=1;
-                break;
-            default:
-                ErrorReporter(UNEXPECTED_VALUE,"Not implemented yet\n");
-                break;
-        }
+                else
+                    *(max_nlin+i)=CalcProbsNLineagesLTree(*(node->children+i),Ne,in_subtree,verbosity);
+                fmax_nlin+=*(max_nlin+i);
+                combfmax_nlin*=*(max_nlin+i);
+                switch (*(max_nlin+i))
+                {
+                    case 0:
+                        break;
+                    default:
+                        ++nbranch_wlin;
+                        break;
+                }
+            }
+            switch (in_subtree)
+            {
+                case 1:
+                    node->i_probs=calloc(fmax_nlin+1, sizeof(double));
+                    node->i_combprobs=calloc(combfmax_nlin, sizeof(double));
+                    node->o_probs=calloc(fmax_nlin+1, sizeof(double));
+                    ErrorReporter((long int)node->i_probs, "");
+                    ErrorReporter((long int)node->i_combprobs, "");
+                    ErrorReporter((long int)node->o_probs, "");
+                    switch (*(max_nlin+1))
+                    {
+                        case 1:
+                            bkp_prob=*((*(node->children+1))->o_probs+1);
+                            *((*(node->children+1))->o_probs+1)=1;
+                            break;
+                    }
+                    switch (nbranch_wlin)
+                    {
+                        case 2:
+                            k=0;
+                            for (i=2; i<=fmax_nlin; ++i)
+                                for (j=1; j<i; ++j)
+                                {
+                                    if (j<=*(max_nlin+0) && (i-j)<=*(max_nlin+1))
+                                    {
+                                        *(node->i_combprobs+k)= *((*(node->children+0))->o_probs+j) * *((*(node->children+1))->o_probs+(i-j));
+                                        *(node->i_probs+i)+=*(node->i_combprobs+k);
+                                        ++k;
+                                    }
+                                }
+                            break;
+                        case 1:
+                            for (j=0; j<node->n_child; ++j)
+                            {
+                                if (*(max_nlin+j)!=0)
+                                {
+                                    for (i=1; i<=fmax_nlin; ++i)
+                                    {
+                                        *(node->i_probs+i)=*((*(node->children+j))->o_probs+i);
+                                    }
+                                    break;
+                                }
+                            }
+                            break;
+                        case 0:
+                            fmax_nlin=0;
+                            *(node->i_probs)=1;
+                            *(node->o_probs)=1;
+                            break;
+                        default:
+                            ErrorReporter(UNEXPECTED_VALUE,"Not implemented yet\n");
+                            break;
+                    }
+                    break;
+                    
+                default:
+                    break;
+            }
+            
+            break;
+            
+        case 0:
+            fmax_nlin=node->n_ilin;//Either lost nodes (RGC/RTRFR/LOSS) or SP leaves. Given n_ilin, previously applied by MatchTreesMLC
+            node->i_probs=calloc(fmax_nlin+1, sizeof(double));
+            node->o_probs=calloc(fmax_nlin+1, sizeof(double));
+            ErrorReporter((long int)node->i_probs, "");
+            ErrorReporter((long int)node->o_probs, "");
+            *(node->i_probs+fmax_nlin)=1;
+            
+            break;
     }
-    else //Either lost nodes (RGC/RTRFR/LOSS) or SP leaves. Given n_ilin and i_probs, previously applied by MatchTreesMLC
-        fmax_nlin=node->n_ilin;
     
-    
+    return_nlin=fmax_nlin;
+
     // *
     /// Calculating the output probabilities using \ref LogscaleProbCoalFromXtoYLineages for regular nodes or setting it to fixed values if necessary (1 if bounded, 0 if either no lineages present or unbounded process)
-    
-    if (node->anc_node==NULL || fmax_nlin==0) //Either unbounded (root) or witout any node
+    switch (in_subtree)
     {
-        node->n_olin=0;
-        *(node->o_probs)=1;
+        case 1:
+            if (node->anc_node==NULL || fmax_nlin==0) //Either unbounded (root) or without any node
+            {
+                node->n_olin=0;
+                *(node->o_probs)=1;
+                return_nlin=0;
+            }
+            else if (fmax_nlin==1) //Just one input node
+            {
+                node->n_olin=1;
+                *(node->o_probs+1)=1;
+            }
+            else //Normal
+            {
+                comp_opsum=0;
+                for (i=1; i<=fmax_nlin;++i)
+                {
+                    comp=0;
+                    for (j=i; j<=fmax_nlin;++j)
+                        SKahanSum(node->o_probs+i,KahanLogscaleProbCoalFromXtoYLineages(j,i,node->gen_length,node->Ne==0?Ne:node->Ne)* *(node->i_probs+j),&comp);
+                    SKahanSum(&o_prob_sum, *(node->o_probs+i), &comp_opsum);
+                    if (o_prob_sum>=1)
+                        break;
+                }
+            }
+            
+            if(node->anc_node!=NULL && ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+1)==node))
+            {
+                node->n_olin=1;
+                return_nlin=1;
+            }
+            
+            if (verbosity>4)
+            {
+                if (verbosity==5)
+                {
+                    printf("\n\t\t\t\tNode %u, input probabilities sum %lf, output probabilities sum %lf",node->index,VKahanSum(node->i_probs,fmax_nlin+1),VKahanSum(node->o_probs,fmax_nlin+1));
+                }
+                else
+                {
+                    printf("\n\t\t\t\tNode %u, kind node %u, n_children %u, input probabilities sum %lf, input probabilities: ", node->index, node->kind_node, node->n_child,VKahanSum(node->i_probs,fmax_nlin+1));
+                    for (i=0; i<=fmax_nlin; ++i)
+                    {
+                        printf("%u:%lf,",i,*(node->i_probs+i));
+                    }
+                    printf("; Output probabilities sum %lf, output probabilities: ", VKahanSum(node->o_probs,return_nlin+1));
+                    for (i=0; i<=return_nlin; ++i)
+                    {
+                        printf("%u:%lf,",i,*(node->o_probs+i));
+                    }
+                    
+                }
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+            
+            if (node->n_child>0 && *(max_nlin+1)==1)
+                *((*(node->children+1))->o_probs+1)=bkp_prob;
+            break;
+            
+        default:
+            if (verbosity>4)
+            {
+                if (verbosity==5)
+                {
+                    printf("\n\t\t\t\tNode %u, unbounded sampling (multispecies coalescent)",node->index);
+                }
+                else
+                {
+                    printf("\n\t\t\t\tNode %u, kind node %u, n_children %u, unbounded sampling (multispecies coalescent)", node->index, node->kind_node, node->n_child);
+                }
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+            break;
     }
-    else if (fmax_nlin==1 || ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+1)==node)) //Either without possible coalescences or bounded to only one node
-    {
-        node->n_olin=1;
-        *(node->o_probs+1)=1;
-    }
-    else //Normal
-    {
-        full_prob=0;
-        comp_opsum=0;
-        for (i=1; i<=fmax_nlin;++i)
-        {
-            comp=0;
-            for (j=i; j<=fmax_nlin;++j)
-                SKahanSum(node->o_probs+i,KahanLogscaleProbCoalFromXtoYLineages(j,i,node->gen_length,node->Ne==0?Ne:node->Ne)* *(node->i_probs+j),&comp);
-            SKahanSum(&o_prob_sum, *(node->o_probs+i), &comp_opsum);
-            if (o_prob_sum>=1)
-                break;
-        }
-    }
+
     
     if (max_nlin!=NULL)
         free(max_nlin);
-
-
-    if (verbosity>4)
-    {
-        if (verbosity==5)
-        {
-            printf("\n\t\t\t\tNode %u, input probabilities sum %lf, output probabilities sum %lf",node->index,VKahanSum(node->i_probs,fmax_nlin+1),VKahanSum(node->o_probs,fmax_nlin+1));
-        }
-        else
-        {
-            printf("\n\t\t\t\tNode %u, kind node %u, n_children %u, input probabilities sum %lf, input probabilities: ", node->index, node->kind_node, node->n_child,VKahanSum(node->i_probs,fmax_nlin+1));
-            for (i=0; i<=fmax_nlin; ++i)
-            {
-                printf("%u:%lf,",i,*(node->i_probs+i));
-            }
-            printf("; Output probabilities sum %lf, output probabilities: ", VKahanSum(node->o_probs,fmax_nlin+1));
-            for (i=0; i<=fmax_nlin; ++i)
-            {
-                printf("%u:%lf,",i,*(node->o_probs+i));
-            }
-            
-        }
-#ifdef DBG
-        fflush(stdout);
-#endif
-    }
-
     
-    return fmax_nlin;
+    node->fmax_nlin=return_nlin;
+    
+    return return_nlin;
+}
+
+inline int SampleNLineagesLNode(l_node *node, int n_gleaves, gsl_rng *seed)
+{
+    int result=0;
+    switch (node->n_olin)
+    {
+        case 0:
+            result=(int)SampleNDoubles(n_gleaves+1,node->o_probs,seed);
+            break;
+            
+        default:
+            result=node->n_olin;
+            break;
+    }
+    return result;
 }
 
 void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed)
@@ -5603,8 +5852,8 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
         switch (n_branch_wlin)
         {
             case 2:
-                wn_olin0=(int)SampleNDoubles(n_gleaves+1,(*(node->children+0))->o_probs,seed);
-                wn_olin1=(int)SampleNDoubles(n_gleaves+1,(*(node->children+1))->o_probs,seed);
+                wn_olin0=SampleNLineagesLNode(*(node->children+0), n_gleaves, seed);
+                wn_olin1=SampleNLineagesLNode(*(node->children+1), n_gleaves, seed);
                 switch (node->n_olin)
                 {
                     case 0:
@@ -5672,8 +5921,8 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                                 reject=0;
                             else
                             {
-                                wn_olin0=(int)SampleNDoubles(n_gleaves+1,(*(node->children+0))->o_probs,seed);
-                                wn_olin1=(int)SampleNDoubles(n_gleaves+1,(*(node->children+1))->o_probs,seed);
+                                wn_olin0=SampleNLineagesLNode(*(node->children+0), n_gleaves, seed);
+                                wn_olin1=SampleNLineagesLNode(*(node->children+1), n_gleaves, seed);
                             }
                         }
                         
@@ -5707,7 +5956,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                 SampleNLineagesLTree(*(node->children+1),n_gleaves,Ne,verbosity,seed);
                 break;
             case 1:
-                wn_olin0=(int)SampleNDoubles(n_gleaves+1,(*(node->children+child))->o_probs,seed);
+                wn_olin0=SampleNLineagesLNode(*(node->children+child), n_gleaves, seed);
                 switch (node->n_olin)
                 {
                     case 0:
@@ -5770,7 +6019,7 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
                                 reject=0;
                             else
                             {
-                                wn_olin0=(int)SampleNDoubles(n_gleaves+1,(*(node->children+child))->o_probs,seed);
+                                wn_olin0=SampleNLineagesLNode(*(node->children+child), n_gleaves, seed);
                             }
                         }
                         switch (verbosity)
@@ -5826,7 +6075,157 @@ void SampleNLineagesLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gs
     }
 }
 
-l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu, int probs)
+void SampleNLineagesCDFLTree(l_node *node, int n_gleaves, int Ne, int verbosity, gsl_rng *seed)
+{
+    int i=0,j=0,prob_padding=0,prob_combs=0,*mapcomb_lin0=NULL,n_branch_wlin=0, wn_olin0=0, wn_olin1=0, child=0;
+    double p=0,u=0;
+    
+    int kt=0,ktmax=0;
+#ifdef DBG
+    int ktdbug=0;
+#endif
+    double sum=0,cden=0,comp=0;
+    
+    switch(node->n_child)
+    {
+        default:
+            switch (node->n_olin)
+            {
+                case 0:
+                    for (i=0; i<node->n_child;++i)
+                        SampleNLineagesCDFLTree(*(node->children+i),n_gleaves,Ne,verbosity,seed);
+                    break;
+                    
+                default:
+                    u=gsl_rng_uniform(seed);
+                    ktmax=(*(node->children+0))->fmax_nlin+(*(node->children+1))->fmax_nlin;
+                    cden=*(node->o_probs+node->n_olin);
+                    comp=0;
+#ifndef DBG
+                    kt=node->n_olin-1;
+                    if (node->n_olin<ktmax)
+                        do
+                        {
+                            ++kt;
+                            SKahanSum(&sum,KahanLogscaleProbCoalFromXtoYLineages(kt, node->n_olin, node->gen_length, node->Ne!=0?node->Ne:Ne)**(node->i_probs+kt), &comp);
+                            p=sum/cden;
+                        } while (p<u && kt<ktmax);
+                    else if (kt>ktmax)
+                        ErrorReporter(UNEXPECTED_VALUE, "");
+                        
+#endif
+                    
+#ifdef DBG
+                    ktdbug=kt=node->n_olin;
+                    if (node->n_olin<ktmax)
+                    {
+                        do
+                        {
+                            SKahanSum(&sum,KahanLogscaleProbCoalFromXtoYLineages(ktdbug, node->n_olin, node->gen_length, node->Ne!=0?node->Ne:Ne)**(node->i_probs+ktdbug), &comp);
+                            p=sum/cden;
+                            ++ktdbug;
+                            if (p<u)
+                                ++kt;
+                        } while (ktdbug<=ktmax);
+                        if (sum/cden<0.9)
+                        {
+                            ErrorReporter(UNEXPECTED_VALUE, ": The CDF of the input number of lineages given the output number of lineages is not working properly. The simulator is generating a really unrealistic biological scenario. Please, check your input parameters.");
+                        }
+                        
+                        printf("CDF integrates to %lf",sum/cden);
+                    }
+                    else if (node->n_olin>ktmax)
+                        ErrorReporter(UNEXPECTED_VALUE, "");
+
+#endif
+                    for (i=0; i<node->n_child;++i)
+                    {
+                        if (*((*(node->children+i))->o_probs+0)==0)
+                        {
+                            ++n_branch_wlin;
+                            child=i;
+                        }
+                    }
+
+                    switch (n_branch_wlin)
+                    {
+                        case 2:
+                            node->n_ilin=kt;
+                            prob_padding=0;
+                            prob_combs=0;
+                            mapcomb_lin0=calloc(kt, sizeof(int));
+                            ErrorReporter((long int)mapcomb_lin0, "");
+                            for (i=2; i<kt; ++i)
+                                for (j=1; j<i; ++j)
+                                    if (j<=(*(node->children+0))->fmax_nlin && (i-j)<=(*(node->children+1))->fmax_nlin)
+                                        ++prob_padding;
+                            for (j=1; j<kt; ++j)
+                                if (j<=(*(node->children+0))->fmax_nlin && (kt-j)<=(*(node->children+1))->fmax_nlin)
+                                {
+                                    *(mapcomb_lin0+prob_combs)=j;
+                                    ++prob_combs;
+                                }
+                            
+                            wn_olin0=*(mapcomb_lin0+(int)SampleNDoubles(prob_combs, node->i_combprobs+prob_padding, seed));
+                            wn_olin1=kt-wn_olin0;
+                            (*(node->children+0))->n_olin=wn_olin0;
+                            (*(node->children+1))->n_olin=wn_olin1;
+                            if (verbosity>4)
+                            {
+                                printf("\n\t\t\t\tNode %u: %u output lineages and %u input lineages, 2 children with lineages, node %u %u lineages, node %u %u lineages", node->index, node->n_olin, node->n_ilin, (*(node->children+0))->index,(*(node->children+0))->n_olin,(*(node->children+1))->index,(*(node->children+1))->n_olin);
+                            }
+#ifdef DBG
+                            fflush(stdout);
+#endif
+                            free(mapcomb_lin0);
+                            SampleNLineagesCDFLTree(*(node->children+0),n_gleaves,Ne,verbosity,seed);
+                            SampleNLineagesCDFLTree(*(node->children+1),n_gleaves,Ne,verbosity,seed);
+                            break;
+                        case 1:
+                            node->n_ilin=kt;
+                            (*(node->children+child))->n_olin=kt;
+                            if (verbosity>4)
+                            {
+                                printf("\n\t\t\t\tNode %u: %u output lineages and %u input lineages, 1 children node %u with lineages", node->index, node->n_olin, node->n_ilin, (*(node->children+child))->index);
+                            }
+#ifdef DBG
+                            fflush(stdout);
+#endif
+                            SampleNLineagesCDFLTree(*(node->children+child),n_gleaves,Ne,verbosity,seed);
+                            break;
+                        case 0:
+                            if (verbosity>4)
+                            {
+                                printf("\n\t\t\t\tNode %u: %u output lineages and %u input lineages, 0 children with lineages, previously set lineage counts", node->index, node->n_olin, node->n_ilin);
+                            }
+    #ifdef DBG
+                            fflush(stdout);
+    #endif
+                            //The n_lineages have to be previosly set here.
+                            break;
+                        default:
+                            ErrorReporter(UNEXPECTED_VALUE,": not implemented yet\n");
+                            break;
+                    }
+
+                    break;
+            }
+            break;
+        case 0://The n_lineages have to be previosly set here.
+            if (verbosity>4 && node->n_olin>1)
+            {
+                printf("\n\t\t\t\tLeaf node %u: %u preset input lineages (leaf), and %u output lineages", node->index, node->n_ilin, node->n_olin);
+            }
+    #ifdef DBG
+            fflush(stdout);
+    #endif
+            break;
+        
+    }
+}
+
+
+l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, double gen_time, int Ne, double mu)
 {
     l_tree * tree=NULL;
     
@@ -5855,12 +6254,12 @@ l_tree * NewLTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     
     if (n_nodes>1)
     {
-        tree->m_node=NewLNodes(n_nodes,n_gleaves,max_children,probs);
+        tree->m_node=NewLNodes(n_nodes,n_gleaves,max_children);
         tree->root=NULL;
     }
     else if (n_nodes==1)
     {
-        tree->root=NewLNodes(n_nodes, n_gleaves, max_children,probs);
+        tree->root=NewLNodes(n_nodes, n_gleaves, max_children);
         tree->m_node=NULL;
     }
     else
@@ -6025,11 +6424,11 @@ long int CopySTree (s_tree ** out_tree_ptr,s_tree * in_tree,int tree_struct, int
     return NO_ERROR;
 }
 
-long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int relink)
+long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int l_nodes_ptr, int g_nodes_ptr, int probs, int relink, int preserve)
 {
     l_tree * out_tree=NULL;
     l_node * w_output=NULL, * w_input=NULL;
-    int i=0, j=0, post_order=0, probs=0;
+    int i=0, j=0, post_order=0, tfmax_nlin=0;
     
     // ****
     /// <dl><dt> Function structure </dt><dd>
@@ -6045,8 +6444,6 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
     {
         post_order=1;
     }
-    if (in_tree->m_node->i_probs!=NULL)
-        probs=1;
     
     // **
     /// Input tree is collapsed using a post-order if it has sparse nodes</dd></dl>
@@ -6062,14 +6459,14 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
     /// Allocation if *out_tree_ptr==NULL
     if (*out_tree_ptr==NULL)
     {
-        *out_tree_ptr=NewLTree(in_tree->n_nodes, in_tree->n_leaves,in_tree->n_gleaves, in_tree->max_children, in_tree->gen_time, in_tree->Ne, in_tree->mu, probs);
+        *out_tree_ptr=NewLTree(in_tree->n_nodes, in_tree->n_leaves,in_tree->n_gleaves, in_tree->max_children, in_tree->gen_time, in_tree->Ne, in_tree->mu);
     }
     // **
     /// Reallocation (by \ref FreeSTree and \ref NewLTree) if the output tree pointer has a sparse tree, and l_tree::n_nodes or l_tree::max_children are different. </dd></dl>
     else if ((*out_tree_ptr)->m_node==NULL || (*out_tree_ptr)->n_nodes!=in_tree->n_nodes || (*out_tree_ptr)->max_children!=in_tree->max_children)
     {
         FreeLTree(out_tree_ptr);
-        *out_tree_ptr=NewLTree(in_tree->n_nodes, in_tree->n_leaves,in_tree->n_gleaves, in_tree->max_children, in_tree->gen_time, in_tree->Ne, in_tree->mu, probs);
+        *out_tree_ptr=NewLTree(in_tree->n_nodes, in_tree->n_leaves,in_tree->n_gleaves, in_tree->max_children, in_tree->gen_time, in_tree->Ne, in_tree->mu);
     }
     
     out_tree=*out_tree_ptr;
@@ -6093,26 +6490,64 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         w_output->gtime_mult=w_input->gtime_mult;
         w_output->n_ilin=w_input->n_ilin;
         w_output->n_olin=w_input->n_olin;
+        w_output->fmax_nlin=w_input->fmax_nlin;
         
-        if (w_input->i_probs!=NULL)
+        switch (probs)
         {
-            w_output->i_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
-            if (w_output->i_probs==NULL)
-                return MEM_ERROR;
-            for (j=0;j<in_tree->n_gleaves;++j)
-            {
-                *(w_output->i_probs+j)=*(w_input->i_probs+j);
-            }
-        }
-        if (w_input->o_probs!=NULL)
-        {
-            w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
-            if (w_output->o_probs==NULL)
-                return MEM_ERROR;
-            for (j=0;j<in_tree->n_gleaves;++j)
-            {
-                *(w_output->o_probs+j)=*(w_input->o_probs+j);
-            }
+            case 1:
+                switch (preserve)
+                {
+                    case 1:
+                        if (w_input->i_probs!=NULL)
+                        {
+                            w_output->i_probs=calloc(w_input->fmax_nlin+1,sizeof(double));
+                            if (w_output->i_probs==NULL)
+                                return MEM_ERROR;
+                            for (j=0;j<=w_input->fmax_nlin;++j)
+                            {
+                                *(w_output->i_probs+j)=*(w_input->i_probs+j);
+                            }
+                        }
+                        if (w_input->i_combprobs!=NULL)
+                        {
+                            tfmax_nlin=1;
+                            for (j=0;j<w_input->n_child;++j)
+                                tfmax_nlin*=(*(w_input->children+j))->fmax_nlin;
+                            w_output->i_combprobs=calloc(tfmax_nlin,sizeof(double));
+                            if (w_output->i_combprobs==NULL)
+                                return MEM_ERROR;
+                            for (j=0;j<tfmax_nlin;++j)
+                            {
+                                *(w_output->i_combprobs+j)=*(w_input->i_combprobs+j);
+                            }
+                        }
+                        if (w_input->o_probs!=NULL)
+                        {
+                            w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
+                            if (w_output->o_probs==NULL)
+                                return MEM_ERROR;
+                            for (j=0;j<=w_input->fmax_nlin;++j)
+                            {
+                                *(w_output->o_probs+j)=*(w_input->o_probs+j);
+                            }
+                        }
+                        break;
+                        
+                    default:
+                        w_output->i_probs=w_input->i_probs;
+                        w_output->i_combprobs=w_input->i_combprobs;
+                        w_output->o_probs=w_input->o_probs;
+                        w_input->i_probs=NULL;
+                        w_input->i_combprobs=NULL;
+                        w_input->o_probs=NULL;
+                        break;
+                }
+                break;
+            default:
+                w_output->i_probs=NULL;
+                w_output->i_combprobs=NULL;
+                w_output->o_probs=NULL;
+                break;
         }
         
         if (tree_struct>0)
@@ -6169,28 +6604,66 @@ long int CopyLTree (l_tree **out_tree_ptr, l_tree *in_tree, int tree_struct, int
         w_output->gtime_mult=w_input->gtime_mult;
         w_output->n_ilin=w_input->n_ilin;
         w_output->n_olin=w_input->n_olin;
+        w_output->fmax_nlin=w_input->fmax_nlin;
         
         // **
         /// Copy of input and output probabilities of numbers of lineages
-        if (w_input->i_probs!=NULL)
+        switch (probs)
         {
-            w_output->i_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
-            if (w_output->i_probs==NULL)
-                return MEM_ERROR;
-            for (j=0;j<in_tree->n_gleaves;++j)
+            case 1:
+                switch (preserve)
             {
-                *(w_output->i_probs+j)=*(w_input->i_probs+j);
+                case 1:
+                    if (w_input->i_probs!=NULL)
+                    {
+                        w_output->i_probs=calloc(w_input->fmax_nlin+1,sizeof(double));
+                        if (w_output->i_probs==NULL)
+                            return MEM_ERROR;
+                        for (j=0;j<=w_input->fmax_nlin;++j)
+                        {
+                            *(w_output->i_probs+j)=*(w_input->i_probs+j);
+                        }
+                    }
+                    if (w_input->i_combprobs!=NULL)
+                    {
+                        tfmax_nlin=1;
+                        for (j=0;j<w_input->n_child;++j)
+                            tfmax_nlin*=(*(w_input->children+j))->fmax_nlin;
+                        w_output->i_combprobs=calloc(tfmax_nlin,sizeof(double));
+                        if (w_output->i_combprobs==NULL)
+                            return MEM_ERROR;
+                        for (j=0;j<tfmax_nlin;++j)
+                        {
+                            *(w_output->i_combprobs+j)=*(w_input->i_combprobs+j);
+                        }
+                    }
+                    if (w_input->o_probs!=NULL)
+                    {
+                        w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
+                        if (w_output->o_probs==NULL)
+                            return MEM_ERROR;
+                        for (j=0;j<=w_input->fmax_nlin;++j)
+                        {
+                            *(w_output->o_probs+j)=*(w_input->o_probs+j);
+                        }
+                    }
+                    break;
+                    
+                default:
+                    w_output->i_probs=w_input->i_probs;
+                    w_output->i_combprobs=w_input->i_combprobs;
+                    w_output->o_probs=w_input->o_probs;
+                    w_input->i_probs=NULL;
+                    w_input->i_combprobs=NULL;
+                    w_input->o_probs=NULL;
+                    break;
             }
-        }
-        if (w_input->o_probs!=NULL)
-        {
-            w_output->o_probs=calloc(in_tree->n_gleaves+1,sizeof(double));
-            if (w_output->o_probs==NULL)
-                return MEM_ERROR;
-            for (j=0;j<in_tree->n_gleaves;++j)
-            {
-                *(w_output->o_probs+j)=*(w_input->o_probs+j);
-            }
+                break;
+            default:
+                w_output->i_probs=NULL;
+                w_output->i_combprobs=NULL;
+                w_output->o_probs=NULL;
+                break;
         }
         
         // **
@@ -6484,6 +6957,11 @@ void FreeLTree(l_tree ** tree)
                 free(w_node->i_probs);
                 w_node->i_probs=NULL;
             }
+            if (w_node->i_combprobs !=NULL)
+            {
+                free(w_node->i_combprobs);
+                w_node->i_combprobs=NULL;
+            }
             if (w_node->o_probs !=NULL)
             {
                 free(w_node->o_probs);
@@ -6693,7 +7171,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         if (locus_tree->root==NULL)
             return MEM_ERROR;
         
-        CollapseLTree(locus_tree,1,0,locus_tree->root->o_probs!=NULL?1:0); //Post-order
+        CollapseLTree(locus_tree,1,0,0); //Post-order
     }
     if (includelosses>1)
         return UNEXPECTED_VALUE;
@@ -6805,7 +7283,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         if (locus_tree->root == NULL)
             return MEM_ERROR;
         
-        CollapseLTree(locus_tree,1,0,locus_tree->root->o_probs!=NULL?1:0); //Post-order
+        CollapseLTree(locus_tree,1,0,1); //Post-order
     }
     if (includelosses>1)
         return UNEXPECTED_VALUE;
@@ -6849,19 +7327,11 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         w_lnode=locus_tree->m_node+i;
         
         //**
-        /// Adding fixed number of output lineages for bounded coalescences and branches without lineages
-        
-        if (includelosses==0 && (w_lnode->kind_node==LOSS || w_lnode->kind_node==RTRFR || w_lnode->kind_node==RGC)) //Lost locus tree branches with 0 lineages
-        {
-            w_lnode->n_olin=0;
-            *(w_lnode->o_probs)=1;
-        }
-        else if((w_lnode->anc_node!=NULL && (w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *(w_lnode->anc_node->children+1)==w_lnode) || w_lnode->anc_node==NULL) //Either bounded or root
-        {
+        /// Adding fixed number of output lineages for bounded coalescences
+        if(w_lnode->anc_node!=NULL && ((w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *(w_lnode->anc_node->children+1)==w_lnode)) //bounded
             w_lnode->n_olin=1;
-            *(w_lnode->o_probs+1)=1;
-        }
-        // else => nodes where we have to sample the output probabilities and number of lineages.
+        else //=> nodes where we have to sample the number of lineages.
+            w_lnode->n_olin=0;
         
         // **
         /// <dl><dt>Leaf nodes association </dt><dd>
@@ -6876,13 +7346,19 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                     case RTRFR:
                     case RGC:
                         w_lnode->n_nodes=includelosses;
-                        w_lnode->n_ilin=includelosses;
-                        *(w_lnode->i_probs+includelosses)=1;
+                        w_lnode->n_ilin=w_lnode->n_nodes;
+                        switch (includelosses)
+                        {
+                            case 1:
+                                w_lnode->n_olin=includelosses;
+                                break;
+                            default:
+                                w_lnode->n_olin=0;
+                        }
                         break;
                     default:
                         w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of input lineages in the same way as conts->n_replicas
-                        w_lnode->n_ilin=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin;
-                        *(w_lnode->i_probs+(w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin))=1;
+                        w_lnode->n_ilin=w_lnode->n_nodes;
                         break;
                 }
                 
@@ -6903,6 +7379,7 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                 break;
                 
             default:
+                w_lnode->n_ilin=0;
                 w_lnode->n_nodes=0;
                 break;
         }
@@ -7023,7 +7500,7 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
     
     // *
     /// New l_node array allocation by \ref NewLTree
-    m_node=NewLNodes(in_tree->n_nodes, in_tree->n_gleaves, in_tree->max_children, probs);
+    m_node=NewLNodes(in_tree->n_nodes, in_tree->n_gleaves, in_tree->max_children);
     
     // *
     /// Unreference previous (in case it exists) input tree m_node
@@ -7042,7 +7519,7 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
     if (post_order==0)
     {
         PreReorderLNodes(in_tree->root, &index);
-        PreCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink);
+        PreCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink,probs);
 
         // *
         /// Asigns the new root to the tree.
@@ -7051,7 +7528,7 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
     else
     {
         PostReorderLNodes(in_tree->root, &index);
-        PostCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink);
+        PostCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink,probs);
         
         // Asigns the new root to the tree.
         in_tree->root=(m_node+in_tree->n_nodes-1); //The last node is the root.
@@ -7091,6 +7568,11 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
             {
                 free(w_node->i_probs);
                 w_node->i_probs=NULL;
+            }
+            if (w_node->i_combprobs!=NULL)
+            {
+                free(w_node->i_combprobs);
+                w_node->i_combprobs=NULL;
             }
             if (w_node->o_probs !=NULL)
             {
@@ -7325,7 +7807,7 @@ long int Count_duplications(l_tree *tree, int *n_dup)
         
 }
 
-long int Count_losses(l_tree *tree, int *n_losses)
+long int Count_losses(l_tree *tree, int *n_loss)
 {
     int i=0;
     l_node *w_lnode=NULL;
@@ -7334,10 +7816,12 @@ long int Count_losses(l_tree *tree, int *n_losses)
     {
         return MEM_ERROR;
     }
-    *n_losses=0;
+    
+    *n_loss=0;
+    
     if (tree->m_node==NULL)
     {
-        *n_losses=Count_losses_lnodes(tree->root);
+        *n_loss=Count_losses_lnodes(tree->root);
     }
     else
     {
@@ -7345,7 +7829,65 @@ long int Count_losses(l_tree *tree, int *n_losses)
         {
             w_lnode=tree->m_node+i;
             if (w_lnode->kind_node==LOSS)
-                ++(*n_losses);
+                ++(*n_loss);
+        }
+    }
+    
+    return NO_ERROR;
+    
+}
+
+long int Count_transfers(l_tree *tree, int *n_trans)
+{
+    int i=0;
+    l_node *w_lnode=NULL;
+    
+    if (tree->root==NULL)
+    {
+        return MEM_ERROR;
+    }
+    
+    *n_trans=0;
+    
+    if (tree->m_node==NULL)
+    {
+        *n_trans=Count_transfers_lnodes(tree->root);
+    }
+    else
+    {
+        for (i=0; i<tree->n_nodes; ++i)
+        {
+            w_lnode=tree->m_node+i;
+            if (w_lnode->kind_node==TRFR)
+                ++(*n_trans);
+        }
+    }
+    
+    return NO_ERROR;
+    
+}
+
+long int Count_gc(l_tree *tree, int *n_gc)
+{
+    int i=0;
+    l_node *w_lnode=NULL;
+    
+    if (tree->root==NULL)
+    {
+        return MEM_ERROR;
+    }
+    *n_gc=0;
+    if (tree->m_node==NULL)
+    {
+        *n_gc=Count_gc_lnodes(tree->root);
+    }
+    else
+    {
+        for (i=0; i<tree->n_nodes; ++i)
+        {
+            w_lnode=tree->m_node+i;
+            if (w_lnode->kind_node==GC)
+                ++(*n_gc);
         }
     }
     
@@ -8568,6 +9110,11 @@ void FreeLNodes(l_node *node, int free_gnodes)
         free(node->i_probs);
         node->i_probs=NULL;
     }
+    if (node->i_combprobs != NULL)
+    {
+        free(node->i_combprobs);
+        node->i_combprobs=NULL;
+    }
     if (node->o_probs != NULL)
     {
         free(node->o_probs);
@@ -8819,13 +9366,11 @@ static void CopyStoLNodes(l_node *output,s_node *input, int *l_id)
     ++*l_id;
 }
 
-void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral)
+void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral, int probs)
 {
     l_node * w_output=NULL;
     g_node ** g_backup=NULL;
     l_node ** r_backup=NULL;
-    double * i_probs_backup=NULL;
-    double * o_probs_backup=NULL;
     
     int i=0;
     
@@ -8836,7 +9381,7 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
     /// Post-order recursion (children,anc)
     for (i=0;i<input->n_child;++i)
     {
-        PostCollapseLNodes(output,*(input->children+i),n_gleaves,retain_lateral);
+        PostCollapseLNodes(output,*(input->children+i),n_gleaves,retain_lateral,probs);
     }
     
     // **
@@ -8846,39 +9391,34 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
     ErrorReporter((long int)w_output->children,NULL);
     r_backup=w_output->children;
     if (w_output->g_nodes!=NULL)
-    {
         g_backup=w_output->g_nodes;
-    }
-    if (w_output->i_probs!=NULL)
-        i_probs_backup=w_output->i_probs;
-    if (w_output->o_probs!=NULL)
-        o_probs_backup=w_output->o_probs;
     
     // **
     /// Copy of values
     memcpy(w_output,input,sizeof(l_node));
     if (retain_lateral!=1)
-    {
         w_output->lat_node=NULL;
-    }
     
     // **
     ///<dl><dt>Copy of saved pointers</dt><dd>
     
     //*
     /// N_lineages probabilities (if necessary)
-    
-    if (i_probs_backup!=NULL)
+    switch (probs)
     {
-        w_output->i_probs=i_probs_backup;
-        if (input->i_probs!=NULL)
-            memcpy(w_output->i_probs,input->i_probs,sizeof(double)*n_gleaves);
-    }
-    if (o_probs_backup!=NULL)
-    {
-        w_output->o_probs=o_probs_backup;
-        if (input->o_probs!=NULL)
-            memcpy(w_output->o_probs,input->o_probs,sizeof(double)*n_gleaves);
+        case 1:
+            w_output->i_probs=input->i_probs;
+            input->i_probs=NULL;
+            w_output->i_combprobs=input->i_combprobs;
+            input->i_combprobs=NULL;
+            w_output->o_probs=input->o_probs;
+            input->o_probs=NULL;
+            break;
+        default:
+            w_output->i_probs=NULL;
+            w_output->i_combprobs=NULL;
+            w_output->o_probs=NULL;
+            break;
     }
     
     // *
@@ -9020,13 +9560,12 @@ void PreCollapseSNodes(s_node *output,s_node *input)
     
 }
 
-void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral)
+void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_lateral, int probs)
 {
     l_node * w_output=NULL;
     g_node ** g_backup=NULL;
     l_node ** r_backup=NULL;
-    double * i_probs_backup=NULL;
-    double * o_probs_backup=NULL;
+    
     int i=0;
     
     // ***
@@ -9039,13 +9578,7 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
     ErrorReporter((long int)w_output->children,NULL);
     r_backup=w_output->children;
     if (w_output->g_nodes!=NULL)
-    {
         g_backup=w_output->g_nodes;
-    }
-    if (w_output->i_probs!=NULL)
-        i_probs_backup=w_output->i_probs;
-    if (w_output->o_probs!=NULL)
-        o_probs_backup=w_output->o_probs;
     
     // **
     /// Copy of values
@@ -9060,18 +9593,21 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
     
     //*
     /// N_lineages probabilities (if necessary)
-    
-    if (i_probs_backup!=NULL)
+    switch (probs)
     {
-        w_output->i_probs=i_probs_backup;
-        if (input->i_probs!=NULL)
-            memcpy(w_output->i_probs,input->i_probs,sizeof(double)*n_gleaves);
-    }
-    if (o_probs_backup!=NULL)
-    {
-        w_output->o_probs=o_probs_backup;
-        if (input->o_probs!=NULL)
-            memcpy(w_output->o_probs,input->o_probs,sizeof(double)*n_gleaves);
+        case 1:
+            w_output->i_probs=input->i_probs;
+            input->i_probs=NULL;
+            w_output->i_combprobs=input->i_combprobs;
+            input->i_combprobs=NULL;
+            w_output->o_probs=input->o_probs;
+            input->o_probs=NULL;
+            break;
+        default:
+            w_output->i_probs=NULL;
+            w_output->i_combprobs=NULL;
+            w_output->o_probs=NULL;
+            break;
     }
     // *
     /// children loop
@@ -9108,7 +9644,7 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
     /// Pre-order recursion (anc,children)  </dd></dl>
     for (i=0;i<input->n_child;++i)
     {
-        PreCollapseLNodes(output,*(input->children+i),n_gleaves,retain_lateral);
+        PreCollapseLNodes(output,*(input->children+i),n_gleaves,retain_lateral,probs);
     }
     
     
@@ -9182,12 +9718,60 @@ static int Count_duplications_lnodes(l_node *node)
     
     // *
     /// Counting </dd></dl>
-    if (node->paralog==DUP)//Duplication
+    if (node->kind_node==DUP)//Duplication
     {
         ++n_dup;
     }
     return n_dup;
 
+}
+
+static int Count_transfers_lnodes(l_node *node)
+{
+    int i=0;
+    int n_trans=0;
+    // **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Post-order recursion (children,anc)
+    for (i=0;i<node->n_child;++i)
+    {
+        n_trans+=Count_transfers_lnodes(*(node->children+i));
+    }
+    
+    // *
+    /// Counting </dd></dl>
+    if (node->kind_node==TRFR)//Duplication
+    {
+        ++n_trans;
+    }
+    return n_trans;
+    
+}
+
+static int Count_gc_lnodes(l_node *node)
+{
+    int i=0;
+    int n_gc=0;
+    // **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Post-order recursion (children,anc)
+    for (i=0;i<node->n_child;++i)
+    {
+        n_gc+=Count_gc_lnodes(*(node->children+i));
+    }
+    
+    // *
+    /// Counting </dd></dl>
+    if (node->kind_node==GC)//Duplication
+    {
+        ++n_gc;
+    }
+    return n_gc;
+    
 }
 
 static int Count_losses_lnodes(l_node *node)
@@ -9206,7 +9790,7 @@ static int Count_losses_lnodes(l_node *node)
     
     // *
     /// Counting </dd></dl>
-    if (node->paralog==LOSS)//Loss
+    if (node->kind_node==LOSS)//Loss
     {
         ++n_losses;
     }
@@ -9449,12 +10033,29 @@ static void RefineSNodes(s_node * node, int ind_persp, double gen_time)
     
 }
 
-static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time)
+static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen_time, int *n_dup, int *n_loss, int *n_trans, int *n_gc)
 {
     int i=0,j=0;
     
     // **
     /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Gets lnodes stats (number of duplications, losses, transferences and gc)
+    switch (node->kind_node)
+    {
+        case DUP:
+            (*n_dup)++;
+            break;
+        case LOSS:
+            (*n_loss)++;
+        case GC:
+            (*n_gc)++;
+            break;
+        case TRFR:
+            (*n_trans)++;
+            break;
+    }
     
     // *
     /// Sets the correct l_node::n_nodes for leaf nodes or calculates and applies l_node::n_gen for every node
@@ -9502,7 +10103,7 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
     /// Pre-order recursion (anc,children)
     for (i=0;i<node->n_child;++i)
     {
-        RefineLNodes(*(node->children+i),n_gleaves, ind_persp, gen_time);
+        RefineLNodes(*(node->children+i),n_gleaves, ind_persp, gen_time, n_dup, n_loss, n_trans, n_gc);
     }
     
 }

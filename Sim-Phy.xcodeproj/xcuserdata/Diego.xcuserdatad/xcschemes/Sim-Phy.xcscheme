@@ -64,7 +64,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:10000 -si f:4 -v 6"
+            argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
@@ -80,7 +80,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i hand.conf"
+            argument = "-i hand.conf -rg 2"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -92,7 +92,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i test.conf"
+            argument = "-i test.conf -v 6"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -135,8 +135,8 @@
       <EnvironmentVariables>
          <EnvironmentVariable
             key = "SIMPHY_MAXIT"
-            value = "100000000"
-            isEnabled = "YES">
+            value = "10000000000"
+            isEnabled = "NO">
          </EnvironmentVariable>
       </EnvironmentVariables>
       <AdditionalOptions>
