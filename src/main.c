@@ -190,7 +190,7 @@ int main (int argc, char **argv)
     
     // ******
     /// Configuration variables
-    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=0,min_lsleaves=0, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
+    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=1,min_lsleaves=0, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
     float epsilon_brent=0.000001, u_seed=(time (NULL) * clock());
     char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*confile_name=NULL;
     char *buffer=NULL;
@@ -1203,7 +1203,7 @@ int main (int argc, char **argv)
                 if (n_dups==0 && n_trans==0 && n_gc==0)
                     ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 else
-                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,recon>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
+                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,verbosity,get_sampling(gen_time)),": simulating a gene tree");
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>
@@ -2785,7 +2785,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LL. Simulated locus tree. Minimum number of leaves of simulated locus trees.
                         case 'L':
-                            if(sscanf(buffer+offset,"%u",min_lleaves)==0 || *min_lleaves<2)
+                            if(sscanf(buffer+offset,"%u",min_lleaves)==0 || *min_lleaves<1)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -2795,7 +2795,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             // **
                             /// -LS. Simulated locus tree. Minimum number of leaves from different species of simulated locus trees.</dd></dl>
                         case 'S':
-                            if(sscanf(buffer+offset,"%u",min_lsleaves)==0 || *min_lsleaves<2)
+                            if(sscanf(buffer+offset,"%u",min_lsleaves)==0 || *min_lsleaves<1)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);

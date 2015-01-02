@@ -825,8 +825,6 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  *   Seed for the random number generator.
  * \paran tn_lcoals
  *   Pointer to return the number of observed extra lineages.
- * \param simlosses
- *   Logical flag. If ==1, then the lost locus tree lineages are simulated at the gene tree level, using only one leave. This is mainly for DBGging and it is not recomended for general users.
  * \param verbosity
  *   Config about verbosity.
  * \param gen_time
@@ -835,7 +833,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time);
 
 /**
  * Creates a new l_tree, and initializes it.
@@ -1114,15 +1112,13 @@ long int MatchTreesMSC(l_tree * locus_tree, g_tree * gene_tree, int reset_gtree,
  * \param gene_tree
  *  g_tree (gene tree).
  * \param reset_gtree
- *  Logical flag. If =1 the g_tree is reset by the function.
- * \param includelosses
  *  Number of g_nodes associated to each lost l_node (0= normal behaviour, 1= simulate lost lineages).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note If the l_tree is spread (l_tree::root instead of l_tree::m_node) the
  *  tree is collapsed by  \ref CollapseLTree in a post-order.
  *******************************************************************************/
-long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, int includelosses);
+long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree);
 
 // ** Tree conversion ** //
 

@@ -64,8 +64,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
+            argument = "-lr lnexus.trees -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -rl u:10,501 -rg 1 -sb l:-14,1 -sl u:10,51 -st u:100000,10000000 -si u:1,6 -so l:0,0.1 -ld f:0.0000001 -lb f:0.0000001 -lt f:0.0000001 -cp l:12,0.5 -cg f:1 -hs l:1.5,1 -hl l:1.2,1 -hg L:1.4,1 -cu e:10000000 -o SimPhy_complex -os 1 -or 1 -v 2 -od 1 -cs 22"
@@ -92,7 +96,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i test.conf -v 6"
+            argument = "-i test.conf"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument

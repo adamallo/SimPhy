@@ -1915,7 +1915,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     name_c * names=NULL;
     char code=' ';
     int step=0, in_coment=0;
-    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
+    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_tleaves=0,n_gleaves=0, n_priv_ngleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0,index=0;
     char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
@@ -1974,6 +1974,7 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
         if (step==MAX_IT) ErrorReporter(LOOP_ERROR,NULL); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
+    n_tleaves=n_leaves;
     
     // ***
     /// Name container allocation by \ref NewNames
@@ -2061,13 +2062,19 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
             case '[':
                 step+=2;
                 ErrorReporter(GetLnodeParamsFromNexusComments(nexus,current_node,&step), ": parsing Nexus tree comments");
-                if (current_node->n_nodes>1 && current_node->n_child!=0)
+                if (current_node->n_nodes>0 && current_node->n_nodes!=ind_persp)
                 {
-                    PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
-                    ErrorReporter(SETTINGS_ERROR,NULL);
+                    n_gleaves+=current_node->n_nodes;
+                    ++n_priv_ngleaves;
+                    if (current_node->n_child!=0)
+                    {
+                        PrintXCharError(nexus, step, "\nNEWICK PARSING ERROR\n", "|<- Fixing the number of nodes/replicates in an internal node is not allowed, please, revisit the manual and your input trees\n");
+                        ErrorReporter(SETTINGS_ERROR,NULL);
+                    }
                 }
-                if (current_node->n_nodes>1)
-                    n_gleaves+=current_node->n_nodes-1;
+                if (current_node->kind_node==LOSS || current_node->kind_node==RGC || current_node->kind_node==RTRFR)
+                    --n_tleaves;
+                
                 break;
                 
             default:
@@ -2116,7 +2123,6 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
                 /// New s_node by \ref NewSNodes
                 anc_node=current_node;
                 current_node=NewLNodes(1,0,max_children);
-                ++n_gleaves;
                 // *
                 /// Points the pointers of this new node and its ancestor
                 *(anc_node->children+anc_node->n_child)=current_node;
@@ -2142,32 +2148,12 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
         if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
         
     }
-    
+    n_gleaves+=(n_tleaves-n_priv_ngleaves)*ind_persp;
     // ***
     /// Refines the readed nodes by \ref RefineLNodes
     
     RefineLNodes(root,n_gleaves,ind_persp,gen_time,n_dup,n_loss,n_trans,n_gc);
     max_lname++; //One extra character for \0.
-    
-    // ***
-    /// Calculate the count probabilities by \ref RefineLNodes
-    if (verbosity>4)
-    {
-        printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
-#ifdef DBG
-        fflush(stdout);
-#endif
-    }
-    
-    CalcProbsNLineagesLTree(root,Ne, 0, verbosity);//I should try to extend it for using polytomies
-    
-    if (verbosity>4)
-    {
-        printf("\n\t\tDone\n");
-#ifdef DBG
-        fflush(stdout);
-#endif
-    }
     
     // ***
     /// Reallocates the name_c memory by \ref ReallocNames
@@ -2191,6 +2177,26 @@ l_tree * ParseNexusLTree (char * nexus,name_c **names_ptr, int verbosity, double
     
     if(CheckUltrametricityLTree(tree)==-1)
         ErrorReporter(UNEXPECTED_VALUE,": locus tree is not ultrametric in time units. This doesn't allow to use the full model (transfers)\n");
+    
+    // ***
+    /// Calculate the count probabilities by \ref RefineLNodes
+    if (verbosity>4)
+    {
+        printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
+    
+    CalcProbsNLineagesLTree(root,Ne, 0, verbosity);//I should try to extend it for using polytomies
+    
+    if (verbosity>4)
+    {
+        printf("\n\t\tDone\n");
+#ifdef DBG
+        fflush(stdout);
+#endif
+    }
     
     // ***
     /// Frees dynamic memory (buffers)</dd></dl>
@@ -2220,7 +2226,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
     name_c * names=NULL;
     char code=' ';
     int register step=0;
-    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, is_dup=0, n_paralog=0, n_priv_ngleaves=0;
+    int n_char=0, iteration=0, ffree_codename=1, n_leaves=0, n_tleaves=0, n_gleaves=0, n_inodes=0, n_nodes=0, max_children=0, max_lname=0, n_replica=0,index=0, is_dup=0, n_paralog=0, n_priv_ngleaves=0;
     char *buffer=NULL,*name_buffer=NULL;
     size_t tbuffer=NUM_BUFFER;
     
@@ -2288,7 +2294,7 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
         if (step==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
     }
     n_nodes=n_leaves+n_inodes;
-    n_gleaves+=(n_leaves-n_priv_ngleaves)*ind_persp; //Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
+    n_tleaves=n_leaves;
     
     // ***
     /// Name container allocation by \ref NewNames
@@ -2542,6 +2548,10 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
                     /// Translates the buffer in a integer number and asigns it as l_node::kind_node of the current node</dd></dl>
                     sscanf(buffer,"%ui",&is_dup);
                     current_node->kind_node=is_dup;
+                    if (is_dup==LOSS || is_dup==RGC || is_dup==RTRFR)
+                    {
+                        --n_tleaves;
+                    }
                 }
                 break;
             case '_':
@@ -2652,6 +2662,8 @@ l_tree * ParseNewickLTree (char * newick,name_c **names_ptr, int verbosity, doub
         if (iteration==MAX_IT) ErrorReporter(LOOP_ERROR, NULL); // Avoids ininite loops
         
     }
+    
+    n_gleaves+=(n_tleaves-n_priv_ngleaves)*ind_persp; //Addition of the ngleaves of the nodes using the common number of individuals (ind_persp)
     
     // ***
     /// Refines the readed nodes by \ref RefineLNodes
@@ -4415,7 +4427,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             
         }
         
-        if (lt_true_leaves<min_lleaves || maxnleaves_reached==1 || lt_diffs_true_leaves<min_lsleaves)
+        if (lt_true_leaves<min_lleaves || maxnleaves_reached==1 || lt_diffs_true_leaves<min_lsleaves || *st_gleaves<=1)
         {
             if (verbosity>2)
             {
@@ -4427,10 +4439,13 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 {
                     printf("\n\t\tLocus tree with %u leaves, less than the minimum %u , restart of the simulation of this tree. Try %d of %d",lt_true_leaves,min_lleaves,l_tree_retries,MAX_IT);
                 }
-                else
+                else if (lt_diffs_true_leaves<min_lsleaves)
                 {
                     printf("\n\t\tLocus tree with %u leaves from different species, less than the minimum %u , restart of the simulation of this tree. Try %d of %d",lt_diffs_true_leaves,min_lsleaves,l_tree_retries,MAX_IT);
                 }
+                else
+                    printf("\n\t\tLocus tree with %u associated gene tree leaves, less than 2, restart of the simulation of this tree. Try %d of %d",*st_gleaves,l_tree_retries,MAX_IT);
+                    
                 if (verbosity>4)
                 {
                     printf("\n");
@@ -5216,7 +5231,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     return(NO_ERROR);
 }
 
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time)
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5262,7 +5277,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
 #ifdef DBG
     fflush(stdout);
 #endif
-    MatchTreesMLC(wlocus_tree,*gene_tree,1,simlosses);
+    MatchTreesMLC(wlocus_tree,*gene_tree,1);
     if (verbosity>4)
         printf("Done\n\t\t\tSampling the number of lineages using the probabilities of lineage counts...");
 #ifdef DBG
@@ -5726,11 +5741,11 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int in_subtree ,int verbosity)
     return_nlin=fmax_nlin;
 
     // *
-    /// Calculating the output probabilities using \ref LogscaleProbCoalFromXtoYLineages for regular nodes or setting it to fixed values if necessary (1 if bounded, 0 if either no lineages present or unbounded process)
+    /// Calculating the output probabilities using \ref LogscaleProbCoalFromXtoYLineages for regular nodes inside bounded subtrees or setting it to fixed values (with the corresponding n_olin) if necessary (1 if bounded node, 0 if either no lineages present or unbounded process)
     switch (in_subtree)
     {
         case 1:
-            if (node->anc_node==NULL || fmax_nlin==0) //Either unbounded (root) or without any node
+            if (node->anc_node==NULL || fmax_nlin==0) //Without any node
             {
                 node->n_olin=0;
                 *(node->o_probs)=1;
@@ -5753,12 +5768,11 @@ int CalcProbsNLineagesLTree(l_node *node, int Ne, int in_subtree ,int verbosity)
                     if (o_prob_sum>=1)
                         break;
                 }
-            }
-            
-            if(node->anc_node!=NULL && ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+1)==node))
-            {
-                node->n_olin=1;
-                return_nlin=1;
+                if(node->anc_node!=NULL && ((node->anc_node->kind_node==DUP || node->anc_node->kind_node==TRFR || node->anc_node->kind_node==GC) && *(node->anc_node->children+1)==node))
+                {
+                    node->n_olin=1;
+                    return_nlin=1;
+                }
             }
             
             if (verbosity>4)
@@ -6110,7 +6124,9 @@ void SampleNLineagesCDFLTree(l_node *node, int n_gleaves, int Ne, int verbosity,
                             SKahanSum(&sum,KahanLogscaleProbCoalFromXtoYLineages(kt, node->n_olin, node->gen_length, node->Ne!=0?node->Ne:Ne)**(node->i_probs+kt), &comp);
                             p=sum/cden;
                         } while (p<u && kt<ktmax);
-                    else if (kt>ktmax)
+                    else if (node->n_olin==ktmax)
+                        kt=ktmax;
+                    else
                         ErrorReporter(UNEXPECTED_VALUE, "");
                         
 #endif
@@ -6134,7 +6150,9 @@ void SampleNLineagesCDFLTree(l_node *node, int n_gleaves, int Ne, int verbosity,
                         
                         printf("CDF integrates to %lf",sum/cden);
                     }
-                    else if (node->n_olin>ktmax)
+                    else if (node->n_olin==ktmax)
+                        kt=ktmax;
+                    else
                         ErrorReporter(UNEXPECTED_VALUE, "");
 
 #endif
@@ -7263,7 +7281,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
     return (NO_ERROR);
 }
 
-long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, int includelosses)
+long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree)
 {
     int i=0,j=0,next_leaf=0;
     l_node *w_lnode=NULL;
@@ -7285,8 +7303,6 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         
         CollapseLTree(locus_tree,1,0,1); //Post-order
     }
-    if (includelosses>1)
-        return UNEXPECTED_VALUE;
     
     // ***
     /// <dl><dt>Gene tree reset if it is required</dt><dd>
@@ -7328,9 +7344,9 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         
         //**
         /// Adding fixed number of output lineages for bounded coalescences
-        if(w_lnode->anc_node!=NULL && ((w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *(w_lnode->anc_node->children+1)==w_lnode)) //bounded
+        if(w_lnode->anc_node!=NULL && ((w_lnode->anc_node->kind_node==DUP || w_lnode->anc_node->kind_node==TRFR || w_lnode->anc_node->kind_node==GC) && *(w_lnode->anc_node->children+1)==w_lnode) && w_lnode->fmax_nlin>0) //bounded and with lineages
             w_lnode->n_olin=1;
-        else //=> nodes where we have to sample the number of lineages.
+        else //=> nodes where we have to sample the number of lineages or it is 0.
             w_lnode->n_olin=0;
         
         // **
@@ -7339,32 +7355,8 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
         {
             case 0:
                 // *
-                /// The l_node::n_nodes is reset using l_node::conts s_node::n_replicas
-                switch (w_lnode->kind_node)
-                {
-                    case LOSS:
-                    case RTRFR:
-                    case RGC:
-                        w_lnode->n_nodes=includelosses;
-                        w_lnode->n_ilin=w_lnode->n_nodes;
-                        switch (includelosses)
-                        {
-                            case 1:
-                                w_lnode->n_olin=includelosses;
-                                break;
-                            default:
-                                w_lnode->n_olin=0;
-                        }
-                        break;
-                    default:
-                        w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of input lineages in the same way as conts->n_replicas
-                        w_lnode->n_ilin=w_lnode->n_nodes;
-                        break;
-                }
-                
-                // *
                 /// l_node::g_nodes are filled with g_node leaves by a loop with as much iterations as l_node::n_nodes, and each of these \ref g_node "g_nodes" is set with the same l_node::sp_index and with it own g_node::replica. </dd></dl></dd></dl>
-                for (j=0;j<w_lnode->n_nodes;++j)
+                for (j=0;j<w_lnode->n_ilin;++j)
                 {
                     w_gnode=gene_tree->m_node+next_leaf;
                     ++next_leaf;
@@ -7380,9 +7372,9 @@ long int MatchTreesMLC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                 
             default:
                 w_lnode->n_ilin=0;
-                w_lnode->n_nodes=0;
                 break;
         }
+        w_lnode->n_nodes=w_lnode->n_ilin;
     }
     
     gene_tree->species_tree=locus_tree->species_tree;
@@ -8205,6 +8197,9 @@ long int CheckUltrametricityLTree(l_tree *tree)
             switch ((tree->m_node+i)->kind_node)
             {
                 case SP:
+                case DUP:
+                case TRFR:
+                case GC:
                     switch (is_set)
                 {
                     case 0:
@@ -10071,13 +10066,13 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
                     case RTRFR:
                     case RGC:
                         node->n_nodes=0;
-                        node->n_ilin=0;
                         break;
                     default:
-                        node->n_nodes=ind_persp;
-                        node->n_ilin=ind_persp;
+                        if (node->n_nodes==0)
+                            node->n_nodes=ind_persp;
                         break;
                 }
+                node->n_ilin=node->n_nodes;
   
             default:
                 node->n_gen=node->anc_node->n_gen+node->gen_length;
@@ -10472,7 +10467,11 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         break;
                         
                     case LOSS:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            printf("Lost–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if(p->conts->n_child==0 && names!=NULL)
                         {
                             printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -10482,7 +10481,11 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         }
                         break;
                     case RTRFR:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            printf("Rtransf–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if(p->conts->n_child==0 && names!=NULL)
                         {
                             printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -10492,7 +10495,11 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         }
                         break;
                     case RGC:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            printf("Rgc–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if (p->conts->n_child==0 && names!=NULL)
                         {
                             printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -10643,7 +10650,11 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                             fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         break;
                     case LOSS:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            fprintf(file,"Lost–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if (p->conts->n_child==0 && names!=NULL)
                         {
                             fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -10653,7 +10664,11 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                         }
                         break;
                     case RTRFR:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if (p->conts->n_child==0 && names!=NULL)
                         {
                             fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -10663,7 +10678,11 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                         }
                         break;
                     case RGC:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts==NULL)
+                        {
+                            fprintf(file,"Rgc–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        }
+                        else if (p->conts->n_child==0 && names!=NULL)
                         {
                             fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11243,7 +11262,7 @@ long int GetSnodeParamsFromNexusComments(char *string,s_node *node,int *n_char)
             }
             if (c_param==-1)
             {
-                PrintXCharError(string, *n_char+8, "\nNEWICK PARSING ERROR\n", "|<- Unvalid param, please, revisit the manual to check the proper parameter spelling\n"); //+8, maximum parameter width
+                PrintXCharError(string, *n_char+8, "\nNEXUS TREE PARSING ERROR\n", "|<- Unvalid param, please, revisit the manual to check the proper parameter spelling\n"); //+8, maximum parameter width
                 return SETTINGS_ERROR;
             }
             else if (*(string+*n_char+s_params[c_param])=='=')
@@ -11490,9 +11509,12 @@ double CheckUltrametricityLNodes(l_node *node)
         else
             for (i=1; i<node->n_child; ++i)
             {
-                n_time=CheckUltrametricityLNodes(*(node->children+i));
-                if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
-                    return -1;
+                if ((*(node->children+i))->kind_node!=LOSS && (*(node->children+i))->kind_node!=RTRFR && (*(node->children+i))->kind_node!=RGC)
+                {
+                    n_time=CheckUltrametricityLNodes(*(node->children+i));
+                    if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
+                        return -1;
+                }
             }
         return time;
     }
