@@ -1365,7 +1365,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                     ErrorReporter(SETTINGS_ERROR, NULL);
                 }
                 if (current_node->n_replicas>1)
-                    n_gleaves+=current_node->n_replicas-1;
+                    n_gleaves+=current_node->n_replicas-ind_persp;
                 break;
                 
             default:
@@ -1414,7 +1414,7 @@ s_tree * ParseNexusSTree (char * nexus,name_c **names_ptr, int verbosity, double
                 /// New s_node by \ref NewSNodes
                 anc_node=current_node;
                 current_node=NewSNodes(1,max_children);
-                ++n_gleaves;
+                n_gleaves+=ind_persp;
                 // *
                 /// Points the pointers of this new node and its ancestor
                 *(anc_node->children+anc_node->n_child)=current_node;

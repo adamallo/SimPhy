@@ -65,7 +65,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-lr lnexus.trees -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-l (((A_1:1000,B_1:1000):1000,(A_2:1000,B_2:1000):1000):1000%1,C_1:3000); -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
@@ -80,11 +80,15 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-sr trees.test -cp f:10 -v 6"
+            argument = "-sr trees.test -cp f:10 -v 6 -si f:3"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i hand.conf -rg 2"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-s &quot;((A:20/1,B:20/4):30,C:50);&quot; -cp f:10 -v 6 -si f:3"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
@@ -97,7 +101,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i test.conf"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -rl U10-100 -sb f0.000001 -sl U20-50 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 2 -cs 22"
