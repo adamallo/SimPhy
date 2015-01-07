@@ -5341,7 +5341,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         
         pn_nodes=w_lnode->n_nodes;
         
-        memcpy(w_gnodes_ptr,w_lnode->g_nodes,sizeof(g_node *)*w_lnode->n_nodes);
+        memmove(w_gnodes_ptr,w_lnode->g_nodes,sizeof(g_node *)*w_lnode->n_nodes);
         
         if(w_lnode->Ne!=0) //Node with a private Ne.
             p_Ne=w_lnode->Ne;
@@ -8056,7 +8056,7 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
                 return MEM_ERROR;
         }
         
-        memcpy(wg_pointers, w_lnode->g_nodes, sizeof(g_node*)*w_lnode->n_ilin);
+        memmove(wg_pointers, w_lnode->g_nodes, sizeof(g_node*)*w_lnode->n_ilin);
         pn_nodes=w_lnode->n_ilin;
         
         // **
@@ -9298,7 +9298,7 @@ void PostCollapseSNodes(s_node *output,s_node *input)
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(s_node));
+    memmove(w_output,input,sizeof(s_node));
     
     // **
     ///<dl><dt>Copy of saved pointers</dt><dd>
@@ -9390,7 +9390,7 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(l_node));
+    memmove(w_output,input,sizeof(l_node));
     if (retain_lateral!=1)
         w_output->lat_node=NULL;
     
@@ -9432,7 +9432,7 @@ void PostCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_l
         
         if (input->g_nodes!=NULL)
         {
-            memcpy(w_output->g_nodes,input->g_nodes,sizeof(g_node*)*n_gleaves);
+            memmove(w_output->g_nodes,input->g_nodes,sizeof(g_node*)*n_gleaves);
         }
         
     }
@@ -9476,7 +9476,7 @@ void PostCollapseGNodes(g_node *output,g_node *input)
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(g_node));
+    memmove(w_output,input,sizeof(g_node));
     
     // **
     ///<dl><dt>Copy of saved pointers</dt><dd>
@@ -9521,7 +9521,7 @@ void PreCollapseSNodes(s_node *output,s_node *input)
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(s_node));
+    memmove(w_output,input,sizeof(s_node));
     
     // **
     ///<dl><dt>Copy of saved pointers</dt><dd>
@@ -9577,7 +9577,7 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(l_node));
+    memmove(w_output,input,sizeof(l_node));
     if (retain_lateral!=1)
     {
         w_output->lat_node=NULL;
@@ -9619,7 +9619,7 @@ void PreCollapseLNodes(l_node *output,l_node *input,int n_gleaves, int retain_la
         w_output->g_nodes=g_backup;
         if (input->g_nodes!=NULL)
         {
-            memcpy(w_output->g_nodes,input->g_nodes,sizeof(g_node*)*n_gleaves);
+            memmove(w_output->g_nodes,input->g_nodes,sizeof(g_node*)*n_gleaves);
         }
         
     }
@@ -9663,7 +9663,7 @@ void PreCollapseGNodes(g_node *output,g_node *input)
     
     // **
     /// Copy of values
-    memcpy(w_output,input,sizeof(s_node));
+    memmove(w_output,input,sizeof(s_node));
     
     // **
     ///<dl><dt>Copy of saved pointers</dt><dd>
@@ -11113,7 +11113,7 @@ l_node * ChooseLNodePeriod(l_node **l_pointers, int n_nodes, l_node * t_node, do
     {
         *(t_times+j)=-1;
     }
-    memcpy(wl_pointers,l_pointers,sizeof(l_node *)*n_nodes);
+    memmove(wl_pointers,l_pointers,sizeof(l_node *)*n_nodes);
     
     while (i<MAX_IT && done==0) //while it gets all the distances or the loop reaches MAX_IT
     {
