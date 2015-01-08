@@ -1,8 +1,13 @@
+ifndef CC
 CC=gcc
+endif
+
 CFLAGS:= $(CFLAGS) -Wall
 PERF=-O2
 DBG=-DDEBUG -O0
-OBJDIR=out
+OBJDIR=./out
+SRCDIR=./src
+BINDIR=./bin
 EXECUTABLES=simphy simphy_dbg simphy_static
 
 _OBJECTS= num_methods.o sampling.o sql_managing.o trees.o
@@ -30,48 +35,51 @@ else
 LIBS= -Wl,-Bstatic $(LS_LIBS) -Wl,-Bdynamic $(C_LIBS)
 endif
 
-simphy: main.c $(OBJECTS)
+$(BINDIR)/simphy: $(SRCDIR)/main.c $(OBJECTS)
+	mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $^ -o $@ $(C_LIBS) $(D_LIBS)
 	@echo "\nSimphy built"
 
-simphy_dbg: main.c $(DBG_OBJECTS)
+$(BINDIR)/simphy_dbg: $(SRCDIR)/main.c $(DBG_OBJECTS)
+	mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(DBG) -g $^ -o $@ $(C_LIBS) $(D_LIBS)
 	@echo "\nDebug version of Simphy built"
 
-simphy_static: main.c $(OBJECTS)
+$(BINDIR)/simphy_static: $(SRCDIR)/main.c $(OBJECTS)
+	mkdir -p $(BINDIR)
 	@echo "\nThis target has been designed for internal usage and may not work properly in your system\n"
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $^ -o $@ $(LIBS)
 	@echo "\nStatic-linked version of Simphy built"
 
-$(OBJDIR)/num_methods.o: num_methods.c num_methods.h trees.h
+$(OBJDIR)/num_methods.o: $(SRCDIR)/num_methods.c $(SRCDIR)/num_methods.h $(SRCDIR)/trees.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $< -c -o $@
 
-$(OBJDIR)/num_methods_dbg.o: num_methods.c num_methods.h trees.h
+$(OBJDIR)/num_methods_dbg.o: $(SRCDIR)/num_methods.c $(SRCDIR)/num_methods.h $(SRCDIR)/trees.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(DBG) $< -c -o $@
 
-$(OBJDIR)/sampling.o: sampling.c sampling.h trees.h
+$(OBJDIR)/sampling.o: $(SRCDIR)/sampling.c $(SRCDIR)/sampling.h $(SRCDIR)/trees.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $< -c -o $@
 
-$(OBJDIR)/sampling_dbg.o: sampling.c sampling.h trees.h
+$(OBJDIR)/sampling_dbg.o: $(SRCDIR)/sampling.c $(SRCDIR)/sampling.h $(SRCDIR)/trees.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(DBG) $< -c -o $@
 
-$(OBJDIR)/sql_managing.o: sql_managing.c sql_managing.h trees.h sampling.h
+$(OBJDIR)/sql_managing.o: $(SRCDIR)/sql_managing.c $(SRCDIR)/sql_managing.h $(SRCDIR)/trees.h $(SRCDIR)/sampling.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $< -c -o $@
 
-$(OBJDIR)/sql_managing_dbg.o: sql_managing.c sql_managing.h trees.h sampling.h
+$(OBJDIR)/sql_managing_dbg.o: $(SRCDIR)/sql_managing.c $(SRCDIR)/sql_managing.h $(SRCDIR)/trees.h $(SRCDIR)/sampling.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(DBG) $< -c -o $@
 
-$(OBJDIR)/trees.o: trees.c trees.h sampling.h num_methods.h
+$(OBJDIR)/trees.o: $(SRCDIR)/trees.c $(SRCDIR)/trees.h $(SRCDIR)/sampling.h $(SRCDIR)/num_methods.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $< -c -o $@
 
-$(OBJDIR)/trees_dbg.o: trees.c trees.h sampling.h num_methods.h
+$(OBJDIR)/trees_dbg.o: $(SRCDIR)/trees.c $(SRCDIR)/trees.h $(SRCDIR)/sampling.h $(SRCDIR)/num_methods.h
 	mkdir -p $(OBJDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(DBG) $< -c -o $@
 
@@ -79,10 +87,18 @@ $(OBJDIR)/trees_dbg.o: trees.c trees.h sampling.h num_methods.h
 .PHONY: all
 .PHONY: debug
 .PHONY: static
+.PHONY: simphy
+.PHONY: simphy_debug
+.PHONY: simphy_static
 
+simphy: $(BINDIR)/simphy
+simphy_debug: $(BINDIR)/simphy_dbg
+simphy_dbg: simphy_debug
+simphy_static: $(BINDIR)/simphy_static
 static: simphy_static
 debug: simphy_dbg
 all: $(EXECUTABLES)
+
 clean:
 	@echo "Cleaning object files directory\n"
 	rm -f $(OBJECTS) $(DBG_OBJECTS)
