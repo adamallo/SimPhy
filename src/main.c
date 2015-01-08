@@ -1999,7 +1999,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                     // ***
                     /// <dl><dt>-Px. Hyperparameters.</dt><dd>
                 case 'P':
-                    switch (sub_code)
+                    switch (toupper(sub_code))
                 {
                         // **
                         /// -Pb. Locus tree birth rate hyperparameter.
@@ -3467,26 +3467,6 @@ long int CheckSampledSettingsSloop(sampling_unit bds_leaves, sampling_unit bds_l
     if (get_sampling(nl_trees)<1)
     {
         fprintf(stderr,"\n\tImproper value sampling the parameter -Rl, Number of locus trees per species tree. Please, check your sampling settings and try again\n");
-        is_error=1;
-    }
-    if (is_sampling_set(b_rate)&&(get_sampling(b_rate)<0))
-    {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -Pb, Locus tree birth rate prior. Please, check your sampling settings and try again\n");
-        is_error=1;
-    }
-    if (is_sampling_set(d_rate)&&(get_sampling(d_rate)>get_sampling(b_rate)))
-    {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -Pd, Locus tree death rate prior. Please, check your sampling settings and try again\n");
-        is_error=1;
-    }
-    if (is_sampling_set(t_rate)&&(get_sampling(t_rate)<0))
-    {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -Pt, Locus tree transfer rate prior. Please, check your sampling settings and try again\n");
-        is_error=1;
-    }
-    if (is_sampling_set(gc_rate)&&(get_sampling(gc_rate)<0))
-    {
-        fprintf(stderr,"\n\tImproper value sampling the parameter -Pg, Locus tree gene conversion rate prior. Please, check your sampling settings and try again\n");
         is_error=1;
     }
     if (get_sampling(Ne)<2)

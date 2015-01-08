@@ -65,7 +65,7 @@ inline void set_sampling_pointerdouble(sampling_unit *variable, sampling_unit *d
 
 int MeasureSampleUnitRecurency(sampling_unit * su, int * it)
 {
-    int i=0,mdepth=1,depth;
+    int i=0,mdepth=0,depth;
     ++*it;
     if (*it>=MAX_IT)
         ErrorReporter(SETTINGS_ERROR, "Recurrent sampling distribution parameters. Please, check your simulation parameters!\n");
@@ -80,7 +80,7 @@ int MeasureSampleUnitRecurency(sampling_unit * su, int * it)
                     mdepth=depth;
             }
         }
-        su->dependent_index=mdepth;
+        su->dependent_index=mdepth+1;
     }
     return su->dependent_index;
 }
@@ -283,6 +283,7 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
                                 ++p_index;
                                 break;
                         }
+                        is_pointer=0;
                         break;
                     case ' ':
                         break;
