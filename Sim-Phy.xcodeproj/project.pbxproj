@@ -39,6 +39,9 @@
 		F14CADCB183C046900A8F7AF /* trees.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = trees.c; sourceTree = "<group>"; };
 		F14CADCC183C046900A8F7AF /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1E3AE2C1A6587DB0038E55E /* INDELIble_control.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = INDELIble_control.txt; sourceTree = "<group>"; };
+		F1E3AE2D1A6587DB0038E55E /* test.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = test.conf; sourceTree = "<group>"; };
+		F1E3AE2F1A6587DB0038E55E /* INDELIble_wrapper_fixed.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = INDELIble_wrapper_fixed.pl; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -71,6 +74,9 @@
 		F1C36ED7180C620700E35F5D = {
 			isa = PBXGroup;
 			children = (
+				F1E3AE2B1A6587DB0038E55E /* configuration_files */,
+				F1E3AE2E1A6587DB0038E55E /* scripts */,
+				F1E3AE301A6587DB0038E55E /* manual */,
 				F14C06721A5EA7B800BF1570 /* Makefile */,
 				F14C06731A5EA7B800BF1570 /* test.conf */,
 				F14CADC3183C044C00A8F7AF /* src */,
@@ -85,6 +91,31 @@
 			);
 			name = Products;
 			sourceTree = "<group>";
+		};
+		F1E3AE2B1A6587DB0038E55E /* configuration_files */ = {
+			isa = PBXGroup;
+			children = (
+				F1E3AE2C1A6587DB0038E55E /* INDELIble_control.txt */,
+				F1E3AE2D1A6587DB0038E55E /* test.conf */,
+			);
+			name = configuration_files;
+			path = examples;
+			sourceTree = SOURCE_ROOT;
+		};
+		F1E3AE2E1A6587DB0038E55E /* scripts */ = {
+			isa = PBXGroup;
+			children = (
+				F1E3AE2F1A6587DB0038E55E /* INDELIble_wrapper_fixed.pl */,
+			);
+			path = scripts;
+			sourceTree = SOURCE_ROOT;
+		};
+		F1E3AE301A6587DB0038E55E /* manual */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = manual;
+			sourceTree = SOURCE_ROOT;
 		};
 /* End PBXGroup section */
 

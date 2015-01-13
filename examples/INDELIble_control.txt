@@ -1,0 +1,29 @@
+/////////////////////////////////////////////////////////////////////////////////////
+//                                                                                 //
+//  INDELible V1.03 control file - basic.txt                                       //
+//                                                                                 //
+//      A basic introduction to the structure of the INDELible control file.       //
+//                                                                                 //
+//      There are other examples in the file examples.html in the help folder      //
+//      Any one of those examples will work if cut and paste into a control file.  //
+//                                                                                 //
+/////////////////////////////////////////////////////////////////////////////////////
+
+// It is useful to know that anything on a line after two forward slashes is ignored.
+
+/*
+   Another useful thing to know is that anything after a forward slash and star
+   is ignored until INDELible sees a star followed by a forward slash later on.
+*/     
+
+[TYPE] NUCLEOTIDE 1	//  EVERY control file must begin with a [TYPE] command.
+			//  The word can be NUCLEOTIDE, AMINOACID or CODON depending 
+			//  on what kind of simulation you want to do but must be in 
+			//  upper case. The number can be 1 or 2 and chooses the 
+			//  algorithm that INDELible uses (see manuscript). Both give 
+			//  identical results but in some cases one is quicker.
+			//  Other blocks and commands following this statement
+			//  can come in any order you like.
+
+[MODEL]    modelname  	//  Evolutionary models are defined in [MODEL] blocks.
+[submodel] JC         	//  Here the substitution model is simply set as JC69.
