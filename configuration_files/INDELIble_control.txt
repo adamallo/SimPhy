@@ -1,11 +1,9 @@
 /////////////////////////////////////////////////////////////////////////////////////
 //                                                                                 //
-//  INDELible V1.03 control file - basic.txt                                       //
+//  Modified from: INDELible V1.03 control file - basic.txt                        //
 //                                                                                 //
-//      A basic introduction to the structure of the INDELible control file.       //
-//                                                                                 //
-//      There are other examples in the file examples.html in the help folder      //
-//      Any one of those examples will work if cut and paste into a control file.  //
+//      A basic introduction to the structure of the INDELible control file input  //
+//    for the INDELible_wrapper script distributed with SimPhy.		           //
 //                                                                                 //
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -26,4 +24,5 @@
 			//  can come in any order you like.
 
 [MODEL]    modelname  	//  Evolutionary models are defined in [MODEL] blocks.
-[submodel] JC         	//  Here the substitution model is simply set as JC69.
+[submodel]    HKY 2.5          // HKY with kappa=2.5
+  [statefreq]   $(u:0.1,0.9) $(u:0.1,0.5) $(u:0.3,5) $(u:0.2,0.4)  // frequencies for T C A G sampled from independent uniform distributions as an example (may be inconvenient for real usage)
