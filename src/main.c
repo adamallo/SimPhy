@@ -871,7 +871,7 @@ int main (int argc, char **argv)
             
             // *****
             /// <dl><dt>Pointer allocation for locus tree simulation</dt><dd>
-            if (is_variable(lb_rate) || is_variable(ld_rate) || is_variable(lt_rate) || is_variable(lgc_rate))
+            if ((is_variable(lb_rate) || is_variable(ld_rate) || is_variable(lt_rate) || is_variable(lgc_rate)) && node_ptrs==NULL)
             {
                 // ****
                 /// Intermediate node pointers allocation </dd></dl></dd></dl>
@@ -1908,7 +1908,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         // **
                         /// -L. Fixed locus tree. Parses the string as a locus tree
                     case'\0':
-                        *newick_ltree=calloc(strlen(argv[i])+1,sizeof(argv[i]));
+                        *newick_ltree=calloc(strlen(argv[i])+1,sizeof(char));
                         sscanf(argv[i],"%s",*newick_ltree);
                         break;
                         // **

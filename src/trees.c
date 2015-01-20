@@ -7571,6 +7571,11 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
                 free(w_node->o_probs);
                 w_node->o_probs=NULL;
             }
+            if (w_node->g_nodes !=NULL)
+            {
+                free(w_node->g_nodes);
+                w_node->g_nodes=NULL;
+            }
         }
         free(p_m_node);
         p_m_node=NULL;
