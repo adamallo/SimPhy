@@ -36,6 +36,11 @@
  ********************/
 #define set_propsampling(a,b) (a->vtype==UI?(a->value=(ui_d)(int)b):(a->value=(ui_d)(double)b))
 
+/**
+ * Macro to initialize SUs
+ ********************/
+#define INIT_SU {FIXED,{0,0,0,0,0},{UI,UI,UI,UI,UI},0,UI,-1}
+
 extern int MAX_IT;
 
 /**

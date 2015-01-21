@@ -88,7 +88,7 @@ int MeasureSampleUnitRecurency(sampling_unit * su, int * it)
 int Compare_SampleUnits(const void *su1,const void *su2)
 {
     int rec_test=0;
-    sampling_unit *wsu1,*wsu2;
+    sampling_unit *wsu1=NULL,*wsu2=NULL;
     
     wsu1=*(sampling_unit**)su1;
     wsu2=*(sampling_unit**)su2;

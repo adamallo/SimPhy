@@ -235,7 +235,7 @@ int main (int argc, char **argv)
     
     // ******
     /// Sampling variables
-    sampling_unit Ne, bds_leaves, ind_per_sp, nl_trees, lb_rate, ld_rate, lt_rate, lgc_rate, b_rate, d_rate, t_rate, gc_rate, sb_rate, sd_rate, bds_length, outgroup, gen_time, mu,alpha_s, alpha_l, salpha_g,lalpha_g,alpha_g;
+    sampling_unit Ne=INIT_SU, bds_leaves=INIT_SU, ind_per_sp=INIT_SU, nl_trees=INIT_SU, lb_rate=INIT_SU, ld_rate=INIT_SU, lt_rate=INIT_SU, lgc_rate=INIT_SU, b_rate=INIT_SU, d_rate=INIT_SU, t_rate=INIT_SU, gc_rate=INIT_SU, sb_rate=INIT_SU, sd_rate=INIT_SU, bds_length=INIT_SU, outgroup=INIT_SU, gen_time=INIT_SU, mu=INIT_SU,alpha_s=INIT_SU, alpha_l=INIT_SU, salpha_g=INIT_SU,lalpha_g=INIT_SU,alpha_g=INIT_SU;
     
     //**Sampled once
     set_sampling_double(&alpha_s,0);
@@ -545,6 +545,7 @@ int main (int argc, char **argv)
             fprintf(command_outfile,"%s ",argv[i]);
         fclose(command_outfile);
         free(command_outname);
+        command_outname=NULL;
 
         if(confile_name!=NULL)
         {
@@ -564,6 +565,7 @@ int main (int argc, char **argv)
             fclose(confile_infile);
             fclose(confile_outfile);
             free(confile_outname);
+            confile_outfile=NULL;
         }
         
         if (verbosity>4)
@@ -1469,9 +1471,13 @@ int main (int argc, char **argv)
         free(stree_iname);
     if (ltree_iname!=NULL)
         free(ltree_iname);
+    if (node_ptrs!=NULL)
+        free(node_ptrs);
 #ifndef NO_OUT
     if (db>0)
         ErrorReporter(CloseDB(&database),NULL);
+    if (curr_outdir!=NULL)
+        free(curr_outdir);
 #endif
 #ifdef SORTHOLOGS
     if (dupdistances!=NULL)
