@@ -39,7 +39,7 @@
 /**
  * Macro to initialize SUs
  ********************/
-#define INIT_SU {FIXED,{0,0,0,0,0},{UI,UI,UI,UI,UI},0,UI,-1}
+#define INIT_SU {FIXED,{0,0,0,0,0},{UI,UI,UI,UI,UI},0,UI,0}
 
 extern int MAX_IT;
 

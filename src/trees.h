@@ -1168,6 +1168,28 @@ long int ReindexSTree (s_tree * in_tree, int post_order);
 long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs);
 
 /**
+ * Collapse a sparse l_tree (root) in an l_tree with nodes in an array (m_node) allowing to increase or decrease the size of the tree
+ * This avoids memory leaks when freezing unused memory (discarded transfers/gcs)
+ *
+ * \param in_tree
+ *  Input l_tree.
+ * \param new_nnodes
+ *  New number of nodes.
+ * \param new_nleaves
+ *  New number of leaves.
+ * \param post_order
+ *  Logical flag. If post_order = 1, the new tree will be in a post-order. Else,
+ *  it will be in a pre-order.
+ * \param relink
+ *  Logical flag. If relink = 1, the \ref l_node::lat_node and \ref s_node::l_nodes pointer of the \ref l_node::conts nodes will be updated. If = 0, the \ref l_node::lat_node will be erased to avoid malfunctioning due to the reference of freed memory.
+ * \param probs
+ *  Logical flag. If probs = 1, the new tree will have updated the l_tree::i_probs, l_tree::o_probs and ltree::i_combprobs.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ *******************************************************************************/
+long int CollapseResizeLTree (l_tree * in_tree,int new_nnodes, int new_nleaves, int post_order, int relink, int probs);
+
+/**
  * Collapse a sparse g_tree (root) in an g_tree with nodes in an array (m_node)
  *
  * \param in_tree

@@ -4484,13 +4484,11 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             
             // Tree realocation (adding necessary memory)
             (*wlocus_tree)->n_leaves=*st_leaves;
-            (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr+*st_gc;//One extra node will be needed for each transfer/gc
+            (*wlocus_tree)->n_nodes=tn_nodes;//One extra node will be needed for each transfer/gc
             (*wlocus_tree)->n_gleaves=*st_gleaves;
             (*wlocus_tree)->species_tree=wsp_tree;
-            
-            //WriteLNodes((*wlocus_tree)->root, (name_c *) NULL, 0); /////DEBUG!!!!!!!
-            
-            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0),NULL); //The root of this tree is going to be badly set due to the extra still not used nodes.
+ 
+            ErrorReporter(CollapseResizeLTree(*wlocus_tree,tn_nodes+*st_transfr+*st_gc,*st_leaves,1,0,0),NULL); //The root of this tree is going to be badly set due to the extra still not used nodes.
             
             //Variable initialization
             n_periods=tn_nodes-*st_leaves+*st_losses+1; //Maximum number of periods of an ultrametric tree (without the root) =Internal nodes + losses (tip_dates). I add a dummy one, with r_bound==0 to avoid some pointer problems
@@ -4877,8 +4875,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         /// Filling information of the just simulated l_tree
         *st_transfr-=n_ltransf;
         *st_gc-=n_lgc;
-        (*wlocus_tree)->n_leaves=*st_leaves+*st_transfr+*st_gc;
-        (*wlocus_tree)->n_nodes=tn_nodes+*st_transfr-n_ltransf+*st_gc-n_lgc;
+        (*wlocus_tree)->n_leaves=*st_leaves;
+        (*wlocus_tree)->n_nodes=tn_nodes;
         (*wlocus_tree)->n_gleaves=*st_gleaves;
         (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
@@ -4893,7 +4891,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         
         if (*st_dups>0 || *st_transfr>0 || *st_gc>0)
         {
-            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,1), NULL);
+            ErrorReporter(CollapseResizeLTree(*wlocus_tree,tn_nodes+*st_transfr-n_ltransf+*st_gc-n_lgc,*st_leaves+*st_transfr+*st_gc,1,0,1), NULL);
             if (verbosity>4)
             {
                 printf("\n\t\tCalculating lineage count probabilities of entering and leaving each locus tree branch... ");
@@ -7584,6 +7582,120 @@ long int CollapseLTree (l_tree * in_tree, int post_order, int relink, int probs)
     {
         FreeLNodes(p_root,1);
     }
+    
+    return NO_ERROR;
+}
+
+long int CollapseResizeLTree (l_tree * in_tree, int new_nnodes, int new_nleaves, int post_order, int relink, int probs)
+{
+    l_node * m_node=NULL, * p_m_node=NULL, *w_node=NULL, *p_root=NULL;
+    int index=0, i=0;
+    
+    // **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Input tree root control
+    if (in_tree->root == NULL)
+        return MEM_ERROR;
+    
+    // *
+    /// New l_node array allocation by \ref NewLTree
+    m_node=NewLNodes(new_nnodes, new_nleaves, in_tree->max_children);
+    
+    // *
+    /// Unreference previous (in case it exists) input tree m_node
+    if (in_tree->m_node!=NULL)
+    {
+        p_m_node=in_tree->m_node;
+        in_tree->m_node=NULL;
+    }
+    else
+    {
+        p_root=in_tree->root;
+    }
+    
+    // *
+    /// Reordenation in a post or pre-order and node copy by \ref PostCollapseLNodes or \ref PreCollapseLNodes according to the post_order variable
+    if (post_order==0)
+    {
+        PreReorderLNodes(in_tree->root, &index);
+        PreCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink,probs);
+        
+        // *
+        /// Asigns the new root to the tree.
+        in_tree->root=m_node; //The first node is the root.
+    }
+    else
+    {
+        PostReorderLNodes(in_tree->root, &index);
+        PostCollapseLNodes(m_node,in_tree->root, in_tree->n_gleaves, relink,probs);
+        
+        // Asigns the new root to the tree.
+        in_tree->root=(m_node+new_nnodes-1); //The last node is the root.
+    }
+    
+    // *
+    /// Relinkage of \ref l_node::lat_node and the \ref s_node::l_nodes when it is necessary.
+    if (relink==1)
+    {
+        for (i=0;i<new_nnodes;++i)
+        {
+            w_node=(m_node+i);
+            if (w_node->conts!=NULL && w_node->conts->l_nodes->index == i)
+                w_node->conts->l_nodes=w_node;
+            if (w_node->lat_node!=NULL)
+                w_node->lat_node=(m_node+w_node->lat_node->index);
+        }
+    }
+    
+    // *
+    /// Asigns the new nodes to the tree
+    in_tree->m_node=m_node;
+    
+    // *
+    /// Frees the memory of the previous tree</dd></dl>
+    if (p_m_node!=NULL)
+    {
+        for (i=0; i<in_tree->n_nodes;++i)
+        {
+            w_node=p_m_node+i;
+            if (w_node->children !=NULL)
+            {
+                free(w_node->children);
+                w_node->children=NULL;
+            }
+            if (w_node->i_probs!=NULL)
+            {
+                free(w_node->i_probs);
+                w_node->i_probs=NULL;
+            }
+            if (w_node->i_combprobs!=NULL)
+            {
+                free(w_node->i_combprobs);
+                w_node->i_combprobs=NULL;
+            }
+            if (w_node->o_probs !=NULL)
+            {
+                free(w_node->o_probs);
+                w_node->o_probs=NULL;
+            }
+            if (w_node->g_nodes !=NULL)
+            {
+                free(w_node->g_nodes);
+                w_node->g_nodes=NULL;
+            }
+        }
+        free(p_m_node);
+        p_m_node=NULL;
+    }
+    else
+    {
+        FreeLNodes(p_root,1);
+    }
+    
+    in_tree->n_nodes=new_nnodes;
+    in_tree->n_leaves=new_nleaves;
     
     return NO_ERROR;
 }
