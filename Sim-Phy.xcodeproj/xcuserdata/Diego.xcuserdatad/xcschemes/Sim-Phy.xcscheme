@@ -100,7 +100,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i test.conf"
+            argument = "-i test.conf -v 4"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

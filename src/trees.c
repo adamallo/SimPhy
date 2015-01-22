@@ -4470,6 +4470,12 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         return (LOOP_ERROR);
     else
     {
+        
+        (*wlocus_tree)->n_leaves=*st_leaves;
+        (*wlocus_tree)->n_nodes=tn_nodes;
+        (*wlocus_tree)->n_gleaves=*st_gleaves;
+        (*wlocus_tree)->species_tree=wsp_tree;
+        
         if (*st_transfr+*st_gc>0)
         {
             
@@ -4480,14 +4486,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
                 fflush(stdout);
 #endif
             }
-            
-            
-            // Tree realocation (adding necessary memory)
-            (*wlocus_tree)->n_leaves=*st_leaves;
-            (*wlocus_tree)->n_nodes=tn_nodes;//One extra node will be needed for each transfer/gc
-            (*wlocus_tree)->n_gleaves=*st_gleaves;
-            (*wlocus_tree)->species_tree=wsp_tree;
  
+            // Tree realocation (adding necessary memory)
             ErrorReporter(CollapseResizeLTree(*wlocus_tree,tn_nodes+*st_transfr+*st_gc,*st_leaves,1,0,0),NULL); //The root of this tree is going to be badly set due to the extra still not used nodes.
             
             //Variable initialization
@@ -4875,10 +4875,6 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         /// Filling information of the just simulated l_tree
         *st_transfr-=n_ltransf;
         *st_gc-=n_lgc;
-        (*wlocus_tree)->n_leaves=*st_leaves;
-        (*wlocus_tree)->n_nodes=tn_nodes;
-        (*wlocus_tree)->n_gleaves=*st_gleaves;
-        (*wlocus_tree)->species_tree=wsp_tree;
         wsp_tree->locus_tree=*wlocus_tree;
         
         if (verbosity>4)

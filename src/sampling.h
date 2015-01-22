@@ -121,7 +121,7 @@ struct sampling_unit
 
 struct sampling_duple
 {
-    char name[2];
+    char name[3];
     sampling_unit *p;
 };
 

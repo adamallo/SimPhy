@@ -972,7 +972,7 @@ int main (int argc, char **argv)
                 if (recon>0 && recon!=2)
                 {
                     sprintf(reconsl_outname,"%.*d%s",n_ldigits,curr_ltree,reconsl_sufix2);
-                    WriteReconSL(sp_tree, locus_tree, names, reconsl_outname);
+                    ErrorReporter(WriteReconSL(sp_tree, locus_tree, names, reconsl_outname),"");
                 }
 #endif
                 
