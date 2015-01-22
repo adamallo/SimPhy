@@ -4910,7 +4910,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
             }
         }
         else
-            ErrorReporter(CollapseLTree(*wlocus_tree,1,0,0), NULL);
+            ErrorReporter(CollapseResizeLTree(*wlocus_tree,tn_nodes+*st_transfr-n_ltransf+*st_gc-n_lgc,*st_leaves+*st_transfr+*st_gc,1,0,0), NULL);
         
         return (NO_ERROR);
     }
