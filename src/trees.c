@@ -3887,7 +3887,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     int n_leaves=0,slice_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
     int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
-    double w_prob=d_rate+b_rate+h_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0, gen_time=wsp_tree->gen_time;
+    double w_prob=d_rate+b_rate+h_rate+gc_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0, gen_time=wsp_tree->gen_time;
     
     // ******
     /// Loop related variables</dd></dl>
@@ -9970,7 +9970,7 @@ static long double Measure_g_node_cu_length(g_node *node, int g_Ne)
     /// Post-order recursion acumulating branch length
     for (i=0;i<node->n_child;++i)
     {
-        sum+=Measure_g_node_cu_height(*(node->children+i),g_Ne);
+        sum+=Measure_g_node_cu_length(*(node->children+i),g_Ne);
     }
     
     // **
@@ -9992,7 +9992,7 @@ static long double Measure_g_node_bl_length(g_node *node)
     /// Post-order recursion selecting the longest accumulated branch length
     for (i=0;i<node->n_child;++i)
     {
-        sum+=Measure_g_node_bl_height(*(node->children+i));
+        sum+=Measure_g_node_bl_length(*(node->children+i));
 
     }
     
@@ -10063,7 +10063,7 @@ static long double Measure_s_node_cu_length(s_node *node, int g_Ne)
     /// Post-order recursion acumulating branch length
     for (i=0;i<node->n_child;++i)
     {
-        sum+=Measure_s_node_cu_height(*(node->children+i),g_Ne);
+        sum+=Measure_s_node_cu_length(*(node->children+i),g_Ne);
     }
     
     // **
@@ -10087,7 +10087,7 @@ static long double Measure_s_node_gl_length(s_node *node)
     /// Post-order recursion selecting the longest accumulated branch length
     for (i=0;i<node->n_child;++i)
     {
-        sum+=Measure_s_node_gl_height(*(node->children+i));
+        sum+=Measure_s_node_gl_length(*(node->children+i));
         
     }
     

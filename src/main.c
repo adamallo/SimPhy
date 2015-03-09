@@ -931,7 +931,7 @@ int main (int argc, char **argv)
         {
             ErrorReporter(sample_distr(r,5,&lb_rate,&ld_rate,&lt_rate,&lgc_rate,&lalpha_g),": sampling distributions");
             ErrorReporter(CheckSampledSettingsLloop(lb_rate,ld_rate,lt_rate,lgc_rate,lalpha_g), ": improper sampled values");
-            n_dups=n_losses=n_trans=n_gc=st_lleaves=st_gleaves=n_extralin=0;
+            n_dups=n_losses=n_trans=n_gc=n_extralin=0;
             
             if(get_sampling(alpha_l)!=0)
                 gamma_l=gsl_ran_gamma(r, get_sampling(alpha_l), 1/(get_sampling(alpha_l)));

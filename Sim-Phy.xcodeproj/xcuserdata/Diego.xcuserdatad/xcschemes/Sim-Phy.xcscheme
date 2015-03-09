@@ -64,6 +64,14 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy_benchmarks/benchmark_stree_sizerate.conf -rs 10 -sl f:50 -rl f:100 -sb f:0.0001 -cs 1 -o benchmark-stree-sizerate-test"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy_benchmarks/benchmark_stree_sizerate.conf -s &quot;((A:100,B:100):200,C:300);&quot; -rl f:100 -cs 1 -o test_length"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-lr lnexus.trees -cp f:1000000 -si f:4 -v 6 -cs 22 -rg 2"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -101,7 +109,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i test.conf -v 4"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -rl U10-100 -sb f0.000001 -sl U20-50 -ld f0.0000005 -lb f0.0000005 -lt f0.0000005 -p f10000 -g f1 -o test -os 1 -oc 1 -or 1 -od 1 -v 2 -cs 22"
