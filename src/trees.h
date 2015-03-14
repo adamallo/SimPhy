@@ -1423,6 +1423,20 @@ long int Measure_ST_length(s_tree *tree,long double *length,int unit);
  *******************************************************************************/
 long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int n_dup, int unit);
 
+/**
+ * Calculates the expected locus tree number of leaves
+ *
+ * \param tree
+ *  Species tree
+ * \param b_rate
+ *  Birth (duplication) rate.
+ * \param d_rate
+ *  Death (loss) rate.
+ * \return Expected number of pruned leaves (leaves reaching to the present)
+ * \attention -1 is given as the distance when there is no way of getting the MRCA (one loss or reception of transfer/gene conversion after the duplication, for example)
+ *******************************************************************************/
+double ExpectedPrunedLtreeNleavesSNodes(s_tree *tree, double b_rate, double d_rate);
+
 long int CheckUltrametricitySTree(s_tree *tree);
 
 long int CheckUltrametricityLTree(l_tree *tree);
@@ -1685,7 +1699,7 @@ static inline void ErrorReporter(long int code, char * MSN)
             exit (EXIT_FAILURE);
             break;
         case LOOP_ERROR:
-            fprintf(stderr,"\nInfinite loop %s\n", MSN);
+            fprintf(stderr,"\nError: Infinite loop %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);
@@ -1698,7 +1712,7 @@ static inline void ErrorReporter(long int code, char * MSN)
             exit (EXIT_FAILURE);
             break;
         case UNEXPECTED_VALUE:
-            fprintf(stderr,"\nUnexpected value has been reached %s\n", MSN);
+            fprintf(stderr,"\nError: Unexpected value has been reached %s\n", MSN);
             fflush(stdout);
             fflush(stderr);
             exit (EXIT_FAILURE);

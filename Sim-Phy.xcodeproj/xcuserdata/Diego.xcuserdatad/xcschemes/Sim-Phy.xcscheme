@@ -64,7 +64,11 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /Users/Diego/Desktop/Sim-Phy_benchmarks/benchmark_stree_sizerate.conf -rs 10 -sl f:50 -rl f:100 -sb f:0.0001 -cs 1 -o benchmark-stree-sizerate-test"
+            argument = "-i /Users/Diego/Desktop/Sim-Phy_benchmarks/benchmark_stree_sizerate.conf -rs 10 -sl f:50 -rl f:100 -sb f:0.0001 -lb f:1.744e-5 -cs 1 -o benchmark-stree-sizerate-test"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-s ((A:10000,B:10000):10000,(C:10000,D:10000):10000); -rl f:1000 -lb f:9.24196240746594e-05 -cp f:100 -o test_simphy_9.24196240746594e-05 -os 1 -v 0"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

@@ -383,22 +383,6 @@ static double CheckUltrametricityLNodes(l_node *node);
 static double CheckUltrametricitySNodes(s_node *node);
 
 /**
- * Calculates the expected number of locus tree leaves for a given species tree and birth and death rates. Performs a pre-order traversion.
- *
- * \param node
- *  Pointer to the species tree node.
- * \param b_rate
- *  Birth rate.
- * \param d_rate
- *  Death rate.
- * \param n0
- *  Number of expected leaves in this node.
- * \return Expected number of leaves.
-*******************************************************************************/
-
-static double ExpectedLtreeNleavesSNodes(s_node *node, double b_rate, double d_rate, double n0);
-
-/**
  * Gets the n_gen of the tree in coalescent units (n_gen/Ne).
  *
  * \param node
@@ -3884,7 +3868,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
     // ******
     /// B-D + Poisson process related variables
-    int n_leaves=0,slice_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0;
+    int n_leaves=0,slice_leaves=0,lt_true_leaves=0,lt_diffs_true_leaves=0,diffs_true_leaves=0,tn_nodes=0,extra_nodes=0,n_losses=0, n_periods=0,n_ltransf=0, n_lgc=0, n_avail_receptors=0, t_event=0, expected_nleaves=0;
     int next_paralog=0,node_index=0,avail_leaves=0,n_transfer=0,n_gc=0;
     int n_nodes=0;
     double w_prob=d_rate+b_rate+h_rate+gc_rate, dtgc_prob=((d_rate+h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), tgc_prob=((h_rate+gc_rate)/(b_rate+d_rate+h_rate+gc_rate)), gc_prob=(gc_rate/(b_rate+d_rate+h_rate+gc_rate)),current_ngen=0,max_ngen=0,sampled_ngen=0, rnumber=0, max_time=0, gen_time=wsp_tree->gen_time;
@@ -3907,7 +3891,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         
         if(ResetSTreeSimL(wsp_tree)!= NO_ERROR)
             return MEM_ERROR;
-        if (ExpectedLtreeNleavesSNodes(wsp_tree->root,b_rate,d_rate,1)>=MAX_LEAVES)
+        expected_nleaves=ExpectedPrunedLtreeNleavesSNodes(wsp_tree,b_rate,d_rate);
+        if (expected_nleaves>=MAX_LEAVES)
         {
             fprintf(stderr,"\n\nLocus tree birth rate is too hight for the rest of the settings, with an expected number of locus tree leaves bigger than MAX_LEAVES. You could increase this limit changing the environmental variable SIMPHY_MAXLEAVES\n");
             
@@ -8252,6 +8237,11 @@ long int MeasureMRCAEVdistance(g_tree *wg_tree,int event,double **distances, int
     return NO_ERROR;
 }
 
+double ExpectedPrunedLtreeNleavesSNodes(s_tree *tree, double b_rate, double d_rate)
+{
+    return exp((b_rate-d_rate)*Measure_s_node_gl_height(tree->root))*tree->n_leaves;
+}
+
 long int CheckUltrametricitySTree(s_tree *tree)
 {
     int i=0, is_set=0, n_leaves=0;
@@ -11635,24 +11625,5 @@ double CheckUltrametricityLNodes(l_node *node)
     {
         return node->time;
     }
-}
-
-double ExpectedLtreeNleavesSNodes(s_node *node, double b_rate, double d_rate, double prev_n0)
-{
-    int i=0;
-    double n_eleaves=0,n0=0;
-    n0=prev_n0*exp((b_rate-d_rate)*node->n_gen);
-    if (node->n_child==0)
-    {
-        n_eleaves=n0;
-    }
-    else
-    {
-        for (i=0; i<node->n_child;++i)
-        {
-            n_eleaves+=ExpectedLtreeNleavesSNodes(*(node->children+i), b_rate, d_rate,n0);
-        }
-    }
-    return n_eleaves;
 }
 
