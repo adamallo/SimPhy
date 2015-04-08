@@ -115,6 +115,8 @@
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>
+#include <libgen.h>
+
 extern int errno;
 
 int MAX_IT=10000;
@@ -192,7 +194,7 @@ int main (int argc, char **argv)
     /// Configuration variables
     int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=1,min_lsleaves=0, stats=0, recon=0, db=0, params=0, command=1, weirdness=0, t_kind=1;
     float epsilon_brent=0.000001, u_seed=(time (NULL) * clock());
-    char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*confile_name=NULL;
+    char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*base_out_name=NULL,*confile_name=NULL;
     char *buffer=NULL;
     
     buffer=getenv("SIMPHY_MAXIT");
@@ -443,6 +445,7 @@ int main (int argc, char **argv)
     }
     
     error=chdir(out_name);
+    base_out_name=basename(out_name);
     
     if(error!=0)
     {
@@ -459,8 +462,8 @@ int main (int argc, char **argv)
     
     if (db>0)
     {
-        db_outname=malloc((strlen(out_name)+strlen(db_sufix)+1)*sizeof(char));
-        strcpy(db_outname,out_name);
+        db_outname=malloc((strlen(base_out_name)+strlen(db_sufix)+1)*sizeof(char));
+        strcpy(db_outname,base_out_name);
         strcat(db_outname,db_sufix);
         if (verbosity>4)
         {
@@ -481,8 +484,8 @@ int main (int argc, char **argv)
     }
     if (params>0)
     {
-        params_outname=malloc((strlen(out_name)+strlen(params_sufix)+1)*sizeof(char));
-        strcpy(params_outname,out_name);
+        params_outname=malloc((strlen(base_out_name)+strlen(params_sufix)+1)*sizeof(char));
+        strcpy(params_outname,base_out_name);
         strcat(params_outname,params_sufix);
         
         if (verbosity>4)
@@ -512,14 +515,14 @@ int main (int argc, char **argv)
     }
     if (command>0)
     {
-        command_outname=malloc((strlen(out_name)+strlen(command_sufix)+1)*sizeof(char));
-        strcpy(command_outname,out_name);
+        command_outname=malloc((strlen(base_out_name)+strlen(command_sufix)+1)*sizeof(char));
+        strcpy(command_outname,base_out_name);
         strcat(command_outname,command_sufix);
         
         if (confile_name!=NULL)
         {
-            confile_outname=malloc((strlen(out_name)+strlen(confile_sufix)+1)*sizeof(char));
-            strcpy(confile_outname,out_name);
+            confile_outname=malloc((strlen(base_out_name)+strlen(confile_sufix)+1)*sizeof(char));
+            strcpy(confile_outname,base_out_name);
             strcat(confile_outname,confile_sufix);
             if (verbosity>4)
             {
