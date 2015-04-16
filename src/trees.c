@@ -7582,7 +7582,7 @@ long int CollapseResizeLTree (l_tree * in_tree, int new_nnodes, int new_nleaves,
     
     // *
     /// New l_node array allocation by \ref NewLTree
-    m_node=NewLNodes(new_nnodes, new_nleaves, in_tree->max_children);
+    m_node=NewLNodes(new_nnodes, in_tree->n_gleaves, in_tree->max_children);
     
     // *
     /// Unreference previous (in case it exists) input tree m_node
