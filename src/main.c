@@ -129,7 +129,7 @@ char TEST_CHAR=7;
 //#define DBG
 
 #undef NO_VAR ///< If NO_VAR is defined, the random number generator allways leads the same numbers.
-#undef SORTHOLOGS
+#define SORTHOLOGS
 
 #ifdef DBG
 #define NO_OUT

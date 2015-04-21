@@ -2898,7 +2898,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         /// Orders the times in ascending order using a quicksort algorithm
         qsort(i_nodes, leaves-1, sizeof(*i_nodes), Compare_DBL);
         
-        r_time=*(i_nodes+leaves-1);
+        r_time=*(i_nodes+leaves-2);
         
         if (verbosity>4)
         {
