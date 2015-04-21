@@ -86,6 +86,10 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -rl u:10,501 -rg 1 -sb l:-14,1 -sl u:10,51 -st u:100000,10000000 -si u:1,6 -so l:0,0.1 -pb u:-25,-15 -pt f:pb -ld l:pb,0.4 -lb f:ld -lt l:pb,0.4 -lk 1 -cp l:12,0.5 -cg f:1 -hs l:1.5,1 -hl l:1.2,1 -hg l:1.4,1 -cu e:10000000 -o SimPhy_complex -os 1 -or 1 -v 1 -od 1 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-rs 10 -rl f:1 -sb f:6.66e-6 -sl f:50 -cs 1 -o newtest -rg 1 -cp f:10000 -cg f:1 -od 1 -os 1"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument

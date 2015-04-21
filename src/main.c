@@ -1288,12 +1288,12 @@ int main (int argc, char **argv)
                     if ((sorthologs_outfile=fopen(sorthologs_outname, "w"))==NULL)
                     {
                         perror("Error opening sorthologs file:");
-                        ErrorReporter(IO_ERROR);
+                        ErrorReporter(IO_ERROR,"Sorthologs file problem");
                     }
 #endif
                     if (n_dups>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, n_dups, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, n_dups, GL),"Error measuring duplication distance");
 
                         for (i=0; i<n_dups; ++i)
                         {
@@ -1309,7 +1309,7 @@ int main (int argc, char **argv)
                     }
                     if (n_gc>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,GC,&gcdistances, n_gc, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,GC,&gcdistances, n_gc, GL),"Error measuring gc distance");
 
                         for (i=0; i<n_gc; ++i)
                         {
@@ -1326,7 +1326,7 @@ int main (int argc, char **argv)
                     }
                     if (n_trans>0)
                     {
-                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,TRFR,&trfrdistances, n_trans, GL));
+                        ErrorReporter(MeasureMRCAEVdistance(gene_tree,TRFR,&trfrdistances, n_trans, GL),"Error measuring transference distance");
 
                         for (i=0; i<n_trans; ++i)
                         {

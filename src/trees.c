@@ -2777,7 +2777,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
     int eq_rates=0, j=0, node_index=0, n_leaves=0, n_nodes=0, avail_leaves=0, extra_nodes=0, iter=0;
     //unsigned long int stats_leaves=0;
     //double stats_time=0;
-    double w_prob=d_rate+b_rate, b_prob=(b_rate/(d_rate+b_rate)), random=0, inv_leaves=0, res1=0, res2=0, *i_nodes=NULL, s_time=0, c_time=0;
+    double w_prob=d_rate+b_rate, b_prob=(b_rate/(d_rate+b_rate)), random=0, inv_leaves=0, res1=0, res2=0, *i_nodes=NULL, s_time=0, c_time=0,r_time=0;
     s_node *w_node1=NULL,*w_node2=NULL,*anc_node=NULL, **node_ptrs=NULL;
     
     
@@ -2845,9 +2845,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             if (verbosity>4)
             {
                 if (outgroup==0)
-                    printf("\n\t\t\tRoot time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf",leaves,time);
+                    printf("\n\t\t\tTree origin (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf",leaves,time);
                 else
-                    printf("\n\t\t\tIngroup root time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf, root time = %.8lf",leaves,time,time*outgroup/2);
+                    printf("\n\t\t\tIngroup origin time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf, root time = %.8lf",leaves,time,time*outgroup/2);
 #ifdef DBG
                 fflush(stdout);
 #endif
@@ -2857,9 +2857,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         else if (verbosity>4)
         {
             if (outgroup==0)
-                printf("\n\t\t\tTree height (user defined) = %.8lf",time);
+                printf("\n\t\t\tTree origin (user defined) = %.8lf",time);
             else
-                printf("\n\t\t\tIngroup tree height (user defined) = %.8lf, total tree height = %.8lf",time, time*outgroup/2);
+                printf("\n\t\t\tIngroup tree origin (user defined) = %.8lf, total tree origin = %.8lf",time, time*outgroup/2);
 #ifdef DBG
             fflush(stdout);
 #endif
@@ -2881,7 +2881,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         // ****
         /// Calculates the internal node branches, or sampled from the inverse of the pdf of the speciation events, Hartmann et al., 2010; Gernhard, 2008.
         
-        for (j=0;j<leaves-2;++j)
+        for (j=0;j<leaves-1;++j)
         {
             random=gsl_rng_uniform_pos(seed); //If it is 0 we get branch lengths=0, although in the paper they say [0,1]
             if (eq_rates>0)
@@ -2893,11 +2893,12 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 *(i_nodes+j)=(log((res2-(d_rate*random*(1-res1)))/(res2-(b_rate*random*(1-res1))))/(b_rate-d_rate));
             }
         }
-        *(i_nodes+leaves-2)=time;
         
         // ****
         /// Orders the times in ascending order using a quicksort algorithm
         qsort(i_nodes, leaves-1, sizeof(*i_nodes), Compare_DBL);
+        
+        r_time=*(i_nodes+leaves-1);
         
         if (verbosity>4)
         {
@@ -2907,7 +2908,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 printf("\n\t\t\t\tDuplication times:");
                 for (j=0; j<leaves-1; ++j)
                 {
-                    printf(" %.8lf,",time+time*outgroup/2-*(i_nodes+j));
+                    printf(" %.8lf,",r_time+time*outgroup/2-*(i_nodes+j));
                 }
             }
 #ifdef DBG
@@ -2947,7 +2948,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             *(anc_node->children+1)=w_node2;
             w_node1->anc_node=anc_node;
             w_node2->anc_node=anc_node;
-            anc_node->time=time+time*outgroup/2-*(i_nodes+j);
+            anc_node->time=r_time+time*outgroup/2-*(i_nodes+j);
             // * Branch lenghts and times * //
             anc_node->n_gen=anc_node->time/gen_time;
             anc_node->n_child=2;
@@ -2980,7 +2981,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             (*out_tree)->root->gen_length=(outgroup*time/2)/gen_time;
             (*out_tree)->root->anc_node=w_node2;
             
-            w_node1->time=time+outgroup*time/2;
+            w_node1->time=r_time+outgroup*time/2;
             w_node1->gen_length=w_node1->time/gen_time;
             w_node1->n_gen=w_node1->gen_length;
             
@@ -3257,7 +3258,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 
             }
             // ****
-            /// If the tree ends without leaves, it is discarted and the algorithm retries it construction.
+            /// If the tree ends without leaves, it is discarted and the algorithm retries its construction.
             if (avail_leaves<2)
             {
                 FreeSTree(out_tree);
@@ -5299,6 +5300,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             case 0:
                 n_coals=w_lnode->n_nodes-1;
+                w_lnode->n_ilin=w_lnode->n_nodes;
                 no_counts=1;
                 break;
             default:
