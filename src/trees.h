@@ -678,13 +678,10 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
  *   Multiplier to apply to the half of the tree height as the internal branch for the output outgroup adition. If it is negative, it is not used.
  * \param complete
  *   Logical flag. If complete==1, the tree maintains it death lineages (complete tree). In the other case, the resulting tree is the reconstructed tree shape.
- * \param two_lineages
- *  Logical flag. If two_lineages==1, the trees start in a root with time==time,
+ * \param mrca_time
+ *  Logical flag. If mrca_time==1, the trees start in a root with time==time,
  *   and two leaves (two birth-death processes). This will be the MRCA of the
- *   leaves of the tree. Unlike TreeSim, this MRCA maybe had been extinct along
- *   the birth-death process. In this case, the root of the tree will be the ancestor
- *   of this MRCA node. Thus, the mean number of tips is closer to the expected value
- *   than in processes that imposes restrictions in the persistence of the MRCA.
+ *   leaves of the tree.
  * \param seed
  *   Seed for the RandomNumber function.
  * \param verbosity
@@ -693,7 +690,7 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int two_lineages, gsl_rng *seed, int verbosity);
+long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int verbosity);
 
 /**
  *  Simulates a new locus tree under a birth death model (duplication-loss).

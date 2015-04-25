@@ -2770,11 +2770,11 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     return (tree);
 }
 
-long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int two_lineages, gsl_rng *seed, int verbosity)
+long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int verbosity)
 {
     // ***** Declaration and initialization of variables ***** //
     
-    int eq_rates=0, j=0, node_index=0, n_leaves=0, n_nodes=0, avail_leaves=0, extra_nodes=0, iter=0;
+    int eq_rates=0, j=0,k=0, node_index=0, n_leaves=0,pn_leaves=0,pn_events=0,n_nodes=0, avail_leaves=0, extra_nodes=0, iter=0;
     //unsigned long int stats_leaves=0;
     //double stats_time=0;
     double w_prob=d_rate+b_rate, b_prob=(b_rate/(d_rate+b_rate)), random=0, inv_leaves=0, res1=0, res2=0, *i_nodes=NULL, s_time=0, c_time=0,r_time=0;
@@ -2804,8 +2804,6 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         if (verbosity>3)
         {
             printf("\n\tUsing BDSA algorithm (fixed number of leaves) to simulate the trees...");
-            if (verbosity>4 && two_lineages==0)
-                printf("\n\tTwo_lineages parameter disabled has no sense in BDSA context, and it will be ignored.");
 #ifdef DBG
             fflush(stdout);
 #endif
@@ -2816,11 +2814,11 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         if (outgroup>0)
         {
             (*out_tree)=NewSTree((((leaves+1)*2)-1), leaves+1, leaves+1, 2,gen_time,Ne, mu);
-
+            
         }
         else
         {
-           (*out_tree)=NewSTree(((leaves*2)-1), leaves, leaves, 2,gen_time,Ne, mu); 
+            (*out_tree)=NewSTree(((leaves*2)-1), leaves, leaves, 2,gen_time,Ne, mu);
         }
         
         i_nodes=calloc(leaves-1, sizeof(double));
@@ -2829,9 +2827,11 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         ErrorReporter((long int)node_ptrs, NULL);
         
         // ****
-        /// Calculates the start of the tree (From user options or sampled from the inverse of the pdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.)
+        /// If the TMRCA is given, it is necessary to sample two BDSA processes with n-x and x leaves respectively x:U[1,n-1]. Else, it is sampled using the inverse of the cdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.
         if (time==0)
         {
+            // ****
+            /// Samples the tree origin (From user options or sampled )
             random=gsl_rng_uniform_pos(seed); //If it is 0 we get negative times, although in the paper they say [0,1]
             inv_leaves=1/(double)leaves;
             
@@ -2842,122 +2842,272 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 res1=pow(random,inv_leaves);
                 time=log((1-(res1*d_rate/b_rate))/(1-res1))/(b_rate-d_rate);
             }
+            
+            // ****
+            /// Sample internal node branches using the quantile function of the speciation times, Hartmann et al., 2010; Gernhard, 2008.
+            
+            for (j=0;j<leaves-1;++j)
+            {
+                random=gsl_rng_uniform_pos(seed); //If it is 0 we get branch lengths=0, although in the paper they say [0,1]
+                if (eq_rates>0)
+                    *(i_nodes+j)=(random*time)/(1+(b_rate*time*(1-random)));
+                else
+                {
+                    res1=exp((b_rate-d_rate)*-time);
+                    res2=b_rate-(d_rate*res1);
+                    *(i_nodes+j)=(log((res2-(d_rate*random*(1-res1)))/(res2-(b_rate*random*(1-res1))))/(b_rate-d_rate));
+                }
+            }
+            
+            // ****
+            /// Orders the times in ascending order using a quicksort algorithm
+            qsort(i_nodes, leaves-1, sizeof(*i_nodes), Compare_DBL);
+            
+            r_time=*(i_nodes+leaves-2);
+            
             if (verbosity>4)
             {
                 if (outgroup==0)
-                    printf("\n\t\t\tTree origin (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf",leaves,time);
+                    printf("\n\t\t\tTree TMRCA (sampled) = %.8lf",r_time);
                 else
-                    printf("\n\t\t\tIngroup origin time (sampled using the inverse pdf of the origin of the tree conditional on having %d leaves (flat prior) = %.8lf, root time = %.8lf",leaves,time,time*outgroup/2);
+                    printf("\n\t\t\tIngroup TMRCA (sampled) = %.8lf, root time = %.8lf",r_time,r_time*outgroup/2);
 #ifdef DBG
                 fflush(stdout);
 #endif
             }
             
-        }
-        else if (verbosity>4)
-        {
-            if (outgroup==0)
-                printf("\n\t\t\tTree origin (user defined) = %.8lf",time);
-            else
-                printf("\n\t\t\tIngroup tree origin (user defined) = %.8lf, total tree origin = %.8lf",time, time*outgroup/2);
-#ifdef DBG
-            fflush(stdout);
-#endif
-        }
-        //        if (verbosity>1)
-        //        {
-        //            stats_time+=(time/gen_time);
-        //        }
-        
-        for (j=0;j<(*out_tree)->n_nodes;++j)
-        {
-            *(node_ptrs+j)=(*out_tree)->m_node+j;
-            (*(node_ptrs+j))->n_gen=(time+time*outgroup/2)/gen_time;
-            (*(node_ptrs+j))->time=time+time*outgroup/2;
-        }
-        
-        n_leaves=leaves;
-        
-        // ****
-        /// Calculates the internal node branches, or sampled from the inverse of the pdf of the speciation events, Hartmann et al., 2010; Gernhard, 2008.
-        
-        for (j=0;j<leaves-1;++j)
-        {
-            random=gsl_rng_uniform_pos(seed); //If it is 0 we get branch lengths=0, although in the paper they say [0,1]
-            if (eq_rates>0)
-                *(i_nodes+j)=(random*time)/(1+(b_rate*time*(1-random)));
-            else
+            if (verbosity>4)
             {
-                res1=exp((b_rate-d_rate)*-time);
-                res2=b_rate-(d_rate*res1);
-                *(i_nodes+j)=(log((res2-(d_rate*random*(1-res1)))/(res2-(b_rate*random*(1-res1))))/(b_rate-d_rate));
-            }
-        }
-        
-        // ****
-        /// Orders the times in ascending order using a quicksort algorithm
-        qsort(i_nodes, leaves-1, sizeof(*i_nodes), Compare_DBL);
-        
-        r_time=*(i_nodes+leaves-2);
-        
-        if (verbosity>4)
-        {
-            printf("\n\t\t\tReconstructing backwards the tree from sampled duplication times...");
-            if (verbosity == 6)
-            {
-                printf("\n\t\t\t\tDuplication times:");
-                for (j=0; j<leaves-1; ++j)
+                printf("\n\t\t\tReconstructing backwards the tree from sampled duplication times...");
+                if (verbosity == 6)
                 {
-                    printf(" %.8lf,",r_time+time*outgroup/2-*(i_nodes+j));
+                    printf("\n\t\t\t\tDuplication times:");
+                    for (j=0; j<leaves-1; ++j)
+                    {
+                        printf(" %.8lf,",r_time+r_time*outgroup/2-*(i_nodes+j));
+                    }
                 }
-            }
 #ifdef DBG
-            fflush(stdout);
+                fflush(stdout);
 #endif
-        }
-        
-        // ****
-        /// Reconstructs the tree from the birth-death times
-        for (j=0; j<leaves-1;++j)
-        {
-            // * First offspring node * //
-            node_index= (int)gsl_rng_uniform_int(seed,n_leaves);//Samples nodes
-            w_node1=*(node_ptrs+node_index);
-            --n_leaves;
-            *(node_ptrs + node_index) = *(node_ptrs + n_leaves);/* The pointer to this node now points to the last node_ptr, inaccesible due to --n_leaves*/
+            }
             
-            // * Second offspring node * //
-#ifndef NO_VAR
-            if (n_leaves>1)
+            for (j=0;j<(*out_tree)->n_nodes;++j)
+            {
+                *(node_ptrs+j)=(*out_tree)->m_node+j;
+                (*(node_ptrs+j))->n_gen=(r_time+r_time*outgroup/2)/gen_time;
+                (*(node_ptrs+j))->time=r_time+r_time*outgroup/2;
+            }
+            
+            n_leaves=leaves;
+            
+            // ****
+            /// Reconstructs the tree from the birth-death times
+            for (j=0; j<leaves-1;++j)
+            {
+                // * First offspring node * //
                 node_index= (int)gsl_rng_uniform_int(seed,n_leaves);//Samples nodes
-            else
-                node_index=0;
+                w_node1=*(node_ptrs+node_index);
+                --n_leaves;
+                *(node_ptrs + node_index) = *(node_ptrs + n_leaves);/* The pointer to this node now points to the last node_ptr, inaccesible due to --n_leaves*/
+                
+                // * Second offspring node * //
+#ifndef NO_VAR
+                if (n_leaves>1)
+                    node_index= (int)gsl_rng_uniform_int(seed,n_leaves);//Samples nodes
+                else
+                    node_index=0;
 #endif
 #ifdef NO_VAR
-            node_index=(int)gsl_rng_uniform_int(seed,n_leaves);
+                node_index=(int)gsl_rng_uniform_int(seed,n_leaves);
 #endif
-            w_node2= *(node_ptrs + node_index);
-            *(node_ptrs + node_index)= (*out_tree)->m_node + j + leaves; //Now the node_ptr that pointed to w_node2 points to the new ancestral node, for using it in the next loop iteration
-            
-            // ** Ancestral node ** //
-            anc_node= (*out_tree)->m_node + j + leaves; //Uses as anc node the next avaliable memory block for internal nodes
-            
-            // ** Filling working nodes ** //
-            // * Pointers * //
-            *(anc_node->children)=w_node1;
-            *(anc_node->children+1)=w_node2;
-            w_node1->anc_node=anc_node;
-            w_node2->anc_node=anc_node;
-            anc_node->time=r_time+time*outgroup/2-*(i_nodes+j);
-            // * Branch lenghts and times * //
-            anc_node->n_gen=anc_node->time/gen_time;
-            anc_node->n_child=2;
-            w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
-            w_node2->gen_length=w_node2->n_gen-anc_node->n_gen;
+                w_node2= *(node_ptrs + node_index);
+                *(node_ptrs + node_index)= (*out_tree)->m_node + j + leaves; //Now the node_ptr that pointed to w_node2 points to the new ancestral node, for using it in the next loop iteration
+                
+                // ** Ancestral node ** //
+                anc_node= (*out_tree)->m_node + j + leaves; //Uses as anc node the next avaliable memory block for internal nodes
+                
+                // ** Filling working nodes ** //
+                // * Pointers * //
+                *(anc_node->children)=w_node1;
+                *(anc_node->children+1)=w_node2;
+                w_node1->anc_node=anc_node;
+                w_node2->anc_node=anc_node;
+                anc_node->time=r_time+r_time*outgroup/2-*(i_nodes+j);
+                // * Branch lenghts and times * //
+                anc_node->n_gen=anc_node->time/gen_time;
+                anc_node->n_child=2;
+                w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
+                w_node2->gen_length=w_node2->n_gen-anc_node->n_gen;
+                
+            }
+            (*out_tree)->root=anc_node;
             
         }
-        (*out_tree)->root=anc_node;
-        
+        else
+        {
+            // ****
+            /// TMRCA given
+            if (verbosity>4)
+            {
+                if (outgroup==0)
+                    printf("\n\t\t\tTMRCA (user defined) = %.8lf",time);
+                else
+                    printf("\n\t\t\tIngroup TMRCA (user defined) = %.8lf, root time = %.8lf",time, time*outgroup/2);
+#ifdef DBG
+                fflush(stdout);
+#endif
+            }
+            
+            // ***
+            /// Randomly splitting the number of leaves in two processes
+            r_time=time;
+            
+            n_leaves=(int)gsl_rng_uniform_int(seed,leaves-1)+1; //Number of leaves for the first BDSA process
+            
+            // ***
+            /// Initializating and pointing tree nodes (only retained for leaves
+            for (j=0;j<(*out_tree)->n_nodes;++j)
+            {
+                *(node_ptrs+j)=(*out_tree)->m_node+j;
+                (*(node_ptrs+j))->n_gen=(time+time*outgroup/2)/gen_time;
+                (*(node_ptrs+j))->time=time+time*outgroup/2;
+            }
+            if (leaves==2)
+                k=3;
+            else if (n_leaves>1 && n_leaves<leaves-1)
+            {
+                k=1;
+                pn_leaves=0;
+            }
+            else if (n_leaves==1)
+            {
+                pn_leaves=1;
+                n_leaves=leaves-pn_leaves;
+                k=2;
+            }
+            else
+            {
+                k=1;
+                pn_leaves=0;
+            }
+
+            pn_events=0;
+            // ****
+            /// Loop for the simulated subtrees
+            for (;k<=2;++k)
+            {
+                extra_nodes=pn_leaves==0?0:pn_leaves*2-1; //Number of previously used nodes, number of previous leaves + internal nodes.
+                pn_events=pn_leaves==0?0:pn_leaves-1; //Number of previously used internal nodes.
+                
+                // ****
+                /// Sample internal node branches using the quantile function of the speciation times, Hartmann et al., 2010; Gernhard, 2008.
+                for (j=0;j<n_leaves-1;++j)
+                {
+                    random=gsl_rng_uniform_pos(seed); //If it is 0 we get branch lengths=0, although in the paper they say [0,1]
+                    if (eq_rates>0)
+                        *(i_nodes+pn_events+j)=(random*time)/(1+(b_rate*time*(1-random)));
+                    else
+                    {
+                        res1=exp((b_rate-d_rate)*-time);
+                        res2=b_rate-(d_rate*res1);
+                        *(i_nodes+pn_events+j)=(log((res2-(d_rate*random*(1-res1)))/(res2-(b_rate*random*(1-res1))))/(b_rate-d_rate));
+                    }
+                }
+                
+                // ****
+                /// Orders the times in ascending order using a quicksort algorithm
+                qsort(i_nodes+pn_events, n_leaves-1, sizeof(*i_nodes), Compare_DBL);
+                
+                if (verbosity>4 && n_leaves>1)
+                {
+                    printf("\n\t\t\tReconstructing backwards the tree %d from sampled duplication times...",k);
+                    if (verbosity == 6)
+                    {
+                        printf("\n\t\t\t\tDuplication times:");
+                        for (j=0; j<n_leaves-1; ++j)
+                        {
+                            printf(" %.8lf,",r_time+r_time*outgroup/2-*(i_nodes+j+pn_events));
+                        }
+                    }
+#ifdef DBG
+                    fflush(stdout);
+#endif
+                }
+                
+                // ****
+                /// Reconstructs the tree from the birth-death times
+                avail_leaves=n_leaves;
+                for (j=0; j<n_leaves-1;++j)
+                {
+                    // * First offspring node * //
+                    node_index= (int)gsl_rng_uniform_int(seed,avail_leaves)+pn_leaves;//Samples nodes
+                    w_node1=*(node_ptrs+node_index);
+                    --avail_leaves;
+                    *(node_ptrs + node_index) = *(node_ptrs + avail_leaves+pn_leaves);/* The pointer to this node now points to the last node_ptr, inaccesible due to --n_leaves*/
+                    
+                    // * Second offspring node * //
+#ifndef NO_VAR
+                    if (avail_leaves>1)
+                        node_index= (int)gsl_rng_uniform_int(seed,avail_leaves)+pn_leaves;//Samples nodes
+                    else
+                        node_index=0+pn_leaves;
+#endif
+#ifdef NO_VAR
+                    node_index=(int)gsl_rng_uniform_int(seed,avail_leaves)+pn_leaves;
+#endif
+                    w_node2= *(node_ptrs + node_index);
+                    *(node_ptrs + node_index)= (*out_tree)->m_node+j+leaves+pn_events;//Now the node_ptr that pointed to w_node2 points to the new ancestral node, for using it in the next loop iteration
+                    
+                    // ** Ancestral node ** //
+                    anc_node= (*out_tree)->m_node+j+leaves+pn_events; //Uses as anc node the next avaliable memory block for internal nodes: Previous used internal nodes (extra_nodes) + currently used internal nodes (j) + displacement (leaves)
+                    
+                    // ** Filling working nodes ** //
+                    // * Pointers * //
+                    *(anc_node->children)=w_node1;
+                    *(anc_node->children+1)=w_node2;
+                    w_node1->anc_node=anc_node;
+                    w_node2->anc_node=anc_node;
+                    anc_node->time=r_time+r_time*outgroup/2-*(i_nodes+j+pn_events);
+                    // * Branch lenghts and times * //
+                    anc_node->n_gen=anc_node->time/gen_time;
+                    anc_node->n_child=2;
+                    w_node1->gen_length=w_node1->n_gen-anc_node->n_gen;
+                    w_node2->gen_length=w_node2->n_gen-anc_node->n_gen;
+                    
+                }
+                
+                pn_leaves=n_leaves;
+                n_leaves=leaves-pn_leaves;
+            }
+            
+            (*out_tree)->root=(*out_tree)->m_node+leaves*2-2;
+            ((*out_tree)->root)->time=0+r_time*outgroup/2;
+            ((*out_tree)->root)->gen_length=0;
+            ((*out_tree)->root)->n_gen=((*out_tree)->root)->time/gen_time;
+            ((*out_tree)->root)->n_child=2;
+            if (pn_leaves==1)
+            {
+                *(((*out_tree)->root)->children)=(*out_tree)->m_node+leaves*2-3;
+                *(((*out_tree)->root)->children+1)=(*out_tree)->m_node+leaves-1;
+            }
+            else if (n_leaves==1)
+            {
+                *(((*out_tree)->root)->children)=(*out_tree)->m_node;
+                *(((*out_tree)->root)->children+1)=(*out_tree)->m_node+leaves*2-3;
+            }
+            else
+            {
+                *(((*out_tree)->root)->children)=(*out_tree)->m_node+leaves+n_leaves-2;
+                *(((*out_tree)->root)->children+1)=(*out_tree)->m_node+leaves*2-3;
+            }
+            (*(((*out_tree)->root)->children+1))->anc_node=(*out_tree)->root;
+            (*(((*out_tree)->root)->children+1))->gen_length=(*(((*out_tree)->root)->children+1))->n_gen-((*out_tree)->root)->n_gen;
+            (*(((*out_tree)->root)->children))->anc_node=(*out_tree)->root;
+            (*(((*out_tree)->root)->children))->gen_length=(*(((*out_tree)->root)->children))->n_gen-((*out_tree)->root)->n_gen;
+            
+        }
+
         // ****
         /// Node info update
         for (j=0;j<leaves;++j)
@@ -2966,7 +3116,6 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node1->sp_index=j+1;
             w_node1->n_replicas=ind_per_sp;
         }
-        
         if (outgroup>0)
         {
             w_node1=(*out_tree)->m_node+leaves*2; //Outgroup
@@ -2978,10 +3127,10 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node2->n_gen=0;
             w_node2->time=0;
             w_node2->n_child=2;
-            (*out_tree)->root->gen_length=(outgroup*time/2)/gen_time;
+            (*out_tree)->root->gen_length=(outgroup*r_time/2)/gen_time;
             (*out_tree)->root->anc_node=w_node2;
             
-            w_node1->time=r_time+outgroup*time/2;
+            w_node1->time=r_time+outgroup*r_time/2;
             w_node1->gen_length=w_node1->time/gen_time;
             w_node1->n_gen=w_node1->gen_length;
             
@@ -3003,6 +3152,13 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             (*out_tree)->gene_tree=NULL;
         }
 
+        // ****
+        /// Frees allocated memory</dd></dl>
+        free (i_nodes);
+        i_nodes=NULL;
+        free (node_ptrs);
+        node_ptrs=NULL;
+        
         if (verbosity>4)
         {
             printf("\n\t\t\tDone");
@@ -3010,24 +3166,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             fflush(stdout);
 #endif
         }
-        //        if (verbosity>4)
-        //        {
-        //            if (verbosity>5)
-        //            {
-        //                printf("\n\t\tSTATS: Time length of the tree %.8lf\n\t", stats_time);
-        //            }
-        //            printf("Done \n");
-        //            #ifdef DBG
-        //fflush(stdout);
-//#endif
-        //        }
-        
-        // ****
-        /// Frees allocated memory</dd></dl>
-        free (i_nodes);
-        i_nodes=NULL;
-        free (node_ptrs);
-        node_ptrs=NULL;
+
+
     }
     else
     {
@@ -3066,16 +3206,16 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node1->anc_node=(*out_tree)->root;
             anc_node=w_node1;
             extra_nodes=0;
-            s_time=-log(gsl_rng_uniform_pos(seed))/(w_prob);
             c_time=0;
             
-            if (two_lineages==0)
+            if (mrca_time==0)
             {
                 *(node_ptrs)=w_node1; // The actual root of the tree
                 n_leaves=1;
                 avail_leaves=1;
                 n_nodes=1;
                 (*out_tree)->root->n_gen=0;
+                s_time=-log(gsl_rng_uniform_pos(seed))/(w_prob*avail_leaves);
             }
             else
             {
@@ -3090,10 +3230,9 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 n_leaves=2;
                 avail_leaves=2;
                 n_nodes=3;
-                s_time=-log(gsl_rng_uniform_pos(seed))/(w_prob*2);
                 *(node_ptrs)=w_node1;
                 *(node_ptrs+1)=w_node2;
-                
+                s_time=-log(gsl_rng_uniform_pos(seed))/(w_prob*avail_leaves);
             }
             
             // ****
@@ -3196,26 +3335,31 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                         
                         if (complete==0)
                         {
-                            // * Reconfiguring pointers * //
-                            w_node2->anc_node=anc_node->anc_node;
-                            if (*(w_node2->anc_node->children)==anc_node)
-                                *(w_node2->anc_node->children)=w_node2;
+                            if (anc_node->anc_node==(*out_tree)->root)
+                                avail_leaves=0; // Tree must be reset, since one of the original branches from the MRCA has been lost, and therefore the tMRCA would not fit the asked height.
                             else
-                                *(w_node2->anc_node->children+1)=w_node2;
-                            
-                            // * Reconfiguring branches * //
-                            if (w_node2->anc_node!=NULL)
-                                w_node2->gen_length=w_node2->n_gen-w_node2->anc_node->n_gen;
-                            
-                            // * Deleting one available leaf and one internal node * //
-                            *(node_ptrs+node_index)=*(node_ptrs+avail_leaves-1);
-                            free(w_node1);
-                            w_node1=NULL;
-                            free(anc_node);
-                            anc_node=NULL;
-                            --avail_leaves;
-                            --n_leaves;
-                            n_nodes-=2;
+                            {
+                                // * Reconfiguring pointers * //
+                                w_node2->anc_node=anc_node->anc_node;
+                                if (*(w_node2->anc_node->children)==anc_node)
+                                    *(w_node2->anc_node->children)=w_node2;
+                                else
+                                    *(w_node2->anc_node->children+1)=w_node2;
+                                
+                                // * Reconfiguring branches * //
+                                if (w_node2->anc_node!=NULL)
+                                    w_node2->gen_length=w_node2->n_gen-w_node2->anc_node->n_gen;
+                                
+                                // * Deleting one available leaf and one internal node * //
+                                *(node_ptrs+node_index)=*(node_ptrs+avail_leaves-1);
+                                free(w_node1);
+                                w_node1=NULL;
+                                free(anc_node);
+                                anc_node=NULL;
+                                --avail_leaves;
+                                --n_leaves;
+                                n_nodes-=2;
+                            }
                         }
                         else
                         {
@@ -3264,7 +3408,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 FreeSTree(out_tree);
                 if (verbosity>2)
                 {
-                    printf("\n\t\t\tSpecies tree with less than 2 leaves, restart of the simulation of this tree. Try %d of %d",iter,MAX_IT);
+                    printf("\n\t\t\tSpecies tree with less than 2 leaves or mrca smaller than expected, restart of the simulation of this tree. Try %d of %d",iter,MAX_IT);
                     if (verbosity>4)
                         printf("\n");
 #ifdef DBG
@@ -8582,16 +8726,16 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
             else if (wl_node->kind_node==LOSS)
             {
                 
-                fprintf(reconsl_outfile,"\'Lost–%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(reconsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             else if (wl_node->kind_node==RTRFR)
             {
                 
-                fprintf(reconsl_outfile,"\'RTransf–%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(reconsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             else
             {
-                fprintf(reconsl_outfile,"\'Rgc–%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(reconsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             
         }
@@ -8636,13 +8780,13 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
                     switch (wg_node->contl->kind_node)
                     {
                         case LOSS:
-                            fprintf(reconlg_outfile,"%d\t\'Lost–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(reconlg_outfile,"%d\t\'Lost-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                         case RTRFR:
-                            fprintf(reconlg_outfile,"%d\t\'Rtransf–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(reconlg_outfile,"%d\t\'Rtransf-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                         case RGC:
-                            fprintf(reconlg_outfile,"%d\t\'Rgc–%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(reconlg_outfile,"%d\t\'Rgc-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                             
                         default:
@@ -8659,13 +8803,13 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
                 switch (wg_node->contl->kind_node)
                 {
                     case LOSS:
-                        fprintf(reconlg_outfile,"\'Lost–%d_%d_%d\'\t\'Lost–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(reconlg_outfile,"\'Lost-%d_%d_%d\'\t\'Lost-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                     case RTRFR:
-                        fprintf(reconlg_outfile,"\'Rtransf–%d_%d_%d\'\t\'Rtransf–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(reconlg_outfile,"\'Rtransf-%d_%d_%d\'\t\'Rtransf-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                     case RGC:
-                        fprintf(reconlg_outfile,"\'Rgc–%d_%d_%d\'\t\'Rgc–%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(reconlg_outfile,"\'Rgc-%d_%d_%d\'\t\'Rgc-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                         
                     default:
@@ -10574,43 +10718,43 @@ void WriteLNodesGen (l_node * p, name_c * names)
                     case LOSS:
                         if (p->conts==NULL)
                         {
-                            printf("Lost–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if(p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts==NULL)
                         {
-                            printf("Rtransf–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if(p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts==NULL)
                         {
-                            printf("Rgc–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                         
@@ -10672,31 +10816,31 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
                 case LOSS:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        printf("Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        printf("Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        printf("Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                     
@@ -10757,43 +10901,43 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                     case LOSS:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Lost–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Rgc–%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                 }
@@ -10853,31 +10997,31 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
                 case LOSS:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        fprintf(file,"Lost–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Lost–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        fprintf(file,"Rtransf–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rtransf–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0 && names!=NULL)
                     {
-                        fprintf(file,"Rgc–%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rgc–%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
             }
@@ -10936,31 +11080,31 @@ void WriteGNodes (g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            printf("Rgc–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Rgc–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                 }
@@ -11025,31 +11169,31 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            sprintf(str,"%sLost–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sLost–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sLost-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            sprintf(str,"%sRtransf–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sRtransf–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sRtransf-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            sprintf(str,"%sRgc–%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sRgc–%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sRgc-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                         
@@ -11116,31 +11260,31 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Lost–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Lost–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rtransf–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Rtransf–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0 && names!=NULL)
                         {
-                            fprintf(file,"Rgc–%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Rgc–%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
                         }
                         break;
                 }

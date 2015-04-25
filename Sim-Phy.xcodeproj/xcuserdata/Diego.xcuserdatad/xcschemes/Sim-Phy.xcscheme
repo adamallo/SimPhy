@@ -65,6 +65,18 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -cp f:10000 -cs 22"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o manual_test -sb f:0.00001 -sl f:10 -st f:100000 -so f:1 -cp f:10000 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-o manual_test -sb f:0.00001 -sl f:10 -so f:1 -cp f:10000 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_benchmarks/benchmark_stree_sizerate.conf -rs 10 -sl f:50 -rl f:100 -sb f:0.0001 -lb f:1.744e-5 -cs 1 -o benchmark-stree-sizerate-test"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -86,7 +98,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -rl u:10,501 -rg 1 -sb l:-14,1 -sl u:10,51 -st u:100000,10000000 -si u:1,6 -so l:0,0.1 -pb u:-25,-15 -pt f:pb -ld l:pb,0.4 -lb f:ld -lt l:pb,0.4 -lk 1 -cp l:12,0.5 -cg f:1 -hs l:1.5,1 -hl l:1.2,1 -hg l:1.4,1 -cu e:10000000 -o SimPhy_complex -os 1 -or 1 -v 1 -od 1 -cs 22"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 10 -rl f:1 -sb f:6.66e-6 -sl f:50 -cs 1 -o newtest -rg 1 -cp f:10000 -cg f:1 -od 1 -os 1"

@@ -129,7 +129,7 @@ char TEST_CHAR=7;
 //#define DBG
 
 #undef NO_VAR ///< If NO_VAR is defined, the random number generator allways leads the same numbers.
-#define SORTHOLOGS
+#undef SORTHOLOGS
 
 #ifdef DBG
 #define NO_OUT
@@ -278,8 +278,7 @@ int main (int argc, char **argv)
     
     //HARDCODED sampling_douple table
     const sampling_table sampling_vars=
-    {
-    (sampling_duple[]){
+    {(sampling_duple[]){
         {"CP",&Ne},
         {"SL",&bds_leaves},
         {"SI",&ind_per_sp},
