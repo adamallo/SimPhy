@@ -27,6 +27,8 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		F10E3F881AFB83B3009B63FE /* INDELible_complex.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = INDELible_complex.txt; sourceTree = "<group>"; };
+		F10E3F891AFB83B3009B63FE /* SimPhy_complex.conf */ = {isa = PBXFileReference; lastKnownFileType = text; path = SimPhy_complex.conf; sourceTree = "<group>"; };
 		F14C06721A5EA7B800BF1570 /* Makefile */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.make; path = Makefile; sourceTree = "<group>"; };
 		F14CADC4183C046900A8F7AF /* main.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = main.c; sourceTree = "<group>"; };
 		F14CADC5183C046900A8F7AF /* num_methods.c */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.c; path = num_methods.c; sourceTree = "<group>"; };
@@ -108,6 +110,8 @@
 		F1E3AE311A65888A0038E55E /* configuration_files */ = {
 			isa = PBXGroup;
 			children = (
+				F10E3F881AFB83B3009B63FE /* INDELible_complex.txt */,
+				F10E3F891AFB83B3009B63FE /* SimPhy_complex.conf */,
 				F1E3AE321A65888A0038E55E /* INDELIble_control.txt */,
 				F189260E1A67ED6D00B82D31 /* SimPhy_controlfile.conf */,
 			);

@@ -2870,7 +2870,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 if (outgroup==0)
                     printf("\n\t\t\tTree TMRCA (sampled) = %.8lf",r_time);
                 else
-                    printf("\n\t\t\tIngroup TMRCA (sampled) = %.8lf, root time = %.8lf",r_time,r_time*outgroup/2);
+                    printf("\n\t\t\tIngroup TMRCA (sampled) = %.8lf, root time = %.8lf",r_time,r_time+r_time*outgroup);
 #ifdef DBG
                 fflush(stdout);
 #endif
@@ -2884,7 +2884,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                     printf("\n\t\t\t\tDuplication times:");
                     for (j=0; j<leaves-1; ++j)
                     {
-                        printf(" %.8lf,",r_time+r_time*outgroup/2-*(i_nodes+j));
+                        printf(" %.8lf,",r_time+r_time*outgroup-*(i_nodes+j));
                     }
                 }
 #ifdef DBG
@@ -2895,8 +2895,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             for (j=0;j<(*out_tree)->n_nodes;++j)
             {
                 *(node_ptrs+j)=(*out_tree)->m_node+j;
-                (*(node_ptrs+j))->n_gen=(r_time+r_time*outgroup/2)/gen_time;
-                (*(node_ptrs+j))->time=r_time+r_time*outgroup/2;
+                (*(node_ptrs+j))->n_gen=(r_time+r_time*outgroup)/gen_time;
+                (*(node_ptrs+j))->time=r_time+r_time*outgroup;
             }
             
             n_leaves=leaves;
@@ -2933,7 +2933,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 *(anc_node->children+1)=w_node2;
                 w_node1->anc_node=anc_node;
                 w_node2->anc_node=anc_node;
-                anc_node->time=r_time+r_time*outgroup/2-*(i_nodes+j);
+                anc_node->time=r_time+r_time*outgroup-*(i_nodes+j);
                 // * Branch lenghts and times * //
                 anc_node->n_gen=anc_node->time/gen_time;
                 anc_node->n_child=2;
@@ -2953,7 +2953,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                 if (outgroup==0)
                     printf("\n\t\t\tTMRCA (user defined) = %.8lf",time);
                 else
-                    printf("\n\t\t\tIngroup TMRCA (user defined) = %.8lf, root time = %.8lf",time, time*outgroup/2);
+                    printf("\n\t\t\tIngroup TMRCA (user defined) = %.8lf, root time = %.8lf",time, time+time*outgroup);
 #ifdef DBG
                 fflush(stdout);
 #endif
@@ -2970,8 +2970,8 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             for (j=0;j<(*out_tree)->n_nodes;++j)
             {
                 *(node_ptrs+j)=(*out_tree)->m_node+j;
-                (*(node_ptrs+j))->n_gen=(time+time*outgroup/2)/gen_time;
-                (*(node_ptrs+j))->time=time+time*outgroup/2;
+                (*(node_ptrs+j))->n_gen=(time+time*outgroup)/gen_time;
+                (*(node_ptrs+j))->time=time+time*outgroup;
             }
             if (leaves==2)
                 k=3;
@@ -3027,7 +3027,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                         printf("\n\t\t\t\tDuplication times:");
                         for (j=0; j<n_leaves-1; ++j)
                         {
-                            printf(" %.8lf,",r_time+r_time*outgroup/2-*(i_nodes+j+pn_events));
+                            printf(" %.8lf,",r_time+r_time*outgroup-*(i_nodes+j+pn_events));
                         }
                     }
 #ifdef DBG
@@ -3068,7 +3068,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
                     *(anc_node->children+1)=w_node2;
                     w_node1->anc_node=anc_node;
                     w_node2->anc_node=anc_node;
-                    anc_node->time=r_time+r_time*outgroup/2-*(i_nodes+j+pn_events);
+                    anc_node->time=r_time+r_time*outgroup-*(i_nodes+j+pn_events);
                     // * Branch lenghts and times * //
                     anc_node->n_gen=anc_node->time/gen_time;
                     anc_node->n_child=2;
@@ -3082,7 +3082,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             }
             
             (*out_tree)->root=(*out_tree)->m_node+leaves*2-2;
-            ((*out_tree)->root)->time=0+r_time*outgroup/2;
+            ((*out_tree)->root)->time=r_time*outgroup;
             ((*out_tree)->root)->gen_length=0;
             ((*out_tree)->root)->n_gen=((*out_tree)->root)->time/gen_time;
             ((*out_tree)->root)->n_child=2;
@@ -3127,10 +3127,10 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             w_node2->n_gen=0;
             w_node2->time=0;
             w_node2->n_child=2;
-            (*out_tree)->root->gen_length=(outgroup*r_time/2)/gen_time;
+            (*out_tree)->root->gen_length=outgroup*r_time/gen_time;
             (*out_tree)->root->anc_node=w_node2;
             
-            w_node1->time=r_time+outgroup*r_time/2;
+            w_node1->time=r_time+outgroup*r_time;
             w_node1->gen_length=w_node1->time/gen_time;
             w_node1->n_gen=w_node1->gen_length;
             
@@ -3441,7 +3441,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         /// Deletion of the dummie root of the tree if there is no outgroup addition, and reescaling and outgroup addition otherwise
         if (outgroup>0)
         {
-            outgroup=time*outgroup/2; //From a deviation to the half of the tree heigth to a real internal branch length
+            outgroup=time*outgroup; //From a deviation to the half of the tree heigth to a real internal branch length
             w_node1=NewSNodes(1,2);
             *((*out_tree)->root->children+1)=w_node1;
             w_node1->anc_node=(*out_tree)->root;
@@ -8628,17 +8628,17 @@ long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names)
     
 }
 
-long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char *reconsl_outname)
+long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char *mapsl_outname)
 {
     int i=0;
     l_node *wl_node=NULL;
-    FILE *reconsl_outfile=NULL;
+    FILE *mapsl_outfile=NULL;
     
-    if ((reconsl_outfile=fopen(reconsl_outname, "w"))==NULL)
+    if ((mapsl_outfile=fopen(mapsl_outname, "w"))==NULL)
     {
         return(IO_ERROR);
     }
-    fprintf(reconsl_outfile,"Lt_node\tLt_paralog\tLt_event\tSt_node\n");
+    fprintf(mapsl_outfile,"Lt_node\tLt_paralog\tLt_event\tSt_node\n");
     
     PostReorderSNodes(wsp_tree->root,&i);
     
@@ -8654,16 +8654,16 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                     switch (wl_node->kind_node)
                     {
                         case SP:
-                            fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Sp",wl_node->conts->index);
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Sp",wl_node->conts->index);
                             break;
                         case DUP:
-                            fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Dup",wl_node->conts->index);
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Dup",wl_node->conts->index);
                             break;
                         case TRFR:
-                            fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Transf",wl_node->conts->index);
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Transf",wl_node->conts->index);
                             break;
                         case GC:
-                            fprintf(reconsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->conts->index);
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t%d\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->conts->index);
                             break;
                         default:
                             return UNEXPECTED_VALUE;
@@ -8677,16 +8677,16 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                         switch (wl_node->kind_node)
                         {
                             case SP:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Sp",wl_node->sp_index);
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Sp",wl_node->sp_index);
                                 break;
                             case DUP:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Dup",wl_node->sp_index);
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Dup",wl_node->sp_index);
                                 break;
                             case TRFR:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Transf",wl_node->sp_index);
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Transf",wl_node->sp_index);
                                 break;
                             case GC:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->sp_index);
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->sp_index);
                                 break;
                             default:
                                 return UNEXPECTED_VALUE;
@@ -8698,16 +8698,16 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
                         switch (wl_node->kind_node)
                         {
                             case SP:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Sp",(names->names+(wl_node->sp_index*names->max_lname)));
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Sp",(names->names+(wl_node->sp_index*names->max_lname)));
                                 break;
                             case DUP:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Dup",(names->names+(wl_node->sp_index*names->max_lname)));
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Dup",(names->names+(wl_node->sp_index*names->max_lname)));
                                 break;
                             case TRFR:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Transf",(names->names+(wl_node->sp_index*names->max_lname)));
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Transf",(names->names+(wl_node->sp_index*names->max_lname)));
                                 break;
                             case GC:
-                                fprintf(reconsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Gconv",(names->names+(wl_node->sp_index*names->max_lname)));
+                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Gconv",(names->names+(wl_node->sp_index*names->max_lname)));
                                 break;
                             default:
                                 return UNEXPECTED_VALUE;
@@ -8719,23 +8719,23 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
             else if (wl_node->kind_node==SP)
             {
                 if (names==NULL)
-                    fprintf(reconsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                    fprintf(mapsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
                 else
-                    fprintf(reconsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                    fprintf(mapsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
             }
             else if (wl_node->kind_node==LOSS)
             {
                 
-                fprintf(reconsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             else if (wl_node->kind_node==RTRFR)
             {
                 
-                fprintf(reconsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             else
             {
-                fprintf(reconsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
             }
             
         }
@@ -8744,24 +8744,24 @@ long int WriteReconSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char 
         
     }
     
-    fclose(reconsl_outfile);
+    fclose(mapsl_outfile);
     
     return(NO_ERROR);
 }
 
-long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
+long int WriteMappingLG(g_tree *gene_tree, name_c *names, char *maplg_outname)
 {
-    FILE *reconlg_outfile=NULL;
+    FILE *maplg_outfile=NULL;
     g_node *wg_node=NULL;
     int i=0;
     
     CollapseGTree(gene_tree,1,1);
     
-    if ((reconlg_outfile=fopen(reconlg_outname, "w"))==NULL)
+    if ((maplg_outfile=fopen(maplg_outname, "w"))==NULL)
     {
         return(IO_ERROR);
     }
-    fprintf(reconlg_outfile,"Gt_node\tLt_node\tLt_paralog\n");
+    fprintf(maplg_outfile,"Gt_node\tLt_node\tLt_paralog\n");
     
     for (i=0;i<gene_tree->n_nodes;++i)
     {
@@ -8773,27 +8773,27 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
                 
                 if (wg_node->contl->n_child!=0) // Everything internal
                 {
-                    fprintf(reconlg_outfile,"%d\t%d\t%d\n",wg_node->index,wg_node->contl->index,wg_node->paralog);
+                    fprintf(maplg_outfile,"%d\t%d\t%d\n",wg_node->index,wg_node->contl->index,wg_node->paralog);
                 }
                 else //External l_node
                 {
                     switch (wg_node->contl->kind_node)
                     {
                         case LOSS:
-                            fprintf(reconlg_outfile,"%d\t\'Lost-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(maplg_outfile,"%d\t\'Lost-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                         case RTRFR:
-                            fprintf(reconlg_outfile,"%d\t\'Rtransf-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(maplg_outfile,"%d\t\'Rtransf-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                         case RGC:
-                            fprintf(reconlg_outfile,"%d\t\'Rgc-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                            fprintf(maplg_outfile,"%d\t\'Rgc-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                             break;
                             
                         default:
                             if (names==NULL)
-                                fprintf(reconlg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                                fprintf(maplg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
                             else
-                                fprintf(reconlg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                fprintf(maplg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
                             break;
                     }
                 }
@@ -8803,20 +8803,20 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
                 switch (wg_node->contl->kind_node)
                 {
                     case LOSS:
-                        fprintf(reconlg_outfile,"\'Lost-%d_%d_%d\'\t\'Lost-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(maplg_outfile,"\'Lost-%d_%d_%d\'\t\'Lost-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                     case RTRFR:
-                        fprintf(reconlg_outfile,"\'Rtransf-%d_%d_%d\'\t\'Rtransf-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(maplg_outfile,"\'Rtransf-%d_%d_%d\'\t\'Rtransf-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                     case RGC:
-                        fprintf(reconlg_outfile,"\'Rgc-%d_%d_%d\'\t\'Rgc-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                        fprintf(maplg_outfile,"\'Rgc-%d_%d_%d\'\t\'Rgc-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
                         break;
                         
                     default:
                         if (names==NULL)
-                            fprintf(reconlg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                            fprintf(maplg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
                         else
-                            fprintf(reconlg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            fprintf(maplg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
                         break;
                 }
             }
@@ -8826,7 +8826,7 @@ long int WriteReconLG(g_tree *gene_tree, name_c *names, char *reconlg_outname)
         
     }
     
-    fclose(reconlg_outfile);
+    fclose(maplg_outfile);
     return (NO_ERROR);
 }
 

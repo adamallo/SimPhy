@@ -251,6 +251,7 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
                     case ',': //stop buffering and parse
                     case '\0':
                     case '/':
+                    case '\n':
                         in_parsing=0;
                         buffer[b_index]='\0';
                         switch (is_pointer)

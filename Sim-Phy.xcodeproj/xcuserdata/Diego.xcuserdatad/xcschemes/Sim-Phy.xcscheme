@@ -65,7 +65,15 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_complex.conf"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -cp f:10000 -cs 22"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf -rs 1 -so f:0.5"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
