@@ -41,8 +41,8 @@
 		F14CADCC183C046900A8F7AF /* trees.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = trees.h; sourceTree = "<group>"; };
 		F189260E1A67ED6D00B82D31 /* SimPhy_controlfile.conf */ = {isa = PBXFileReference; lastKnownFileType = text; name = SimPhy_controlfile.conf; path = configuration_files/SimPhy_controlfile.conf; sourceTree = SOURCE_ROOT; };
 		F189260F1A67ED8F00B82D31 /* INDELIble_wrapper.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = INDELIble_wrapper.pl; sourceTree = "<group>"; };
-		F19388D51AFBEF0E00321E3A /* INDELible_control.txt */ = {isa = PBXFileReference; lastKnownFileType = text; path = INDELible_control.txt; sourceTree = "<group>"; };
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1DB59371AFBF2650059A7B2 /* INDELible_control.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = INDELible_control.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -110,7 +110,7 @@
 		F1E3AE311A65888A0038E55E /* configuration_files */ = {
 			isa = PBXGroup;
 			children = (
-				F19388D51AFBEF0E00321E3A /* INDELible_control.txt */,
+				F1DB59371AFBF2650059A7B2 /* INDELible_control.txt */,
 				F10E3F881AFB83B3009B63FE /* INDELible_complex.txt */,
 				F10E3F891AFB83B3009B63FE /* SimPhy_complex.conf */,
 				F189260E1A67ED6D00B82D31 /* SimPhy_controlfile.conf */,
