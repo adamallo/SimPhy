@@ -684,13 +684,15 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
  *   leaves of the tree.
  * \param seed
  *   Seed for the RandomNumber function.
+ * \param out_time
+ *   Whether the species tree will be written in number of generations (0) or time units (1)
  * \param verbosity
  *   Config about verbosity.
  *
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int verbosity);
+long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int out_time, int verbosity);
 
 /**
  *  Simulates a new locus tree under a birth death model (duplication-loss).

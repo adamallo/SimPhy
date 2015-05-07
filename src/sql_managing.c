@@ -40,7 +40,7 @@ long int InitDB(sqlite3 **database, char * db_filename)
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 
 
-	sprintf(query,"CREATE TABLE IF NOT EXISTS Species_Trees(SID INTEGER PRIMARY KEY,Leaves INTEGER,SB_rate REAL,SD_rate REAL,F_length_gen REAL,Height_cu REAL,Length_cu REAL, Outgroup_intlength_gen REAL, Ind_per_sp INTEGER,N_loci INTEGER,PB_rate REAL,PD_rate REAL,PT_rate REAL,PGC_rate REAL,Alpha_s REAL,Alpha_l REAL,Salpha_g REAL,Ne INTEGER,Mu REAL,Gen_time REAL,Alpha_site REAL, Shape_seqlength REAL, Logscale_seqlength REAL)");
+	sprintf(query,"CREATE TABLE IF NOT EXISTS Species_Trees(SID INTEGER PRIMARY KEY,Leaves INTEGER,SB_rate REAL,SD_rate REAL,F_length_gen REAL,Height_cu REAL,Length_cu REAL, Outgroup_intlength_gen REAL, Ind_per_sp INTEGER,N_loci INTEGER,GB_rate REAL,GD_rate REAL,GT_rate REAL,GGC_rate REAL,Alpha_s REAL,Alpha_l REAL,Salpha_g REAL,Ne INTEGER,Mu REAL,Gen_time REAL)");
 
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	if(db_iserror!=SQLITE_OK)
@@ -119,7 +119,7 @@ long int WriteSTreeDB(sqlite3 **database, int n_leaves, double sb_rate, double s
     
     query=calloc(1000,sizeof(char));
 	
-	sprintf(query,"INSERT INTO Species_Trees VALUES(NULL,'%d','%e','%e','%e','%e','%e','%e','%d','%d','%e','%e','%e','%e','%e','%e','%e','%d','%e','%e',0,0,0)",n_leaves,sb_rate,sd_rate,bds_length,height,length,outgroup,ind_per_sp,n_loci,b_rate,d_rate,t_rate,gc_rate,alpha_s,alpha_l,salpha_g,Ne,mu,gen_time); //67+numbers
+	sprintf(query,"INSERT INTO Species_Trees VALUES(NULL,'%d','%e','%e','%e','%e','%e','%e','%d','%d','%e','%e','%e','%e','%e','%e','%e','%d','%e','%e')",n_leaves,sb_rate,sd_rate,bds_length,height,length,outgroup,ind_per_sp,n_loci,b_rate,d_rate,t_rate,gc_rate,alpha_s,alpha_l,salpha_g,Ne,mu,gen_time); //67+numbers
     
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	

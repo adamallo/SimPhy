@@ -73,7 +73,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf -rs 1 -so f:0.5"
+            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf -rs 1 -so f:0.5 -sg f:10 -ot 0"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
