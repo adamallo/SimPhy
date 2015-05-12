@@ -268,7 +268,7 @@ int main (int argc, char **argv)
     // *******
     /// <dl><dt>Loging variables</dt><dd></dd></dl></dd></dl>
     long double height_bl=0,height_cu=0,st_height=0,st_length=0,length_bl=0;
-    int n_extralin=0,n_dups=0,n_losses=0,n_trans=0,n_gc=0;
+    int n_extralin=0,n_dups=0,n_losses=0,n_trans=0,n_gc=0,n_ltrials=0;
     
     // ********
     /// <dl><dt>Main program</dt><dd>
@@ -857,7 +857,7 @@ int main (int argc, char **argv)
         {
             ErrorReporter(sample_distr(r,5,&lb_rate,&ld_rate,&lt_rate,&lgc_rate,&lalpha_g),": sampling distributions");
             ErrorReporter(CheckSampledSettingsLloop(lb_rate,ld_rate,lt_rate,lgc_rate,lalpha_g), ": improper sampled values");
-            n_dups=n_losses=n_trans=n_gc=n_extralin=0;
+            n_dups=n_losses=n_trans=n_gc=n_extralin=n_ltrials=0;
             
             if(get_sampling(alpha_l)!=0)
                 gamma_l=gsl_ran_gamma(r, get_sampling(alpha_l), 1/(get_sampling(alpha_l)));
@@ -884,7 +884,7 @@ int main (int argc, char **argv)
 
                 // ******
                 /// Locus tree simulation
-                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &n_losses, &n_dups, &n_trans, &n_gc, &st_lleaves, &st_gleaves), ": simulating a locus tree");
+                ErrorReporter(SimBDLHTree(sp_tree, &locus_tree, node_ptrs, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),t_kind,r, min_lleaves, min_lsleaves, verbosity, &n_losses, &n_dups, &n_trans, &n_gc, &st_lleaves, &st_gleaves, &n_ltrials), ": simulating a locus tree");
                 
                 // ******
                 /// Species tree reindexation in post-order
@@ -1039,7 +1039,7 @@ int main (int argc, char **argv)
 
             if (db>0)
             {
-                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),locus_tree->n_leaves, n_dups, n_losses,n_trans,n_gc,gamma_l,get_sampling(lalpha_g)),": writting the locus tree rable");
+                ErrorReporter(WriteLTreeDB(&database, curr_ltree, curr_stree, get_sampling(lb_rate), get_sampling(ld_rate), get_sampling(lt_rate), get_sampling(lgc_rate),locus_tree->n_leaves, n_dups, n_losses,n_trans,n_gc,n_ltrials,gamma_l,get_sampling(lalpha_g)),": writting the locus tree rable");
                 t_n_ltree++;
             }
             

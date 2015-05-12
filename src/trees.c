@@ -3999,7 +3999,7 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
     
 }
 
-long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves)
+long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate, int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves, int *st_ntrials)
 {
     // *******
     /// <dl><dt>Declarations</dt><dd>
@@ -4020,10 +4020,10 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
     // ******
     /// Loop related variables</dd></dl>
-    int ltree_iter=0,bd_iter=0,l_tree_retries=0, maxnleaves_reached=0,done=0, discarded_t=0;
+    int bd_iter=0,l_tree_retries=0, maxnleaves_reached=0,done=0, discarded_t=0;
     int i=0,j=0,k=0;
     
-    while (done!=1 && ltree_iter<=MAX_IT)
+    while (done!=1 && *st_ntrials<=MAX_IT)
     {
         // ******
         /// Locus tree re/initialization
@@ -4069,7 +4069,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
         *st_losses=0;
         *st_transfr=0;
         *st_gc=0;
-        ++ltree_iter;
+        ++(*st_ntrials);
         maxnleaves_reached=0;
         max_time=0;
         
@@ -4596,7 +4596,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     }
     
     
-    if (ltree_iter>MAX_IT)
+    if (*st_ntrials>MAX_IT)
         return (LOOP_ERROR);
     else
     {

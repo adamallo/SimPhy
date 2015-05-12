@@ -764,23 +764,25 @@ long int SimBDLTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, d
  *   Global effective population size.
  * \param verbosity
  *   Config about verbosity.
- * \paran st_losses
+ * \param st_losses
  *   Pointer to return the number of observed losses in the new tree.
- * \paran st_dups
+ * \param st_dups
  *   Pointer to return the number of observed duplications in the new tree.
- * \paran st_transfr
+ * \param st_transfr
  *   Pointer to return the number of observed transferences in the new tree.
- * \paran st_gc
+ * \param st_gc
  *   Pointer to return the number of observed gene conversions in the new tree.
- * \paran st_leaves
+ * \param st_leaves
  *   Pointer to return the number of observed number of leaves.
- * \paran st_gleaves
+ * \param st_gleaves
  *   Pointer to return the number of leaves of the future gene trees simulated using this new simulated locus tree.
+ * \param st_ntrials
+ *   Pointer to return the number of trials needed to generate the tree.
  *
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves);
+long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, double b_rate,double d_rate, double h_rate, double gc_rate,int t_kind, gsl_rng *seed, int min_lleaves, int min_lsleaves, int verbosity, int *st_losses, int *st_dups, int *st_transfr, int *st_gc, int *st_leaves, int *st_gleaves, int *st_ntrials);
 
 /**
  *  Simulates a new gene tree under the multispecies coalescent process along a locus tree.
