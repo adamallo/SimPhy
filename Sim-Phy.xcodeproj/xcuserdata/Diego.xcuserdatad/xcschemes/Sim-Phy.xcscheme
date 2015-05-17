@@ -65,6 +65,14 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-rs 10000 -rl f:1 -sb f:6.666666667e-06 -sl f:50 -cs 1 -rg 1 -o test_stree -sp f:10000 -sg f:1 -v 1 -od 1 -os 1"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-od 1 -os 1 -om -1 -cs 22 -rg 1 -lr /Users/Diego/Desktop/Sim-Phy_validation/validation-gtree-bmc-tmrca-l_trees.trees -sp f:1000000"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_complex.conf"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -74,7 +82,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf -rs 1 -so f:0.5 -sg f:10 -ot 0"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o manual_test -sb f:0.00001 -sl f:10 -st f:100000 -so f:1 -cp f:10000 -cs 22"

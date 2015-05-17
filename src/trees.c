@@ -1011,12 +1011,6 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
     /// <dl><dt> Line's loop </dt><dd></dd></dl></dd></dl>
     while (fgets(buffer,(int)LENGTH,ifile)!=NULL && i<=MAX_IT)
     {
-        if (ferror(ifile)!=0 || feof(ifile)!=0)
-        {
-            fprintf(stderr,"Improper Nexus trees input file: Error in line %s\n",buffer);
-            return (SETTINGS_ERROR);
-        }
-        
         if (in_trees==1)
         {
             tok=strtok(buffer,"\n");
@@ -1061,6 +1055,12 @@ long double NNexusTrees(FILE *ifile, int *n_trees)
             in_trees=0;
             continue;
         }
+        if (ferror(ifile)!=0 || feof(ifile)!=0)
+        {
+            fprintf(stderr,"Improper Nexus trees input file: Error in line %s\n",buffer);
+            return (SETTINGS_ERROR);
+        }
+
         ++i;
     }
     if (i>MAX_IT) return LOOP_ERROR; // Avoids ininite loops
