@@ -8413,7 +8413,7 @@ long int CheckUltrametricitySTree(s_tree *tree)
                     break;
                     
                 default:
-                    if (fabs((tree->m_node+i)->time-time)>DBL_EPSILON)
+                    if (fabs((tree->m_node+i)->time-time)>FLOAT_PRECISION)
                         return UNEXPECTED_VALUE;
                     
                     break;
@@ -8457,7 +8457,7 @@ long int CheckUltrametricityLTree(l_tree *tree)
                         break;
                         
                     default:
-                        if (fabs((tree->m_node+i)->time-time)>DBL_EPSILON)
+                        if (fabs((tree->m_node+i)->time-time)>FLOAT_PRECISION)
                             return UNEXPECTED_VALUE;
                         
                         break;
@@ -11734,7 +11734,7 @@ double CheckUltrametricitySNodes(s_node *node)
             for (i=1; i<node->n_child; ++i)
             {
                 n_time=CheckUltrametricitySNodes(*(node->children+i));
-                if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
+                if(n_time == -1 || fabs(time-n_time)>FLOAT_PRECISION)
                     return -1;
             }
         return time;
@@ -11761,7 +11761,7 @@ double CheckUltrametricityLNodes(l_node *node)
                 if ((*(node->children+i))->kind_node!=LOSS && (*(node->children+i))->kind_node!=RTRFR && (*(node->children+i))->kind_node!=RGC)
                 {
                     n_time=CheckUltrametricityLNodes(*(node->children+i));
-                    if(n_time == -1 || fabs(time-n_time)>0.000001) ///DEBUG!!! TODO, EPSILON DBL_EPSILON CAN BE BIGGER THAN REQUIRED
+                    if(n_time == -1 || fabs(time-n_time)>FLOAT_PRECISION)
                         return -1;
                 }
             }

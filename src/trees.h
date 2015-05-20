@@ -60,6 +60,7 @@ extern int MAX_LEAVES;
 extern int NUM_BUFFER;
 extern char TEST_CHAR;
 extern int IO_BUFFER;
+extern double FLOAT_PRECISION;
 
 /**
  * \enum ERRORS

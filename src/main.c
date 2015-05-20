@@ -48,6 +48,7 @@ int MAX_LEAVES=1000;
 int NUM_BUFFER=20;
 int IO_BUFFER=1000;
 char TEST_CHAR=7;
+double FLOAT_PRECISION=0.001;
 
 //#define DBG
 
@@ -155,6 +156,12 @@ int main (int argc, char **argv)
     if (buffer!=NULL)
     {
         sscanf(buffer,"%u",&IO_BUFFER);
+        buffer=NULL;
+    }
+    buffer=getenv("SIMPHY_FLOATPREC");
+    if (buffer!=NULL)
+    {
+        sscanf(buffer,"%lf",&FLOAT_PRECISION);
         buffer=NULL;
     }
     
