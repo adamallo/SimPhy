@@ -47,6 +47,7 @@ int MAX_NAME=100;
 int MAX_LEAVES=1000;
 int NUM_BUFFER=20;
 int IO_BUFFER=1000;
+int INT_LABELS=1;
 char TEST_CHAR=7;
 double FLOAT_PRECISION=0.001;
 
@@ -164,6 +165,12 @@ int main (int argc, char **argv)
         sscanf(buffer,"%lf",&FLOAT_PRECISION);
         buffer=NULL;
     }
+    buffer=getenv("SIMPHY_INTLABELS");
+    if (buffer!=NULL)
+    {
+        sscanf(buffer,"%u",&INT_LABELS);
+        buffer=NULL;
+    }
     
     
     // ******
@@ -241,9 +248,9 @@ int main (int argc, char **argv)
     
     // *******
     /// <dl><dt>I/O variables</dt><dd></dd></dl>
-    char g_prefix[8]="g_trees", command_sufix[8]=".comand", map_sufix2[8]="g.map", mapsl_sufix2[9]=".mapsl", maplg_sufix2[10]="g.maplg", db_sufix[4]=".db", params_sufix[8]=".params", tree_sufix[7]=".trees", weirdg_sufix[8]=".ralpha", s_outname[13]="s_tree.trees",l_outname[14]="l_trees.trees", *g_outname=NULL, stat_outname[10]="stats.txt",weirds_outname[14]="s_tree.ralpha",confile_sufix[6]=".conf",c=0;
+    char g_prefix[8]="g_trees", command_sufix[8]=".comand", map_sufix2[8]="g.map", mapsl_sufix2[9]=".mapsl", maplg_sufix2[10]="g.maplg", db_sufix[4]=".db", params_sufix[8]=".params", tree_sufix[7]=".trees", weirdg_sufix[8]=".ralpha", s_outname[13]="s_tree.trees",l_outname[14]="l_trees.trees",d_outname[14]="daughters.out", *g_outname=NULL, stat_outname[10]="stats.txt",weirds_outname[14]="s_tree.ralpha",confile_sufix[6]=".conf",c=0;
     char  *map_outname=NULL, *mapsl_outname=NULL, *maplg_outname=NULL, *db_outname=NULL, *params_outname=NULL, *command_outname=NULL, *curr_outdir=NULL,  *weirdg_outname=NULL, *stree_iname=NULL, *ltree_iname=NULL, *confile_outname=NULL;
-    FILE *stree_ifile=NULL, *ltree_ifile=NULL, *s_outfile=NULL,*l_outfile=NULL,*g_outfile=NULL,*stat_outfile=NULL, *params_outfile=NULL, *command_outfile=NULL, *weirds_outfile=NULL, *weirdg_outfile=NULL, *confile_infile=NULL, *confile_outfile=NULL;
+    FILE *stree_ifile=NULL, *ltree_ifile=NULL, *s_outfile=NULL,*l_outfile=NULL,*d_outfile=NULL,*g_outfile=NULL,*stat_outfile=NULL, *params_outfile=NULL, *command_outfile=NULL, *weirds_outfile=NULL, *weirdg_outfile=NULL, *confile_infile=NULL, *confile_outfile=NULL;
     sqlite3 *database;
     int n_sdigits=0, n_ldigits=0, n_gdigits=0, n_istrees=0, n_iltrees=0, error=0;
 
@@ -692,6 +699,27 @@ int main (int argc, char **argv)
 #endif
         }
         
+        if (verbosity>4)
+        {
+            printf("Opening the daughters.out file... ");
+#ifdef DBG
+            fflush(stdout);
+#endif
+        }
+        
+        if ((d_outfile=fopen(d_outname,"w"))==NULL)
+        {
+            perror("Error opening daughters.out file: ");
+            ErrorReporter(IO_ERROR,NULL);
+        }
+        if (verbosity>4)
+        {
+            printf("Done\n");
+#ifdef DBG
+            fflush(stdout);
+#endif
+        }
+        
         if (weirdness!=0)
         {
             if ((weirds_outfile=fopen(weirds_outname, "w"))==NULL)
@@ -838,7 +866,7 @@ int main (int argc, char **argv)
 #ifndef NO_OUT
         if (s_outfile!=NULL)
         {
-            WriteSTreeFile(s_outfile,sp_tree,names,out_time);
+            WriteSTreeFile(s_outfile,sp_tree,names,out_time,INT_LABELS);
         }
         if (db>0) //There is an species tree
         {
@@ -1010,7 +1038,7 @@ int main (int argc, char **argv)
                     break;
                 default:
                     printf("\n\tDone: ");
-                    WriteLTree(locus_tree,names,out_time);
+                    WriteLTree(locus_tree,names,out_time,INT_LABELS);
                     break;
             }
 #ifdef DBG
@@ -1042,7 +1070,11 @@ int main (int argc, char **argv)
             // *******
             // Locus tree output
 #ifndef NO_OUT
-            WriteLTreeFile(l_outfile,locus_tree,names,out_time);
+            WriteLTreeFile(l_outfile,locus_tree,names,out_time,INT_LABELS);
+            if (n_dups!=0 || n_trans!=0 || n_gc!=0)
+                WriteDaughtersFile(d_outfile,locus_tree,names);
+            else
+                fprintf(d_outfile,"\n");
 
             if (db>0)
             {
@@ -1174,7 +1206,7 @@ int main (int argc, char **argv)
                 /// Writes the current gene tree in Newick format
                 
 #ifndef NO_OUT
-                WriteGTreeFile(g_outfile,gene_tree, names);
+                WriteGTreeFile(g_outfile,gene_tree, names,INT_LABELS);
                 
 #endif
                 switch (verbosity)
@@ -1188,7 +1220,7 @@ int main (int argc, char **argv)
                         break;
                     default:
                         printf("\n\t\tDone: ");
-                        WriteGTree(gene_tree,names);
+                        WriteGTree(gene_tree,names,INT_LABELS);
                         printf("\n");
                         break;
                 }
@@ -1352,6 +1384,8 @@ int main (int argc, char **argv)
             free(mapsl_outname);
         if (l_outfile!=NULL)
             fclose(l_outfile);
+        if (d_outfile!=NULL)
+            fclose(d_outfile);
         if (stat_outfile!=NULL)
             fclose(stat_outfile);
         if (s_outfile!=NULL)

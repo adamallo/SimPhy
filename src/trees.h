@@ -61,6 +61,7 @@ extern int NUM_BUFFER;
 extern char TEST_CHAR;
 extern int IO_BUFFER;
 extern double FLOAT_PRECISION;
+extern int INT_LABELS;
 
 /**
  * \enum ERRORS
@@ -1458,11 +1459,13 @@ long int CheckUltrametricityLTree(l_tree *tree);
  * \param time
  *  Logical flag. If ==1, the tree will be printed in time units instead of
  *  generations.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  *  \note It requires a known root node into the r_tree structure.
  *******************************************************************************/
-long int WriteSTree (s_tree *in_tree, name_c * names, int time);
+long int WriteSTree (s_tree *in_tree, name_c * names, int time, int int_labels);
 
 /**
  * Writes a given s_tree in Newick format in a file.
@@ -1478,11 +1481,13 @@ long int WriteSTree (s_tree *in_tree, name_c * names, int time);
  *  generations.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \note The FILE * should be previously opened and checked to avoid errors, and
  *  closed after this function.
  * \note It requires a known root node into the s_tree structure.
  *******************************************************************************/
-long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, int time);
+long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, int time, int int_labels);
 
 /**
  * Writes a given l_tree in Newick format in stdout.
@@ -1494,11 +1499,13 @@ long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, int time);
  * \param time
  *  Logical flag. If ==1, the tree will be printed in time units instead of
  *  generations.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note It requires a known root node into the r_tree structure.
  *******************************************************************************/
-long int WriteLTree (l_tree *in_tree, name_c * names, int time);
+long int WriteLTree (l_tree *in_tree, name_c * names, int time, int int_labels);
 
 /**
  * Writes a given l_tree in Newick format in a file.
@@ -1512,13 +1519,33 @@ long int WriteLTree (l_tree *in_tree, name_c * names, int time);
  * \param time
  *  Logical flag. If ==1, the tree will be printed in time units instead of
  *  generations.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note The FILE * should be previously opened and checked to avoid errors, and
  *  closed after this function.
  *  \note It requires a known root node into the l_tree structure.
  *******************************************************************************/
-long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, int time);
+long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, int time, int int_labels);
+
+
+/**
+ * Writes a comma-separated list of daughters locus tree lineages in a file.
+ *
+ * \param file
+ *  File where the list will be printed.
+ * \param in_tree
+ *  Tree to analize.
+ * \param names
+ *  name_c pointer with taxa names.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \note The FILE * should be previously opened and checked to avoid errors, and
+ *  closed after this function.
+ *  \note It requires a known root node into the l_tree structure.
+ *******************************************************************************/
+long int WriteDaughtersFile (FILE *file,l_tree *in_tree, name_c * names);
 
 /**
  * Writes a given g_tree in Newick format in stdout.
@@ -1527,13 +1554,15 @@ long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, int time);
  *  name_c pointer with taxa names.
  * \param in_tree
  *  Tree to print.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note The FILE * should be previously opened and checked to avoid errors, and
  *  closed after this function.
  *  \note It requires a known root node into the g_tree structure.
  *******************************************************************************/
-long int WriteGTree (g_tree *in_tree, name_c * names);
+long int WriteGTree (g_tree *in_tree, name_c * names, int int_labels);
 
 /**
  * Writes a given g_tree in Newick format in a string.
@@ -1544,13 +1573,15 @@ long int WriteGTree (g_tree *in_tree, name_c * names);
  *  Input tree pointer.
  * \param names
  *  names_c containing the taxa name of the tree.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note The FILE * should be previously opened and checked to avoid errors, and
  *  closed after this function.
  *  \note It requires a known root node into the g_tree structure.
  *******************************************************************************/
-long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names);
+long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names, int int_labels);
 
 /**
  * Writes a given g_tree in Newick format in a file.
@@ -1561,6 +1592,8 @@ long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names);
  *  Input tree pointer.
  * \param names
  *  names_c containing the taxa name of the tree.
+ * \param int_labels
+ *  Logical flag. If ==1, the tree will be printed with internal nodes labeled with its index number (postorder starting at 0).
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
  * \note The FILE * should be previously opened and checked to avoid errors, and
@@ -1568,7 +1601,7 @@ long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names);
  *  \note It requires a known root node into the l_tree structure.
  *  This function is more efficient than using WriteGTreeStr followed by fprintf.
  *******************************************************************************/
-long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names);
+long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names, int int_labels);
 
 /**
  * Calculates and writes the mapping of the species and locus trees in a file (those trees have to be linked in the way that the program does along the locus tree simulation).
