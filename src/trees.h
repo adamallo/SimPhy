@@ -807,11 +807,12 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
  *   Config about verbosity.
  * \param gen_time
  *   Generation time.
- *
+ * \param collapse
+ *   Logical flag. If ==1, then the gene tree is collapsed and post-ordered.
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
- * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
+ * \attention If collapse==0 the resulting tree has to be collapsed to be a proper tree (with proper memory structure)
  *******************************************************************************/
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time);
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time, int collapse);
 
 /**
  *  Simulates a new gene tree under the multilocus coalescent process along a locus tree.
@@ -832,11 +833,12 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  *   Config about verbosity.
  * \param gen_time
  *   Generation time.
- *
+ * \param collapse
+ *   Logical flag. If ==1, then the gene tree is collapsed and post-ordered.
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
- * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
+ * \attention If collapse==0 the resulting tree has to be collapsed to be a proper tree (with proper memory structure)
  *******************************************************************************/
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time);
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time, int collapse);
 
 /**
  * Creates a new l_tree, and initializes it.
@@ -1630,6 +1632,7 @@ long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, cha
  *  Name of the file where the function is going to write the mapping.
  * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
  *  ocurrs.
+ * \attention The gene tree must have been previously collapsed in postorder.
  *******************************************************************************/
 long int WriteMappingLG(g_tree *gene_tree, name_c *names, char *maplg_outname);
 

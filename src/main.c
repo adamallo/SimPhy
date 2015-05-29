@@ -47,7 +47,7 @@ int MAX_NAME=100;
 int MAX_LEAVES=1000;
 int NUM_BUFFER=20;
 int IO_BUFFER=1000;
-int INT_LABELS=1;
+int INT_LABELS=0;
 char TEST_CHAR=7;
 double FLOAT_PRECISION=0.001;
 
@@ -1169,9 +1169,9 @@ int main (int argc, char **argv)
                 // ****
                 /// Gene tree simulation
                 if (n_dups==0 && n_trans==0 && n_gc==0)
-                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,map>1?1:0,verbosity,get_sampling(gen_time)),": simulating a gene tree");
+                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,map>1?1:0,verbosity,get_sampling(gen_time),map>0||INT_LABELS==1?1:0),": simulating a gene tree");
                 else
-                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,verbosity,get_sampling(gen_time)),": simulating a gene tree");
+                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,verbosity,get_sampling(gen_time),map>0||INT_LABELS==1?1:0),": simulating a gene tree");
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>

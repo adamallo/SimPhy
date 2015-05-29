@@ -5206,7 +5206,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
 }
 
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time)
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5510,11 +5510,18 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     if (verbosity>4)
         free(iobuffer);
-    
+
+    switch (collapse)
+    {
+        case 1:
+            CollapseGTree(*gene_tree, 1, 1);
+            break;
+    }
+
     return(NO_ERROR);
 }
 
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time)
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5911,6 +5918,13 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     free(w_gnodes_ptr);
     free(sampled_ngens);
+    
+    switch (collapse)
+    {
+        case 1:
+            CollapseGTree(*gene_tree, 1, 1);
+            break;
+    }
     
     return(NO_ERROR);
 }
@@ -8819,7 +8833,7 @@ long int WriteDaughtersFile (FILE *file,l_tree *in_tree, name_c * names)
     else
     {
         WriteDaughtersNodesFile(file,in_tree->root,names);
-        //fseek(file, -1, SEEK_END);
+        fseek(file, -1, SEEK_END);
         fprintf(file,"\n");
         return(NO_ERROR);
     }
@@ -9028,8 +9042,6 @@ long int WriteMappingLG(g_tree *gene_tree, name_c *names, char *maplg_outname)
     FILE *maplg_outfile=NULL;
     g_node *wg_node=NULL;
     int i=0;
-    
-    CollapseGTree(gene_tree,1,1);
     
     if ((maplg_outfile=fopen(maplg_outname, "w"))==NULL)
     {
