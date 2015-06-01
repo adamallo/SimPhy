@@ -54,7 +54,6 @@ double FLOAT_PRECISION=0.001;
 //#define DBG
 
 #undef NO_VAR ///< If NO_VAR is defined, the random number generator allways leads the same numbers.
-#undef SORTHOLOGS
 
 #ifdef DBG
 #define NO_OUT
