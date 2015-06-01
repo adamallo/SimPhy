@@ -8,7 +8,7 @@ DBG=-DDEBUG -O0
 OBJDIR=./out
 SRCDIR=./src
 BINDIR=./bin
-EXECUTABLES=simphy simphy_dbg simphy_static
+EXECUTABLES=simphy simphy_dbg simphy_static simphy_sorthologs
 
 _OBJECTS= num_methods.o sampling.o sql_managing.o trees.o
 OBJECTS=$(patsubst %,$(OBJDIR)/%,$(_OBJECTS))
@@ -39,6 +39,12 @@ $(BINDIR)/simphy: $(SRCDIR)/main.c $(OBJECTS)
 	mkdir -p $(BINDIR)
 	$(CC) $(CFLAGS) $(LDFLAGS) $(PERF) $^ -o $@ $(C_LIBS) $(D_LIBS)
 	@echo "\nSimphy built"
+
+$(BINDIR)/simphy_sorthologs: $(SRCDIR)/main.c $(OBJECTS)
+	mkdir -p $(BINDIR)
+	@echo "\nThis target has been designed for internal usage and may not work properly in your system\n"
+	$(CC) -D SORTHOLOGS $(CFLAGS) $(LDFLAGS) $(PERF) $^ -o $@ $(C_LIBS) $(D_LIBS)
+	@echo "\nSimphy_sorthologs built"
 
 $(BINDIR)/simphy_dbg: $(SRCDIR)/main.c $(DBG_OBJECTS)
 	mkdir -p $(BINDIR)
@@ -87,14 +93,18 @@ $(OBJDIR)/trees_dbg.o: $(SRCDIR)/trees.c $(SRCDIR)/trees.h $(SRCDIR)/sampling.h 
 .PHONY: all
 .PHONY: debug
 .PHONY: static
+.PHONY: sorthologs
 .PHONY: simphy
 .PHONY: simphy_debug
 .PHONY: simphy_static
+.PHONY: simphy_sorthologs
 
 simphy: $(BINDIR)/simphy
 simphy_debug: $(BINDIR)/simphy_dbg
 simphy_dbg: simphy_debug
 simphy_static: $(BINDIR)/simphy_static
+simphy_sorthologs: $(BINDIR)/simphy_sorthologs
+sorthologs: simphy_sorthologs
 static: simphy_static
 debug: simphy_dbg
 all: $(EXECUTABLES)
@@ -102,5 +112,5 @@ all: $(EXECUTABLES)
 clean:
 	@echo "Cleaning object files directory\n"
 	rm -f $(OBJECTS) $(DBG_OBJECTS)
-	rmdir $(OBJDIR)
+	rm -rf $(OBJDIR)
 	rm -rf simphy_dbg.dSYM
