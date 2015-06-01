@@ -256,7 +256,7 @@ int main (int argc, char **argv)
 #ifdef SORTHOLOGS
     //Sorthologs
     int sorthologs_test=1;
-    char *sorthologs_outname=NULL, sorthologs_prefix[7]="g_tree", sorthologs_midfix[7]="l_tree", sorthologs_sufix[12]=".sorthologs";;
+    char *sorthologs_outname=NULL, sorthologs_prefix[7]="l_tree", sorthologs_sufix[12]=".sorthologs";;
     long double t_ddup=0,t_dgc=0, t_dtrfr=0;
     unsigned long long t_ndup=0, t_ngc=0, t_ntrfr=0;
     FILE *sorthologs_outfile=NULL;
@@ -558,11 +558,12 @@ int main (int argc, char **argv)
         /// Initialization of setting-dependent variables
         n_ldigits=(int)count_intdigits((long)get_sampling(nl_trees),0);
         n_gdigits=(int)count_intdigits((long)ng_trees,0);
-        
-#ifndef NO_OUT
+
 #ifdef SORTHOLOGS
+#ifndef NO_OUT
         //Sorthologs
-        sorthologs_outname=realloc(sorthologs_outname,(strlen(sorthologs_prefix)+n_gdigits+strlen(sorthologs_midfix)+n_ldigits+strlen(sorthologs_sufix)+1)*sizeof(char));
+        sorthologs_outname=realloc(sorthologs_outname,(strlen(sorthologs_prefix)+n_ldigits+strlen(sorthologs_sufix)+1)*sizeof(char));
+#endif
         t_ndup=0;
         t_ngc=0;
         t_ntrfr=0;
@@ -570,7 +571,6 @@ int main (int argc, char **argv)
         t_dgc=0;
         t_dtrfr=0;
         //
-#endif
 #endif
         // ******
         /// Initialization of file-I/O variables and s_tree output opening</dd></dl>
@@ -1088,6 +1088,46 @@ int main (int argc, char **argv)
                 st_locustsumextralin=0;
             }
             
+#ifdef SORTHOLOGS
+            //This function is not intended for general usage.
+            if (sorthologs_test==1)
+            {
+#ifndef NO_OUT
+                sprintf(sorthologs_outname,"%s%.*d%s",sorthologs_prefix,n_ldigits,curr_ltree,sorthologs_sufix);
+                
+                if ((sorthologs_outfile=fopen(sorthologs_outname, "w"))==NULL)
+                {
+                    perror("Error opening sorthologs file:");
+                    ErrorReporter(IO_ERROR,"Sorthologs file problem");
+                }
+                if (n_dups>0)
+                {
+                    for (i=0; i<n_dups; ++i)
+                    {
+                        fprintf(sorthologs_outfile,"DUP\t");
+                    }
+                }
+                if (n_gc>0)
+                {
+                    for (i=0; i<n_gc; ++i)
+                    {
+                        fprintf(sorthologs_outfile,"GC\t");
+                    }
+                    
+                }
+                if (n_trans>0)
+                {
+                    for (i=0; i<n_trans; ++i)
+                    {
+                        fprintf(sorthologs_outfile,"TRFR\t");
+                    }
+                    
+                }
+                fprintf(sorthologs_outfile,"\n");
+#endif
+            }
+#endif
+            
             // *******
             /// <dl><dt>Gene tree simulation</dt><dd>
             
@@ -1243,15 +1283,6 @@ int main (int argc, char **argv)
                 //This function is not intended for general usage.
                 if (sorthologs_test==1)
                 {
-#ifndef NO_OUT
-                    sprintf(sorthologs_outname,"%s%.*d%s%.*d%s",sorthologs_prefix,n_gdigits,curr_gtree,sorthologs_midfix,n_ldigits,curr_ltree,sorthologs_sufix);
-
-                    if ((sorthologs_outfile=fopen(sorthologs_outname, "w"))==NULL)
-                    {
-                        perror("Error opening sorthologs file:");
-                        ErrorReporter(IO_ERROR,"Sorthologs file problem");
-                    }
-#endif
                     if (n_dups>0)
                     {
                         ErrorReporter(MeasureMRCAEVdistance(gene_tree,DUP,&dupdistances, n_dups, GL),"Error measuring duplication distance");
@@ -1259,7 +1290,7 @@ int main (int argc, char **argv)
                         for (i=0; i<n_dups; ++i)
                         {
 #ifndef NO_OUT
-                            fprintf(sorthologs_outfile,"DUP\t%lf\n",*(dupdistances+i));
+                            fprintf(sorthologs_outfile,"%lf\t",*(dupdistances+i));
 #endif
                             if (*(dupdistances+i)!=-1)
                             {
@@ -1275,7 +1306,7 @@ int main (int argc, char **argv)
                         for (i=0; i<n_gc; ++i)
                         {
 #ifndef NO_OUT
-                            fprintf(sorthologs_outfile,"GC\t%lf\n",*(gcdistances+i));
+                            fprintf(sorthologs_outfile,"%lf\t",*(gcdistances+i));
 #endif
                             if (*(gcdistances+i)!=-1)
                             {
@@ -1292,7 +1323,7 @@ int main (int argc, char **argv)
                         for (i=0; i<n_trans; ++i)
                         {
 #ifndef NO_OUT
-                            fprintf(sorthologs_outfile,"TRFR\t%lf\n",*(trfrdistances+i));
+                            fprintf(sorthologs_outfile,"%lf\t",*(trfrdistances+i));
 #endif
                             if (*(trfrdistances+i)!=-1)
                             {
@@ -1303,7 +1334,7 @@ int main (int argc, char **argv)
 
                     }
 #ifndef NO_OUT
-                    fclose(sorthologs_outfile);
+                    fprintf(sorthologs_outfile,"\n");
 #endif
 
                 }
@@ -1343,6 +1374,9 @@ int main (int argc, char **argv)
             fclose(g_outfile);
             if (weirdness!=0)
                 fclose(weirdg_outfile);
+#ifdef SORTHOLOGS
+            fclose(sorthologs_outfile);
+#endif
             
 #endif
         }
