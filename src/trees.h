@@ -61,7 +61,6 @@ extern int NUM_BUFFER;
 extern char TEST_CHAR;
 extern int IO_BUFFER;
 extern double FLOAT_PRECISION;
-extern int INT_LABELS;
 
 /**
  * \enum ERRORS
@@ -694,7 +693,7 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention The resulting tree has to be collapsed or reindexed to be a proper tree (with proper indices and memory structure)
  *******************************************************************************/
-long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int out_time, int verbosity);
+long int NewBDSTree (s_tree ** out_tree,int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed, int out_time,int labels, int verbosity);
 
 /**
  *  Simulates a new locus tree under a birth death model (duplication-loss).

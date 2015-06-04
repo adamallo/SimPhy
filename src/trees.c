@@ -2929,7 +2929,7 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     return (tree);
 }
 
-long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed,int out_time ,int verbosity)
+long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed,int out_time ,int labels,int verbosity)
 {
     // ***** Declaration and initialization of variables ***** //
     
@@ -3665,7 +3665,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             break;
         default:
             printf("\n\t\t%d-node species tree correctly simulated: ",(*out_tree)->n_nodes);
-            WriteSTree((*out_tree),(name_c *)NULL,out_time,INT_LABELS);
+            WriteSTree((*out_tree),(name_c *)NULL,out_time,labels);
             printf("\n");
             break;
     }
