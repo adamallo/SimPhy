@@ -598,6 +598,17 @@ static void WriteSNodesGen (s_node * root, name_c * names);
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in
+ * stdout, with branchs given in number of generations and with labels in internal nodes.
+ *
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteSNodesGenIntlabel (s_node * root, name_c * names);
+
+/**
+ * Writes a given group of s_nodes with tree structure in Newick format in
  * stdout, with branchs given in time units.
  *
  * \param root
@@ -608,6 +619,19 @@ static void WriteSNodesGen (s_node * root, name_c * names);
  *  Generation time
  *******************************************************************************/
 static void WriteSNodesTime (s_node * root, name_c * names, double gen_time);
+
+/**
+ * Writes a given group of s_nodes with tree structure in Newick format in
+ * stdout, with branchs given in time units and with labels in internal nodes.
+ *
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \param gen_time
+ *  Generation time
+ *******************************************************************************/
+static void WriteSNodesTimeIntlabel (s_node * root, name_c * names, double gen_time);
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in a
@@ -622,6 +646,20 @@ static void WriteSNodesTime (s_node * root, name_c * names, double gen_time);
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
 static void WriteSNodesFileGen (FILE * file, s_node * root, name_c * names);
+
+/**
+ * Writes a given group of s_nodes with tree structure in Newick format in a
+ * file, with branch lengths given in number of generations and with labels in internal nodes.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteSNodesFileGenIntlabel (FILE * file, s_node * root, name_c * names);
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in a
@@ -640,6 +678,22 @@ static void WriteSNodesFileGen (FILE * file, s_node * root, name_c * names);
 static void WriteSNodesFileTime (FILE * file, s_node * root, name_c * names, double gen_time);
 
 /**
+ * Writes a given group of s_nodes with tree structure in Newick format in a
+ * file and with labels in internal nodes.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  s_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \param gen_time
+ *  Generation time
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteSNodesFileTimeIntlabel (FILE * file, s_node * root, name_c * names, double gen_time);
+
+/**
  * Writes a given group of l_nodes with tree structure in Newick format in
  * stdout, with branch length given in number of generations.
  *
@@ -649,6 +703,17 @@ static void WriteSNodesFileTime (FILE * file, s_node * root, name_c * names, dou
  *  Names (name_c *).
  *******************************************************************************/
 static void WriteLNodesGen (l_node * root, name_c * names);
+
+/**
+ * Writes a given group of l_nodes with tree structure in Newick format in
+ * stdout, with branch length given in number of generations and labels in internal nodes.
+ *
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteLNodesGenIntlabel (l_node * root, name_c * names);
 
 /**
  * Writes a given group of l_nodes with tree structure in Newick format in
@@ -664,6 +729,19 @@ static void WriteLNodesGen (l_node * root, name_c * names);
 static void WriteLNodesTime (l_node * root, name_c * names, double gen_time);
 
 /**
+ * Writes a given group of l_nodes with tree structure in Newick format in
+ * stdout, with branch lengths given in time.
+ *
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \param gen_time
+ *  Generation time
+ *******************************************************************************/
+static void WriteLNodesTimeIntlabel (l_node * root, name_c * names, double gen_time);
+
+/**
  * Writes a given group of l_nodes with tree structure in Newick format in a
  * file, with branch lengths given in number of generations.
  *
@@ -676,6 +754,20 @@ static void WriteLNodesTime (l_node * root, name_c * names, double gen_time);
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
 static void WriteLNodesFileGen (FILE * file, l_node * root, name_c * names);
+
+/**
+ * Writes a given group of l_nodes with tree structure in Newick format in a
+ * file, with branch lengths given in number of generations and labels in internal nodes.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteLNodesFileGenIntlabel (FILE * file, l_node * root, name_c * names);
 
 /**
  * Writes a given group of l_nodes with tree structure in Newick format in a
@@ -694,6 +786,36 @@ static void WriteLNodesFileGen (FILE * file, l_node * root, name_c * names);
 static void WriteLNodesFileTime (FILE * file, l_node * root, name_c * names, double gen_time);
 
 /**
+ * Writes a given group of l_nodes with tree structure in Newick format in a
+ * file, with branch lengths given in time units and internal nodes with labels
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  l_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \param gen_time
+ *  Generation time.
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteLNodesFileTimeIntlabel (FILE * file, l_node * root, name_c * names, double gen_time);
+
+/**
+ * Writes a comma-separated list of daughter lineages in a
+ * file.
+ *
+ * \param file
+ *  Output opened file.
+ * \param p
+ *  l_node to treat (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names);
+
+/**
  * Writes a given group of g_nodes with tree structure in Newick format in stdout.
  *
  * \param root
@@ -702,6 +824,16 @@ static void WriteLNodesFileTime (FILE * file, l_node * root, name_c * names, dou
  *  Names (name_c *).
  *******************************************************************************/
 static void WriteGNodes (g_node * root, name_c * names);
+
+/**
+ * Writes a given group of g_nodes with tree structure in Newick format in stdout and internal nodes with labels
+ *
+ * \param root
+ *  g_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteGNodesIntlabel (g_node * root, name_c * names);
 
 /**
  * Writes a given group of g_nodes with tree structure in Newick format in a
@@ -718,6 +850,19 @@ static void WriteGNodesStr (char * str, g_node * root, name_c * names);
 
 /**
  * Writes a given group of g_nodes with tree structure in Newick format in a
+ * string and internal nodes with labels.
+ *
+ * \param str
+ *  String where write the Newick tree.
+ * \param root
+ *  g_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ *******************************************************************************/
+static void WriteGNodesStrIntlabel (char * str, g_node * root, name_c * names);
+
+/**
+ * Writes a given group of g_nodes with tree structure in Newick format in a
  * file.
  *
  * \param file
@@ -729,6 +874,20 @@ static void WriteGNodesStr (char * str, g_node * root, name_c * names);
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
 static void WriteGNodesFile (FILE * file, g_node * root, name_c * names);
+
+/**
+ * Writes a given group of g_nodes with tree structure in Newick format in a
+ * file and internal nodes with labels.
+ *
+ * \param file
+ *  Output opened file.
+ * \param root
+ *  g_node to print (root in the first call).
+ * \param names
+ *  Names (name_c *).
+ * \note The FILE * should be previously opened and checked to avoid errors.
+ *******************************************************************************/
+static void WriteGNodesFileIntlabel (FILE * file, g_node * root, name_c * names);
 ///@}
 
 /** \name Non-recursive functions **/
@@ -2770,7 +2929,7 @@ s_tree * NewSTree (int n_nodes, int n_leaves, int n_gleaves, int max_children, d
     return (tree);
 }
 
-long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed,int out_time ,int verbosity)
+long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate, double d_rate, double gen_time, int Ne, double mu, int ind_per_sp, double outgroup, int complete, int mrca_time, gsl_rng *seed,int out_time ,int labels,int verbosity)
 {
     // ***** Declaration and initialization of variables ***** //
     
@@ -3506,7 +3665,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             break;
         default:
             printf("\n\t\t%d-node species tree correctly simulated: ",(*out_tree)->n_nodes);
-            WriteSTree((*out_tree),(name_c *)NULL,out_time);
+            WriteSTree((*out_tree),(name_c *)NULL,out_time,labels);
             printf("\n");
             break;
     }
@@ -5047,7 +5206,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
 }
 
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time)
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5351,11 +5510,18 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     if (verbosity>4)
         free(iobuffer);
-    
+
+    switch (collapse)
+    {
+        case 1:
+            CollapseGTree(*gene_tree, 1, 1);
+            break;
+    }
+
     return(NO_ERROR);
 }
 
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time)
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5752,6 +5918,13 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     
     free(w_gnodes_ptr);
     free(sampled_ngens);
+    
+    switch (collapse)
+    {
+        case 1:
+            CollapseGTree(*gene_tree, 1, 1);
+            break;
+    }
     
     return(NO_ERROR);
 }
@@ -8474,7 +8647,7 @@ long int CheckUltrametricityLTree(l_tree *tree)
 
 // *** Tree I/O *** //
 
-long int WriteSTree (s_tree *in_tree, name_c * names, int time)
+long int WriteSTree (s_tree *in_tree, name_c * names, int time, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8489,18 +8662,35 @@ long int WriteSTree (s_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteSNodesTime(in_tree->root,names,in_tree->gen_time);
+        switch (int_labels)
+        {
+            default:
+                WriteSNodesTime(in_tree->root,names,in_tree->gen_time);
+                break;
+            case 1:
+                WriteSNodesTimeIntlabel(in_tree->root,names,in_tree->gen_time);
+                break;
+        }
+        
         return(NO_ERROR);
     }
     else
     {
-        WriteSNodesGen(in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteSNodesGen(in_tree->root,names);
+                break;
+            case 1:
+                WriteSNodesGenIntlabel(in_tree->root,names);
+                break;
+        }
         return(NO_ERROR);
     }
     
 }
 
-long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time)
+long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8515,18 +8705,36 @@ long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteSNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
+        switch (int_labels)
+        {
+            default:
+                WriteSNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
+                break;
+            case 1:
+                WriteSNodesFileTimeIntlabel(file,in_tree->root,names,in_tree->gen_time);
+                break;
+        }
+        
         return(NO_ERROR);
     }
     else
     {
-        WriteSNodesFileGen(file,in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteSNodesFileGen(file,in_tree->root,names);
+                break;
+            case 1:
+                WriteSNodesFileGenIntlabel(file,in_tree->root,names);
+                break;
+        }
+
         return(NO_ERROR);
     }
     
 }
 
-long int WriteLTree (l_tree *in_tree, name_c * names, int time)
+long int WriteLTree (l_tree *in_tree, name_c * names, int time, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8541,18 +8749,36 @@ long int WriteLTree (l_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteLNodesTime(in_tree->root,names,in_tree->gen_time);
+        switch (int_labels)
+        {
+            default:
+                WriteLNodesTime(in_tree->root,names,in_tree->gen_time);
+                break;
+            case 1:
+                WriteLNodesTimeIntlabel(in_tree->root,names,in_tree->gen_time);
+                break;
+        }
+
         return(NO_ERROR);
     }
     else
     {
-        WriteLNodesGen(in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteLNodesGen(in_tree->root,names);
+                break;
+            case 1:
+                WriteLNodesGenIntlabel(in_tree->root,names);
+                break;
+        }
+
         return(NO_ERROR);
     }
     
 }
 
-long int WriteLTreeFile (FILE *file,l_tree *in_tree, name_c * names, int time)
+long int WriteLTreeFile (FILE *file,l_tree *in_tree, name_c * names, int time, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8567,18 +8793,54 @@ long int WriteLTreeFile (FILE *file,l_tree *in_tree, name_c * names, int time)
         {
             return(UNEXPECTED_VALUE);
         }
-        WriteLNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
+        switch (int_labels)
+        {
+            default:
+                WriteLNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
+                break;
+            case 1:
+                WriteLNodesFileTimeIntlabel(file,in_tree->root,names,in_tree->gen_time);
+                break;
+        }
         return(NO_ERROR);
     }
     else
     {
-        WriteLNodesFileGen(file,in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteLNodesFileGen(file,in_tree->root,names);
+                break;
+            case 1:
+                WriteLNodesFileGenIntlabel(file,in_tree->root,names);
+                break;
+        }
+
         return(NO_ERROR);
     }
     
 }
 
-long int WriteGTree (g_tree *in_tree, name_c * names)
+long int WriteDaughtersFile (FILE *file,l_tree *in_tree, name_c * names)
+{
+    // **
+    /// <dl><dt> Function structure </dt><dd>
+    
+    // *
+    /// Writes the daughters by \ref WriteDaughtersNodeFile (recursive)</dd></dl>
+    if (in_tree->root==NULL)
+        return (MEM_ERROR);
+    else
+    {
+        WriteDaughtersNodesFile(file,in_tree->root,names);
+        fseek(file, -1, SEEK_END);
+        fprintf(file,"\n");
+        return(NO_ERROR);
+    }
+    
+}
+
+long int WriteGTree (g_tree *in_tree, name_c * names, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8589,13 +8851,22 @@ long int WriteGTree (g_tree *in_tree, name_c * names)
         return (MEM_ERROR);
     else
     {
-        WriteGNodes(in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteGNodes(in_tree->root,names);
+                break;
+            case 1:
+                WriteGNodesIntlabel(in_tree->root,names);
+                break;
+        }
+        
         return(NO_ERROR);
     }
     
 }
 
-long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names)
+long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8606,12 +8877,20 @@ long int WriteGTreeStr (char * string, g_tree *in_tree, name_c * names)
         return (MEM_ERROR);
     else
     {
-        WriteGNodesStr(string,in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteGNodesStr(string,in_tree->root,names);
+                break;
+            case 1:
+                WriteGNodesStrIntlabel(string,in_tree->root,names);
+                break;
+        }
         return(NO_ERROR);
     }
 }
 
-long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names)
+long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names, int int_labels)
 {
     // **
     /// <dl><dt> Function structure </dt><dd>
@@ -8622,7 +8901,16 @@ long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names)
         return (MEM_ERROR);
     else
     {
-        WriteGNodesFile(file,in_tree->root,names);
+        switch (int_labels)
+        {
+            default:
+                WriteGNodesFile(file,in_tree->root,names);
+                break;
+            case 1:
+                WriteGNodesFileIntlabel(file,in_tree->root,names);
+                break;
+        }
+        
         return(NO_ERROR);
     }
     
@@ -8754,8 +9042,6 @@ long int WriteMappingLG(g_tree *gene_tree, name_c *names, char *maplg_outname)
     FILE *maplg_outfile=NULL;
     g_node *wg_node=NULL;
     int i=0;
-    
-    CollapseGTree(gene_tree,1,1);
     
     if ((maplg_outfile=fopen(maplg_outname, "w"))==NULL)
     {
@@ -10501,6 +10787,53 @@ void WriteSNodesGen (s_node * p, name_c * names)
 	
 }
 
+void WriteSNodesGenIntlabel (s_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                printf("%d:%.8lf",p->sp_index,p->gen_length);
+            else
+                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+        }
+        else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+            printf("(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesGenIntlabel(*(p->children+i),names);
+                printf(",");
+            }
+            WriteSNodesGenIntlabel(*(p->children+i), names);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+            if (p->anc_node !=NULL)
+                printf(")%d:%.8lf",p->index,p->gen_length);
+            else
+                printf(");");
+        }
+    }
+    
+}
+
 void WriteSNodesTime (s_node * p, name_c * names, double gen_time)
 {
     int i=0;
@@ -10546,6 +10879,53 @@ void WriteSNodesTime (s_node * p, name_c * names, double gen_time)
         }
     }
 	
+}
+
+void WriteSNodesTimeIntlabel (s_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                printf("%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
+            else
+                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+        }
+        else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+            printf("(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesTimeIntlabel(*(p->children+i),names,gen_time);
+                printf(",");
+            }
+            WriteSNodesTimeIntlabel(*(p->children+i), names,gen_time);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+            if (p->anc_node !=NULL)
+                printf(")%d:%.8lf",p->index,p->gen_length*p->gtime_mult*gen_time);
+            else
+                printf(");");
+        }
+    }
+    
 }
 
 //void WriteSNodesNexus (s_node * p, name_c * names, double gen_time)
@@ -10642,7 +11022,101 @@ void WriteSNodesFileGen(FILE * file,s_node * p, name_c * names)
 	
 }
 
+void WriteSNodesFileGenIntlabel(FILE * file,s_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length);
+            else
+                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+        }
+        else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+            fprintf(file,"(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesFileGenIntlabel(file,*(p->children+i),names);
+                fprintf(file,",");
+            }
+            WriteSNodesFileGenIntlabel(file,*(p->children+i), names);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+            if (p->anc_node !=NULL)
+                fprintf(file,")%d:%.8lf",p->index,p->gen_length);
+            else
+                fprintf(file,");\n");
+        }
+    }
+    
+}
+
 void WriteSNodesFileTime (FILE * file,s_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        if (p->n_child==0)
+        {
+            // **
+            /// <dl><dt>If the node is a leaf:</dt><dd>
+            // *
+            /// Prints the node name and its branch length.</dd></dl>
+            if (names==NULL)
+                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
+            else
+                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+        }
+        else
+        {
+            // **
+            /// <dl><dt>Else (internal node):</dt><dd>
+            // *
+            /// Prints "(" and starts the post-order recursion (child loop)
+            fprintf(file,"(");
+            for (i=0;i<p->n_child-1;++i)
+            {
+                // *
+                /// Calls itself using each different child. After each call (except last child) prints ","
+                WriteSNodesFileTime(file,*(p->children+i),names,gen_time);
+                fprintf(file,",");
+            }
+            WriteSNodesFileTime(file,*(p->children+i), names,gen_time);
+            
+            // **
+            /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+            if (p->anc_node !=NULL)
+                fprintf(file,"):%.8lf",p->gen_length*p->gtime_mult*gen_time);
+            else
+                fprintf(file,");\n");
+        }
+    }
+    
+}
+
+void WriteSNodesFileTimeIntlabel (FILE * file,s_node * p, name_c * names, double gen_time)
 {
     int i=0;
     
@@ -10673,15 +11147,15 @@ void WriteSNodesFileTime (FILE * file,s_node * p, name_c * names, double gen_tim
             {
                 // *
                 /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteSNodesFileTime(file,*(p->children+i),names,gen_time);
+                WriteSNodesFileTimeIntlabel(file,*(p->children+i),names,gen_time);
                 fprintf(file,",");
             }
-			WriteSNodesFileTime(file,*(p->children+i), names,gen_time);
+			WriteSNodesFileTimeIntlabel(file,*(p->children+i), names,gen_time);
             
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
 			if (p->anc_node !=NULL)
-				fprintf(file,"):%.8lf",p->gen_length*p->gtime_mult*gen_time);
+				fprintf(file,")%d:%.8lf",p->index,p->gen_length*p->gtime_mult*gen_time);
             else
                 fprintf(file,");\n");
         }
@@ -10787,6 +11261,104 @@ void WriteLNodesGen (l_node * p, name_c * names)
     }
 }
 
+void WriteLNodesGenIntlabel (l_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->kind_node)
+            {
+                    
+                default:
+                    if (names==NULL)
+                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
+                    else
+                        printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    break;
+                    
+                case LOSS:
+                    if (p->conts==NULL)
+                    {
+                        printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if(p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts==NULL)
+                    {
+                        printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if(p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts==NULL)
+                    {
+                        printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+                    
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesGenIntlabel(*(p->children+i),names);
+                    printf(",");
+                }
+                WriteLNodesGenIntlabel(*(p->children+i), names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf(")%d:%.8lf",p->index,p->gen_length);
+                else
+                    printf(");");
+                break;
+        }
+    }
+}
+
 void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
 {
     int i=0;
@@ -10866,6 +11438,92 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
                     printf("):%.8lf",p->gen_length*gen_time*p->gtime_mult);
+                else
+                    printf(");");
+                break;
+        }
+    }
+}
+
+void WriteLNodesTimeIntlabel (l_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->kind_node)
+            {
+                    
+                default:
+                    if (names==NULL)
+                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    else
+                        printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    break;
+                    
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                    
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesTimeIntlabel(*(p->children+i),names,gen_time);
+                    printf(",");
+                }
+                WriteLNodesTimeIntlabel(*(p->children+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf(")%d:%.8lf",p->index,p->gen_length*gen_time*p->gtime_mult);
                 else
                     printf(");");
                 break;
@@ -10969,6 +11627,102 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
     }
 }
 
+void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                
+                switch (p->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
+                    else
+                        fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    break;
+                case LOSS:
+                    if (p->conts==NULL)
+                    {
+                        fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts==NULL)
+                    {
+                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts==NULL)
+                    {
+                        fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                    }
+                    else if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                    }
+                    break;
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesFileGenIntlabel(file,*(p->children+i),names);
+                    fprintf(file,",");
+                }
+                WriteLNodesFileGenIntlabel(file,*(p->children+i), names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,")%d:%.8lf",p->index,p->gen_length);
+                else
+                    fprintf(file,");\n");
+                break;
+        }
+    }
+}
+
 void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_time)
 {
     int i=0;
@@ -11053,6 +11807,145 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
     }
 }
 
+void WriteLNodesFileTimeIntlabel (FILE * file,l_node * p, name_c * names, double gen_time)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                
+                switch (p->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    else
+                        fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    break;
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    }
+                    break;
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteLNodesFileTimeIntlabel(file,*(p->children+i),names,gen_time);
+                    fprintf(file,",");
+                }
+                WriteLNodesFileTimeIntlabel(file,*(p->children+i), names,gen_time);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,")%d:%.8lf",p->index,p->gen_length*gen_time*p->gtime_mult);
+                else
+                    fprintf(file,");\n");
+                break;
+        }
+    }
+}
+
+void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names)
+{
+    int i=0;
+    l_node * daughter=NULL;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+ 
+            default:
+                // **
+                /// <dl><dt>Internal node</dt><dd>
+                // *
+                /// Post-order recursion (child loop)
+                for (i=0;i<p->n_child;++i)
+                {
+                    // *
+                    /// Calls itself using each different child.
+                    WriteDaughtersNodesFile(file,*(p->children+i),names);
+                }
+                // **
+                /// Prints the identity of the daughter node</dd></dl></dd></dl>
+                switch (p->kind_node)
+                {
+                    case DUP:
+                    case TRFR:
+                    case GC:
+                        daughter=*(p->children+1);
+                        if (daughter->n_child!=0)
+                        {
+                            fprintf(file,"%d,",daughter->index);
+                        }
+                        else if (names!=NULL)
+                        {
+                            fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
+                        }
+                        else
+                        {
+                            fprintf(file,"\'%d_%d\',",daughter->conts->index,daughter->paralog);
+                        }
+                        break;
+                }
+                break;
+            
+            case 0:
+                break;
+               
+        }
+    }
+}
+
 void WriteGNodes (g_node * p, name_c * names)
 {
     int i=0;
@@ -11129,6 +12022,93 @@ void WriteGNodes (g_node * p, name_c * names)
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
                     printf("):%.8lf",p->bl);
+                
+                else
+                {
+                    //printf("):%.8lf);",p->gen_length);//To print the length of the p
+                    printf(");");
+                }
+                break;
+        }
+    }
+}
+
+void WriteGNodesIntlabel (g_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        printf("%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+                    
+                    else
+                        printf("%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                    break;
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        printf("Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        printf("Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        printf("Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                printf("(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteGNodesIntlabel(*(p->children+i),names);
+                    printf(",");
+                }
+                WriteGNodesIntlabel(*(p->children+i),names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    printf(")%d:%.8lf",p->index,p->bl);
                 
                 else
                 {
@@ -11232,6 +12212,98 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
     }
 }
 
+void WriteGNodesStrIntlabel (char * str, g_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        sprintf(str,"%s%d_%d_%d:%.8lf",str,p->sp_index,p->paralog,p->replica,p->bl);
+                    
+                    else
+                        sprintf(str,"%s%s_%d_%d:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                    break;
+                    
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        sprintf(str,"%sLost-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        sprintf(str,"%sRtransf-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        sprintf(str,"%sRgc-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                    
+                    
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                sprintf(str,"%s(",str);
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    // *
+                    /// Calls itself using each different child. After each call (except last child) prints ","
+                    WriteGNodesStrIntlabel(str,*(p->children+i),names);
+                    printf(",");
+                    
+                }
+                WriteGNodesStrIntlabel(str,*(p->children+i),names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    sprintf(str,"%s)%d:%.8lf",str,p->index,p->bl);
+                
+                else
+                {
+                    //                sprintf(str,"(%s):%.8lf);",str, p->gen_length);//To print the length of the p
+                    sprintf(str,"%s;",str);
+                }
+                break;
+        }
+    }
+}
+
 void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
 {
     int i=0;
@@ -11307,6 +12379,92 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                 /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
                 if (p->anc_node !=NULL)
                     fprintf(file,"):%.8lf",p->bl);
+                
+                else
+                {
+                    //                fprintf(file,"):%.8lf);\n",p->gen_length); //To print the length of the p
+                    fprintf(file,");\n");
+                }
+                break;
+        }
+    }
+}
+
+void WriteGNodesFileIntlabel (FILE * file, g_node * p, name_c * names)
+{
+    int i=0;
+    
+    // ***
+    /// <dl><dt> Function structure </dt><dd>
+    
+    if (p != NULL)
+    {
+        switch (p->n_child)
+        {
+            case 0:
+                // **
+                /// <dl><dt>If the node is a leaf:</dt><dd>
+                // *
+                /// Prints the node name and its branch length.</dd></dl>
+                switch (p->contl->kind_node)
+            {
+                default:
+                    if (names==NULL)
+                        fprintf(file,"%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
+                    
+                    else
+                        fprintf(file,"%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
+                    break;
+                case LOSS:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        fprintf(file,"Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RTRFR:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+                case RGC:
+                    if (p->conts->n_child==0 && names!=NULL)
+                    {
+                        fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                    }
+                    else
+                    {
+                        fprintf(file,"Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                    }
+                    break;
+            }
+                break;
+                
+            default:
+                // **
+                /// <dl><dt>Else (internal node):</dt><dd>
+                // *
+                /// Prints "(" and starts the post-order recursion (child loop)
+                fprintf(file,"(");
+                for (i=0;i<p->n_child-1;++i)
+                {
+                    WriteGNodesFileIntlabel(file, *(p->children+i), names);
+                    fprintf(file,",");
+                }
+                WriteGNodesFileIntlabel(file, *(p->children+i), names);
+                
+                // **
+                /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
+                if (p->anc_node !=NULL)
+                    fprintf(file,")%d:%.8lf",p->index,p->bl);
                 
                 else
                 {
