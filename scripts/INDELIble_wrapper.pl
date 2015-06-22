@@ -345,7 +345,7 @@ foreach my  $dir (@dirs)
 		if ($unlinked_models{$part_model[$partition_id]})
 		{
 			$temp_model=$unlinked_models{$part_model[$partition_id]};
-			$temp_model=~s/(\[UNLINKED-MODEL\])\s*(.*?)\s*\n/\[MODEL\] $2_$tree_id\n/ or die "Error parsing the configuration file: Malformed [UNLINKED-MODEL] section";
+			$temp_model=~s/(\[SIMPHY-UNLINKED-MODEL\])\s*(.*?)\s*\n/\[MODEL\] $2_$tree_id\n/ or die "Error parsing the configuration file: Malformed [UNLINKED-MODEL] section";
 			$model_id="$2_$tree_id";
 			$temp_model=~s/\$\((.*?)\)/parse_sampling($1)/ge;
 			$out_partitions.=sprintf("\[PARTITIONS\] %s_%.*d \[T%.*d %s %d\]\n",$part_names[$partition_id],$n_digits,$tree_id,$n_digits,$tree_id,$model_id,int($temp_length));	
