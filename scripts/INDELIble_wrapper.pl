@@ -1,7 +1,8 @@
 #!/opt/local/bin/perl -w
 
-# Quick and dirty perl script to simulate sequence evolution using INDELible along gene trees simulated by SimPhy.
-# It doesn't support input indelible [BRANCHES] [TREE] 
+# Perl script to simulate sequence evolution using INDELible along gene trees simulated by SimPhy.
+# It doesn't support input indelible [BRANCHES],[TREE],[EVOLVE] and [PARTITIONS] sections but adds
+# its own [SIMPHY-UNLINKED-MODEL] [SIMPHY-PARTITIONS] and [SIMPHY-EVOLVE] sections.
 # ?? [EVOLVE]
 # Diego Mallo 2015
 

@@ -42,6 +42,8 @@
 		F189260E1A67ED6D00B82D31 /* SimPhy_controlfile.conf */ = {isa = PBXFileReference; lastKnownFileType = text; name = SimPhy_controlfile.conf; path = configuration_files/SimPhy_controlfile.conf; sourceTree = SOURCE_ROOT; };
 		F189260F1A67ED8F00B82D31 /* INDELIble_wrapper.pl */ = {isa = PBXFileReference; lastKnownFileType = text.script.perl; path = INDELIble_wrapper.pl; sourceTree = "<group>"; };
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
+		F1DA8A6D1B409609005A14AF /* database-diagram.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "database-diagram.png"; sourceTree = "<group>"; };
+		F1DA8A6E1B409609005A14AF /* figx2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = figx2.png; sourceTree = "<group>"; };
 		F1DB59371AFBF2650059A7B2 /* INDELible_control.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = INDELible_control.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -75,9 +77,9 @@
 		F1C36ED7180C620700E35F5D = {
 			isa = PBXGroup;
 			children = (
+				F1DA8A6B1B409609005A14AF /* manual */,
 				F1E3AE311A65888A0038E55E /* configuration_files */,
 				F1E3AE2E1A6587DB0038E55E /* scripts */,
-				F1E3AE301A6587DB0038E55E /* manual */,
 				F14C06721A5EA7B800BF1570 /* Makefile */,
 				F14CADC3183C044C00A8F7AF /* src */,
 				F1C36EE1180C620700E35F5D /* Products */,
@@ -92,19 +94,29 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		F1DA8A6B1B409609005A14AF /* manual */ = {
+			isa = PBXGroup;
+			children = (
+				F1DA8A6C1B409609005A14AF /* images */,
+			);
+			path = manual;
+			sourceTree = "<group>";
+		};
+		F1DA8A6C1B409609005A14AF /* images */ = {
+			isa = PBXGroup;
+			children = (
+				F1DA8A6D1B409609005A14AF /* database-diagram.png */,
+				F1DA8A6E1B409609005A14AF /* figx2.png */,
+			);
+			path = images;
+			sourceTree = "<group>";
+		};
 		F1E3AE2E1A6587DB0038E55E /* scripts */ = {
 			isa = PBXGroup;
 			children = (
 				F189260F1A67ED8F00B82D31 /* INDELIble_wrapper.pl */,
 			);
 			path = scripts;
-			sourceTree = SOURCE_ROOT;
-		};
-		F1E3AE301A6587DB0038E55E /* manual */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = manual;
 			sourceTree = SOURCE_ROOT;
 		};
 		F1E3AE311A65888A0038E55E /* configuration_files */ = {
