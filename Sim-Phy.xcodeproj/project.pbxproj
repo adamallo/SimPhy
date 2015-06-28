@@ -44,6 +44,7 @@
 		F1C36EE0180C620700E35F5D /* Sim-Phy */ = {isa = PBXFileReference; explicitFileType = "compiled.mach-o.executable"; includeInIndex = 0; path = "Sim-Phy"; sourceTree = BUILT_PRODUCTS_DIR; };
 		F1DA8A6D1B409609005A14AF /* database-diagram.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "database-diagram.png"; sourceTree = "<group>"; };
 		F1DA8A6E1B409609005A14AF /* figx2.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = figx2.png; sourceTree = "<group>"; };
+		F1DA8A6F1B409A3B005A14AF /* figx_highlighted.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = figx_highlighted.png; sourceTree = "<group>"; };
 		F1DB59371AFBF2650059A7B2 /* INDELible_control.txt */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = INDELible_control.txt; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -105,6 +106,7 @@
 		F1DA8A6C1B409609005A14AF /* images */ = {
 			isa = PBXGroup;
 			children = (
+				F1DA8A6F1B409A3B005A14AF /* figx_highlighted.png */,
 				F1DA8A6D1B409609005A14AF /* database-diagram.png */,
 				F1DA8A6E1B409609005A14AF /* figx2.png */,
 			);

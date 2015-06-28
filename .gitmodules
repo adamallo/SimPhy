@@ -1,0 +1,3 @@
+[submodule "SimPhy.wiki"]
+	path = SimPhy.wiki
+	url = git://github.com/adamallo/SimPhy.wiki
