@@ -74,7 +74,11 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_complex.conf -rg 10 -on 1 -ol 1"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-h"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -cp f:10000 -cs 22"
