@@ -1,5 +1,5 @@
 # [SimPhy: A comprehensive simulator of gene family evolution](https://github.com/adamallo/SimPhy)
-Diego Mallo, Leonardo de Oliveira Martins, David Posada (2015)
+Diego Mallo, Leonardo de Oliveira Martins and  David Posada (2015)
 
 Installation
 ------------
