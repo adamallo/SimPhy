@@ -61,6 +61,10 @@
       </BuildableProductRunnable>
       <CommandLineArguments>
          <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf"
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/itrees.txt"
             isEnabled = "NO">
          </CommandLineArgument>
@@ -78,7 +82,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-h"
-            isEnabled = "NO">
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -cp f:10000 -cs 22"

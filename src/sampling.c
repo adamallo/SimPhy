@@ -136,7 +136,7 @@ long int sample_distr(gsl_rng *r,int n_arg,...)
                 }
                 break;
             case UNIFORM:
-                set_propsampling(variable,gsl_ran_flat(r,GetCastedDoubleUSU(variable->params[0], variable->params_type[0]),GetCastedDoubleUSU(variable->params[1], variable->params_type[1])));
+                set_propsampling(variable,gsl_ran_flat(r,GetCastedDoubleUSU(variable->params[0], variable->params_type[0]),variable->vtype==UI?GetCastedDoubleUSU(variable->params[1], variable->params_type[1])+1:GetCastedDoubleUSU(variable->params[1], variable->params_type[1])));
                 break;
             case NORMAL:
                 set_propsampling(variable,(gsl_ran_gaussian_ziggurat(r, GetCastedDoubleUSU(variable->params[1], variable->params_type[1]))+GetCastedDoubleUSU(variable->params[0], variable->params_type[0])));
@@ -170,6 +170,7 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
 {
     char * buffer=calloc(strlen(p)+1, sizeof(char)),*last_parsed=NULL;
     int in_parsing=0,is_pointer=0,b_index=0,p_index=0,i=0,j=0,p_found=0,n_p=0;
+    long int temp_int=0;
     
     switch (toupper(*p))
     {
@@ -257,11 +258,20 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
                         switch (is_pointer)
                         {
                             default: //value
-                                sample->params[p_index].d=strtod(buffer,&last_parsed);
-                                if(!(*last_parsed=='\0' || *last_parsed==',' || *last_parsed=='/'|| *last_parsed=='\n'))
-                                    return SETTINGS_ERROR;
+                                temp_int=strtol(buffer, &last_parsed,10);
+                                if ((temp_int>=INT_MIN && temp_int<=INT_MAX) && (*last_parsed=='\0' || *last_parsed==',' || *last_parsed=='/'|| *last_parsed=='\n'))
+                                {
+                                    sample->params[p_index].i=(int)temp_int;
+                                    sample->params_type[p_index]=UI;
+                                }
                                 else
-                                    sample->params_type[p_index]=D;
+                                {
+                                    sample->params[p_index].d=strtod(buffer,&last_parsed);
+                                    if(!(*last_parsed=='\0' || *last_parsed==',' || *last_parsed=='/'|| *last_parsed=='\n'))
+                                        return SETTINGS_ERROR;
+                                    else
+                                        sample->params_type[p_index]=D;
+                                }
                                 ++p_index;
                                 break;
                             case 1: //pointer
@@ -379,6 +389,16 @@ void Print_Sampling(sampling_unit *sample, char * buffer, const sampling_table s
         default:
             sprintf(buffer+strlen(buffer)-1, ")");
             break;
+        case UNIFORM:
+            switch (sample->vtype)
+            {
+                case UI:
+                    sprintf(buffer+strlen(buffer)-1, "]");
+                    break;
+                default:
+                    sprintf(buffer+strlen(buffer)-1, ")");
+                    break;
+            }
         case FIXED:
             break;
     }
