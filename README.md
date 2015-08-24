@@ -1,3 +1,4 @@
+[![Build Status](https://travis-ci.org/adamallo/SimPhy.svg?branch=master)](https://travis-ci.org/adamallo/SimPhy)
 # [SimPhy: A comprehensive simulator of gene family evolution](https://github.com/adamallo/SimPhy)
 Diego Mallo, Leonardo de Oliveira Martins and  David Posada (2015)
 
