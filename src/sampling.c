@@ -311,9 +311,14 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
         return MAX_IT;
     else if (p_index != n_p || (*p=='/' && *(p+1)!='/'))
         return SETTINGS_ERROR;
-    if (sample->distribution_code==FIXED && sample->params_type[0]!=SU)
-        set_propsampling(sample, sample->params[0].d);
-
+    if (sample->distribution_code==FIXED)
+    {
+        if(sample->params_type[0]==UI)
+            set_propsampling(sample, sample->params[0].i);
+        else if (sample->params_type[0]==D)
+            set_propsampling(sample, sample->params[0].d);
+    }
+    
     free(buffer);
     
     return NO_ERROR;

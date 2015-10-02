@@ -2239,7 +2239,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
     
     // ****
     /// <dl><dt>No fixed trees</dt><dd>
-    if ((*newick_stree==NULL && n_istrees==0) && (*newick_ltree==NULL && *n_iltrees==0))
+    if ((*newick_stree==NULL && *n_istrees==0) && (*newick_ltree==NULL && *n_iltrees==0))
     {
         // ***
         /// Species tree simulation parameters test</dd></dl>
