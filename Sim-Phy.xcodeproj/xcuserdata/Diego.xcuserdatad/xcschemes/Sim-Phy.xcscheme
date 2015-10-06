@@ -69,7 +69,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sb f:0.00001 -sp f:10000"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/itrees.txt"
@@ -92,7 +92,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -cp f:10000 -cs 22"
+            argument = "-o manual_test -rs 100 -sb f:0.00001 -sd f:0.00001 -st f:100000 -sp f:10000 -cs 22"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
