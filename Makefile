@@ -23,6 +23,7 @@ D_LIBS= -lgsl -lgslcblas -lsqlite3 -lmpfr
 
 #Static libraries for MAC
 _S_LIBS= libgsl.a libgslcblas.a libsqlite3.a libgmp.a libmpfr.a
+LD_LIBRARY_PATH=/opt/local/lib
 MS_LIBS=$(patsubst %,$(LD_LIBRARY_PATH)/%,$(_S_LIBS)) #BSD's LD needs the full path
 
 #Static libraries for Linux

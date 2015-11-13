@@ -72,6 +72,10 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/newsim/SimPhy_configV1.conf"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/itrees.txt"
             isEnabled = "NO">
          </CommandLineArgument>

@@ -56,7 +56,7 @@ extern int MAX_IT;
  *  Normal distribution (2 parameters).
  *******************************************************************************/
 
-enum DISTRIBUTIONS {FIXED=0, UNIFORM=1, NORMAL=2, EXPONENTIAL=3, GAMMA=4, LOGNORMAL=5, LOGNORMAL_MULT=7};
+enum DISTRIBUTIONS {FIXED=0, UNIFORM=1, NORMAL=2, EXPONENTIAL=3, GAMMA=4, LOGNORMAL=5,LOGUNIFORM=6, LOGNORMAL_MULT=7};
 
 /**
  * \enum TYPES

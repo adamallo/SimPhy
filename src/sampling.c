@@ -107,6 +107,8 @@ long int sample_distr(gsl_rng *r,int n_arg,...)
 {
     va_list ap;
     int i;
+    double a=0;
+    double b=0;
     sampling_unit *variable,**variables;
     variables=calloc(n_arg, sizeof(sampling_unit*));
     va_start(ap, n_arg);
@@ -149,6 +151,11 @@ long int sample_distr(gsl_rng *r,int n_arg,...)
                 break;
             case LOGNORMAL:
                 set_propsampling(variable, gsl_ran_lognormal(r,GetCastedDoubleUSU(variable->params[0], variable->params_type[0]),GetCastedDoubleUSU(variable->params[1], variable->params_type[1])));
+                break;
+            case LOGUNIFORM:
+                a=log(GetCastedDoubleUSU(variable->params[0], variable->params_type[0]));
+                b=log(GetCastedDoubleUSU(variable->params[1], variable->params_type[1]));
+                set_propsampling(variable, exp(a+(b-a)*gsl_rng_uniform(r)));
                 break;
             case LOGNORMAL_MULT:
                 set_propsampling(variable,(gsl_ran_lognormal(r,GetCastedDoubleUSU(variable->params[0], variable->params_type[0]),GetCastedDoubleUSU(variable->params[1], variable->params_type[1]))*GetCastedDoubleUSU(variable->params[2], variable->params_type[2])));
@@ -195,8 +202,23 @@ long int ParseSampling(char * p, sampling_unit * sample, const sampling_table sa
             n_p=2;
             break;
         case 'L':
-            sample->distribution_code=LOGNORMAL;
-            n_p=2;
+            switch (toupper(*(p+1)))
+            {
+                case 'N':
+                    sample->distribution_code=LOGNORMAL;
+                    n_p=2;
+                    ++p;
+                    break;
+                case 'U':
+                    sample->distribution_code=LOGUNIFORM;
+                    n_p=2;
+                    ++p;
+                    break;
+                
+                default:
+                    return SETTINGS_ERROR;
+                    break;
+            }
             break;
         case 'S':
             switch (toupper(*(p+1)))
@@ -353,6 +375,10 @@ void Print_Sampling(sampling_unit *sample, char * buffer, const sampling_table s
             break;
         case LOGNORMAL:
             sprintf(buffer,"LogN(");
+            n_param=2;
+            break;
+        case LOGUNIFORM:
+            sprintf(buffer,"LogU[");
             n_param=2;
             break;
         case LOGNORMAL_MULT:
