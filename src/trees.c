@@ -2986,7 +2986,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
         ErrorReporter((long int)node_ptrs, NULL);
         
         // ****
-        /// If the TMRCA is given, it is necessary to sample two BDSA processes with n-x and x leaves respectively x:U[1,n-1]. Else, it is sampled using the inverse of the cdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.
+        /// If the TMRCA is given, it is necessary to sample two BDSA processes with n-x and x leaves respectively x:U[1,n-1]. Otherwise, it is sampled using the inverse of the cdf of the time of the origin of the tree (flat prior), conditional on having n species at the present, Hartmann et al., 2010; Gernhard, 2008.
         if (time==0)
         {
             // ****
@@ -3632,7 +3632,7 @@ long int NewBDSTree (s_tree ** out_tree, int leaves, double time, double b_rate,
             /// Tree info fill
             (*out_tree)->n_nodes=n_nodes+extra_nodes;
             (*out_tree)->n_leaves=avail_leaves+(extra_nodes/2);
-            (*out_tree)->n_gleaves=(avail_leaves+(extra_nodes/2)*ind_per_sp);
+            (*out_tree)->n_gleaves=(avail_leaves+(extra_nodes/2))*ind_per_sp;
             (*out_tree)->locus_tree=NULL;
             (*out_tree)->gene_tree=NULL;
         }

@@ -68,12 +68,20 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
+            argument = "-rs 100 -sb f:0.000001 -o si_test -sp f:10000 -su f:0.00001 -sg f:1 -si u:2,5 -st f:1000000 -op 1 -oc 1 -cs 1"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
             argument = "-sb f:0.00001 -sp f:10000"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/newsim/SimPhy_configV1.conf"
-            isEnabled = "YES">
+            isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-Rs 100 -Rl U:10,500 -Rg 1 -St U:100000,10000000 -si F:1 -Sl U:10,50 -Sb LN:-14,1 -SP LN:12,0.5 -Hs LN:1.5,1 -Hl LN:1.2,1 -Hg LN:1.4,1 -SU E:10000000 -OD 1 -op 1 -oc 1 -v 1 -So SL:0,0.1,0.5 -Cs 22 -O final_first_1000rep_1"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy_Debug/itrees.txt"

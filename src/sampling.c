@@ -395,7 +395,7 @@ void Print_Sampling(sampling_unit *sample, char * buffer, const sampling_table s
         switch (*(sample->params_type+i))
         {
             case UI:
-                sprintf(buffer+strlen(buffer),"%u,",(sample->params+i)->i);
+                sprintf(buffer+strlen(buffer),"%d,",(sample->params+i)->i);
                 break;
             case D:
                 sprintf(buffer+strlen(buffer),"%e,",(sample->params+i)->d);
