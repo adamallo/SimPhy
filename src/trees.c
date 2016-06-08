@@ -9004,26 +9004,76 @@ long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, cha
                     }
                 }
             }
-            else if (wl_node->kind_node==SP)
-            {
-                if (names==NULL)
-                    fprintf(mapsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                else
-                    fprintf(mapsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
-            }
-            else if (wl_node->kind_node==LOSS)
+            else //External l_node
             {
                 
-                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
-            }
-            else if (wl_node->kind_node==RTRFR)
-            {
-                
-                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
-            }
-            else
-            {
-                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                if (wl_node->conts->n_child!=0) //Internal s_node
+                {
+                    switch (wl_node->kind_node)
+                    {
+                        case LOSS:
+                            fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            break;
+                        case RTRFR:
+                            fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            break;
+                        case RGC:
+                            fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            break;
+                        default:
+                            return UNEXPECTED_VALUE;//This would be a locus tree leaf mapped to an species tree internal node.
+                            break;
+                    }
+
+                }
+                else //External s_node
+                {
+                    if (names==NULL)
+                    {
+                        switch (wl_node->kind_node)
+                        {
+                            case SP:
+                                fprintf(mapsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                                break;
+                            case LOSS:
+                                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                                break;
+                            case RTRFR:
+                                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                                break;
+                            case RGC:
+                                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
+                                break;
+                            default:
+                                return UNEXPECTED_VALUE;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        switch (wl_node->kind_node)
+                        {
+                            case SP:
+                                fprintf(mapsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                                break;
+                            case LOSS:
+                                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                                break;
+                            case RTRFR:
+                                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                                break;
+                            case RGC:
+                                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                                break;
+                            default:
+                                return UNEXPECTED_VALUE;
+                                break;
+                        }
+                    }
+                        
+
+                }
+
             }
             
         }
