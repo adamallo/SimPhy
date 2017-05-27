@@ -657,9 +657,11 @@ static void WriteSNodesFileGen (FILE * file, s_node * root, name_c * names);
  *  s_node to print (root in the first call).
  * \param names
  *  Names (name_c *).
+ *  \param anc_id
+ *  pointer to track the ids in post-order, since species-tree ids are specified in pre-order
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
-static void WriteSNodesFileGenIntlabel (FILE * file, s_node * root, name_c * names);
+static void WriteSNodesFileGenIntlabel (FILE * file, s_node * root, name_c * names, int * anc_id);
 
 /**
  * Writes a given group of s_nodes with tree structure in Newick format in a
@@ -689,9 +691,11 @@ static void WriteSNodesFileTime (FILE * file, s_node * root, name_c * names, dou
  *  Names (name_c *).
  * \param gen_time
  *  Generation time
+ *  \param anc_id
+ *  pointer to track the ids in post-order, since species-tree ids are specified in pre-order
  * \note The FILE * should be previously opened and checked to avoid errors.
  *******************************************************************************/
-static void WriteSNodesFileTimeIntlabel (FILE * file, s_node * root, name_c * names, double gen_time);
+static void WriteSNodesFileTimeIntlabel (FILE * file, s_node * root, name_c * names, double gen_time, int *anc_id);
 
 /**
  * Writes a given group of l_nodes with tree structure in Newick format in
@@ -8692,6 +8696,7 @@ long int WriteSTree (s_tree *in_tree, name_c * names, int time, int int_labels)
 
 long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time, int int_labels)
 {
+    int * anc_id=NULL;
     // **
     /// <dl><dt> Function structure </dt><dd>
     
@@ -8711,7 +8716,10 @@ long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time, i
                 WriteSNodesFileTime(file,in_tree->root,names,in_tree->gen_time);
                 break;
             case 1:
-                WriteSNodesFileTimeIntlabel(file,in_tree->root,names,in_tree->gen_time);
+                anc_id=malloc(sizeof(int));
+                *anc_id=-1;
+                WriteSNodesFileTimeIntlabel(file,in_tree->root,names,in_tree->gen_time,anc_id);
+                free(anc_id);
                 break;
         }
         
@@ -8725,7 +8733,10 @@ long int WriteSTreeFile (FILE *file,s_tree *in_tree, name_c * names, int time, i
                 WriteSNodesFileGen(file,in_tree->root,names);
                 break;
             case 1:
-                WriteSNodesFileGenIntlabel(file,in_tree->root,names);
+                anc_id=malloc(sizeof(int));
+                *anc_id=-1;
+                WriteSNodesFileGenIntlabel(file,in_tree->root,names,anc_id);
+                free(anc_id);
                 break;
         }
 
@@ -11072,7 +11083,7 @@ void WriteSNodesFileGen(FILE * file,s_node * p, name_c * names)
 	
 }
 
-void WriteSNodesFileGenIntlabel(FILE * file,s_node * p, name_c * names)
+void WriteSNodesFileGenIntlabel(FILE * file,s_node * p, name_c * names, int * anc_id)
 {
     int i=0;
     
@@ -11103,18 +11114,19 @@ void WriteSNodesFileGenIntlabel(FILE * file,s_node * p, name_c * names)
             {
                 // *
                 /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteSNodesFileGenIntlabel(file,*(p->children+i),names);
+                WriteSNodesFileGenIntlabel(file,*(p->children+i),names, anc_id);
                 fprintf(file,",");
             }
-            WriteSNodesFileGenIntlabel(file,*(p->children+i), names);
+            WriteSNodesFileGenIntlabel(file,*(p->children+i), names, anc_id);
             
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
             if (p->anc_node !=NULL)
-                fprintf(file,")%d:%.8lf",p->index,p->gen_length);
+                fprintf(file,")%d:%.8lf",*anc_id+1,p->gen_length);
             else
                 fprintf(file,");\n");
         }
+        *anc_id=*anc_id+1;
     }
     
 }
@@ -11166,7 +11178,7 @@ void WriteSNodesFileTime (FILE * file,s_node * p, name_c * names, double gen_tim
     
 }
 
-void WriteSNodesFileTimeIntlabel (FILE * file,s_node * p, name_c * names, double gen_time)
+void WriteSNodesFileTimeIntlabel (FILE * file,s_node * p, name_c * names, double gen_time, int * anc_id)
 {
     int i=0;
     
@@ -11197,18 +11209,19 @@ void WriteSNodesFileTimeIntlabel (FILE * file,s_node * p, name_c * names, double
             {
                 // *
                 /// Calls itself using each different child. After each call (except last child) prints ","
-                WriteSNodesFileTimeIntlabel(file,*(p->children+i),names,gen_time);
+                WriteSNodesFileTimeIntlabel(file,*(p->children+i),names,gen_time,anc_id);
                 fprintf(file,",");
             }
-			WriteSNodesFileTimeIntlabel(file,*(p->children+i), names,gen_time);
+			WriteSNodesFileTimeIntlabel(file,*(p->children+i), names,gen_time,anc_id);
             
             // **
             /// Prints the information of this internal node (closing it with ")") or finishes the tree if the node is the root</dd></dl></dd></dl>
 			if (p->anc_node !=NULL)
-				fprintf(file,")%d:%.8lf",p->index,p->gen_length*p->gtime_mult*gen_time);
+				fprintf(file,")%d:%.8lf",*anc_id+1,p->gen_length*p->gtime_mult*gen_time);
             else
                 fprintf(file,");\n");
         }
+        *anc_id=*anc_id+1;
     }
 	
 }

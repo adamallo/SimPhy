@@ -58,11 +58,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4199"
-            endingLineNumber = "4199"
+            startingLineNumber = "4203"
+            endingLineNumber = "4203"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -74,11 +74,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4197"
-            endingLineNumber = "4197"
+            startingLineNumber = "4201"
+            endingLineNumber = "4201"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -90,11 +90,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4198"
-            endingLineNumber = "4198"
+            startingLineNumber = "4202"
+            endingLineNumber = "4202"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -106,11 +106,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8561"
-            endingLineNumber = "8561"
+            startingLineNumber = "8565"
+            endingLineNumber = "8565"
             landmarkName = "ExpectedPrunedLtreeNleavesSNodes()"
             landmarkType = "9">
          </BreakpointContent>
@@ -122,11 +122,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5179"
-            endingLineNumber = "5179"
+            startingLineNumber = "5183"
+            endingLineNumber = "5183"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -154,11 +154,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4762"
-            endingLineNumber = "4762"
+            startingLineNumber = "4766"
+            endingLineNumber = "4766"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -170,11 +170,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4688"
-            endingLineNumber = "4688"
+            startingLineNumber = "4692"
+            endingLineNumber = "4692"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -186,11 +186,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4342"
-            endingLineNumber = "4342"
+            startingLineNumber = "4346"
+            endingLineNumber = "4346"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -202,11 +202,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "4184"
-            endingLineNumber = "4184"
+            startingLineNumber = "4188"
+            endingLineNumber = "4188"
             landmarkName = "SimBDLHTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -234,11 +234,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7904"
-            endingLineNumber = "7904"
+            startingLineNumber = "7908"
+            endingLineNumber = "7908"
             landmarkName = "CollapseResizeLTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -266,11 +266,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8462"
-            endingLineNumber = "8462"
+            startingLineNumber = "8466"
+            endingLineNumber = "8466"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "9">
          </BreakpointContent>
@@ -282,11 +282,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11537"
-            endingLineNumber = "11537"
+            startingLineNumber = "11550"
+            endingLineNumber = "11550"
             landmarkName = "WriteLNodesTimeIntlabel()"
             landmarkType = "9">
          </BreakpointContent>
@@ -298,11 +298,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11559"
-            endingLineNumber = "11559"
+            startingLineNumber = "11572"
+            endingLineNumber = "11572"
             landmarkName = "WriteLNodesTimeIntlabel()"
             landmarkType = "9">
          </BreakpointContent>
@@ -314,11 +314,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11560"
-            endingLineNumber = "11560"
+            startingLineNumber = "11573"
+            endingLineNumber = "11573"
             landmarkName = "WriteLNodesTimeIntlabel()"
             landmarkType = "9">
          </BreakpointContent>
@@ -330,11 +330,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8515"
-            endingLineNumber = "8515"
+            startingLineNumber = "8519"
+            endingLineNumber = "8519"
             landmarkName = "MeasureMRCAEVdistance()"
             landmarkType = "9">
          </BreakpointContent>
@@ -362,11 +362,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3399"
-            endingLineNumber = "3399"
+            startingLineNumber = "3403"
+            endingLineNumber = "3403"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -378,11 +378,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3060"
-            endingLineNumber = "3060"
+            startingLineNumber = "3064"
+            endingLineNumber = "3064"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -394,11 +394,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3104"
-            endingLineNumber = "3104"
+            startingLineNumber = "3108"
+            endingLineNumber = "3108"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -410,11 +410,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3243"
-            endingLineNumber = "3243"
+            startingLineNumber = "3247"
+            endingLineNumber = "3247"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -426,11 +426,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3125"
-            endingLineNumber = "3125"
+            startingLineNumber = "3129"
+            endingLineNumber = "3129"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -442,11 +442,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3156"
-            endingLineNumber = "3156"
+            startingLineNumber = "3160"
+            endingLineNumber = "3160"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -458,11 +458,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3199"
-            endingLineNumber = "3199"
+            startingLineNumber = "3203"
+            endingLineNumber = "3203"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -474,11 +474,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3280"
-            endingLineNumber = "3280"
+            startingLineNumber = "3284"
+            endingLineNumber = "3284"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -490,11 +490,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3263"
-            endingLineNumber = "3263"
+            startingLineNumber = "3267"
+            endingLineNumber = "3267"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -506,11 +506,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3350"
-            endingLineNumber = "3350"
+            startingLineNumber = "3354"
+            endingLineNumber = "3354"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -522,11 +522,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3626"
-            endingLineNumber = "3626"
+            startingLineNumber = "3630"
+            endingLineNumber = "3630"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -538,11 +538,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3498"
-            endingLineNumber = "3498"
+            startingLineNumber = "3502"
+            endingLineNumber = "3502"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -602,11 +602,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3025"
-            endingLineNumber = "3025"
+            startingLineNumber = "3029"
+            endingLineNumber = "3029"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -618,11 +618,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "1150"
-            endingLineNumber = "1150"
+            startingLineNumber = "1154"
+            endingLineNumber = "1154"
             landmarkName = "NNexusTrees()"
             landmarkType = "9">
          </BreakpointContent>
@@ -634,11 +634,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454353218.684878"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2321"
-            endingLineNumber = "2321"
+            startingLineNumber = "2325"
+            endingLineNumber = "2325"
             landmarkName = "ParseNexusLTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -650,11 +650,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8633"
-            endingLineNumber = "8633"
+            startingLineNumber = "8637"
+            endingLineNumber = "8637"
             landmarkName = "CheckUltrametricityLTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -666,11 +666,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8634"
-            endingLineNumber = "8634"
+            startingLineNumber = "8638"
+            endingLineNumber = "8638"
             landmarkName = "CheckUltrametricityLTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -682,11 +682,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "12923"
-            endingLineNumber = "12923"
+            startingLineNumber = "12936"
+            endingLineNumber = "12936"
             landmarkName = "GetLnodeParamsFromNexusComments()"
             landmarkType = "9">
          </BreakpointContent>
@@ -698,11 +698,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "11904"
-            endingLineNumber = "11904"
+            startingLineNumber = "11917"
+            endingLineNumber = "11917"
             landmarkName = "WriteLNodesFileTimeIntlabel()"
             landmarkType = "9">
          </BreakpointContent>
@@ -714,11 +714,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8835"
-            endingLineNumber = "8835"
+            startingLineNumber = "8846"
+            endingLineNumber = "8846"
             landmarkName = "WriteDaughtersFile()"
             landmarkType = "9">
          </BreakpointContent>
@@ -778,11 +778,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584673.388297"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "7546"
-            endingLineNumber = "7546"
+            startingLineNumber = "7550"
+            endingLineNumber = "7550"
             landmarkName = "MatchTreesMSC()"
             landmarkType = "9">
          </BreakpointContent>
@@ -794,11 +794,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487120427.797861"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "9045"
-            endingLineNumber = "9045"
+            startingLineNumber = "9056"
+            endingLineNumber = "9056"
             landmarkName = "WriteMappingSL()"
             landmarkType = "9">
          </BreakpointContent>
@@ -810,11 +810,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "454584703.14073"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "5925"
-            endingLineNumber = "5925"
+            startingLineNumber = "5929"
+            endingLineNumber = "5929"
             landmarkName = "SimMLCGTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -1082,11 +1082,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "484637475.58438"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "2960"
-            endingLineNumber = "2960"
+            startingLineNumber = "2964"
+            endingLineNumber = "2964"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -1098,11 +1098,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "484637565.598936"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3123"
-            endingLineNumber = "3123"
+            startingLineNumber = "3127"
+            endingLineNumber = "3127"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -1114,11 +1114,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "484637641.462706"
+            timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "3635"
-            endingLineNumber = "3635"
+            startingLineNumber = "3639"
+            endingLineNumber = "3639"
             landmarkName = "NewBDSTree()"
             landmarkType = "9">
          </BreakpointContent>
@@ -1130,11 +1130,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "487117995.556867"
+            timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8955"
-            endingLineNumber = "8955"
+            startingLineNumber = "8966"
+            endingLineNumber = "8966"
             landmarkName = "WriteMappingSL()"
             landmarkType = "9">
          </BreakpointContent>
