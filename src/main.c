@@ -927,7 +927,9 @@ int main (int argc, char **argv)
                 if (map>0 && map!=2)
                 {
                     sprintf(mapsl_outname,"%.*d%s",n_ldigits,curr_ltree,mapsl_sufix2);
-                    ErrorReporter(WriteMappingSL(sp_tree, locus_tree, names, mapsl_outname),"");
+                    //ErrorReporter(WriteMappingSL(sp_tree, locus_tree, names, mapsl_outname),"");
+                    //DEBUG
+                    ErrorReporter(WriteSLrecPhyloXML(mapsl_outname, sp_tree, locus_tree, names, out_time),"");
                 }
 #endif
                 

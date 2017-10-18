@@ -1491,6 +1491,27 @@ long int WriteSTree (s_tree *in_tree, name_c * names, int time, int int_labels);
 long int WriteSTreeFile(FILE * file,s_tree *in_tree, name_c * names, int time, int int_labels);
 
 /**
+ * Writes a given s_tree in phyloXML format with internal labels in a file.
+ *
+ * \param file
+ *  File where the tree will be printed.
+ * \param in_tree
+ *  Tree to print.
+ * \param names
+ *  name_c pointer with taxa names.
+ * \param time
+ *  Logical flag. If ==1, the tree will be printed in time units instead of
+ *  generations.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \note The FILE * should be previously opened and checked to avoid errors, and
+ *  closed after this function.
+ * \note It requires a known root node into the s_tree structure.
+ * \note It postreorders the tree
+ *******************************************************************************/
+long int WriteSphyloXML (FILE *file,s_tree *in_tree, name_c * names, int time);
+
+/**
  * Writes a given l_tree in Newick format in stdout.
  *
  * \param names
@@ -1530,6 +1551,23 @@ long int WriteLTree (l_tree *in_tree, name_c * names, int time, int int_labels);
  *******************************************************************************/
 long int WriteLTreeFile(FILE * file,l_tree *in_tree, name_c * names, int time, int int_labels);
 
+/**
+ * Writes a given l_tree in recGenTree format in a file.
+ *
+ * \param file
+ *  File where the tree will be printed.
+ * \param in_tree
+ *  Tree to print.
+ * \param names
+ *  name_c pointer with taxa names.
+ * \param time
+ *  Logical flag. If ==1, the tree will be printed in time units instead of
+ *  generations.
+ * \note The FILE * should be previously opened and checked to avoid errors, and
+ *  closed after this function.
+ *  \note It requires a known root node into the l_tree structure.
+ *******************************************************************************/
+long int WriteLrecGenTreeXML (FILE *file,l_tree *in_tree, name_c * names, int time);
 
 /**
  * Writes a comma-separated list of daughters locus tree lineages in a file.
@@ -1619,6 +1657,26 @@ long int WriteGTreeFile (FILE * file, g_tree *in_tree, name_c * names, int int_l
  *  ocurrs.
  *******************************************************************************/
 long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, char *mapsl_outname);
+
+/**
+ * Writes the mapping of the species and locus trees in a recPhyloXML file (those trees have to be linked in the way that the program does along the locus tree simulation).
+ *
+ * \param map_outname
+ *  Name of the file where the function is going to write the mapping.
+ * \param ins_tree
+ *  Species tree.
+ * \param inl_tree
+ *  Locus tree.
+ * \param names
+ *  names_c containing the taxa names of the tree.
+ * \param time
+ *  Logical flag. If ==1, the tree will be printed in time units instead of
+ *  generations.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ * \note It postreorders the species tree
+ *******************************************************************************/
+long int WriteSLrecPhyloXML(char *map_outname, s_tree *ins_tree, l_tree *inl_tree, name_c *names, int time);
 
 /**
  * Calculates and writes the mapping of the locus and gene trees in a file (those trees have to be linked in the way that the program does along the gene tree simulation).
