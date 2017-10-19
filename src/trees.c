@@ -8973,47 +8973,24 @@ long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, cha
                 }
                 else
                 {
-                    if (names==NULL)
+
+                    switch (wl_node->kind_node)
                     {
-                        switch (wl_node->kind_node)
-                        {
-                            case SP:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Sp",wl_node->sp_index);
-                                break;
-                            case DUP:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Dup",wl_node->sp_index);
-                                break;
-                            case TRFR:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Transf",wl_node->sp_index);
-                                break;
-                            case GC:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%d\'\n",wl_node->index,wl_node->paralog,"Gconv",wl_node->sp_index);
-                                break;
-                            default:
-                                return UNEXPECTED_VALUE;
-                                break;
-                        }
-                    }
-                    else
-                    {
-                        switch (wl_node->kind_node)
-                        {
-                            case SP:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Sp",(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case DUP:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Dup",(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case TRFR:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Transf",(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case GC:
-                                fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Gconv",(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            default:
-                                return UNEXPECTED_VALUE;
-                                break;
-                        }
+                        case SP:
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Sp",(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case DUP:
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Dup",(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case TRFR:
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Transf",(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case GC:
+                            fprintf(mapsl_outfile,"%d\t%d\t%s\t\'%s\'\n",wl_node->index,wl_node->paralog,"Gconv",(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        default:
+                            return UNEXPECTED_VALUE;
+                            break;
                     }
                 }
             }
@@ -9025,13 +9002,13 @@ long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, cha
                     switch (wl_node->kind_node)
                     {
                         case LOSS:
-                            fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            fprintf(mapsl_outfile,"\'Lost_%d-%d_%d\'\t%d\tLoss\t%d\n",wl_node->index,wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
                             break;
                         case RTRFR:
-                            fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            fprintf(mapsl_outfile,"\'Rtransf_%d-%d_%d\'\t%d\tRTransf\t%d\n",wl_node->index,wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
                             break;
                         case RGC:
-                            fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t%d\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
+                            fprintf(mapsl_outfile,"\'Rgc_%d-%d_%d\'\t%d\tRgc\t%d\n",wl_node->index,wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->conts->index);
                             break;
                         default:
                             return UNEXPECTED_VALUE;//This would be a locus tree leaf mapped to an species tree internal node.
@@ -9041,50 +9018,24 @@ long int WriteMappingSL(s_tree *wsp_tree, l_tree *locus_tree, name_c *names, cha
                 }
                 else //External s_node
                 {
-                    if (names==NULL)
+                    switch (wl_node->kind_node)
                     {
-                        switch (wl_node->kind_node)
-                        {
-                            case SP:
-                                fprintf(mapsl_outfile,"\'%d_%d\'\t%d\tLeaf\t\'%d\'\n",wl_node->sp_index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                                break;
-                            case LOSS:
-                                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                                break;
-                            case RTRFR:
-                                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                                break;
-                            case RGC:
-                                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t\'%d\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,wl_node->sp_index);
-                                break;
-                            default:
-                                return UNEXPECTED_VALUE;
-                                break;
-                        }
+                        case SP:
+                            fprintf(mapsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case LOSS:
+                            fprintf(mapsl_outfile,"\'Lost_%d-%s_%d\'\t%d\tLoss\t\'%s\'\n",wl_node->index,(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case RTRFR:
+                            fprintf(mapsl_outfile,"\'Rtransf_%d-%s_%d\'\t%d\tRTransf\t\'%s\'\n",wl_node->index,(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        case RGC:
+                            fprintf(mapsl_outfile,"\'Rgc_%d-%s_%d\'\t%d\tRgc\t\'%s\'\n",wl_node->index,(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
+                            break;
+                        default:
+                            return UNEXPECTED_VALUE;
+                            break;
                     }
-                    else
-                    {
-                        switch (wl_node->kind_node)
-                        {
-                            case SP:
-                                fprintf(mapsl_outfile,"\'%s_%d\'\t%d\tLeaf\t\'%s\'\n",(names->names+(wl_node->sp_index*names->max_lname)),wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case LOSS:
-                                fprintf(mapsl_outfile,"\'Lost-%d_%d\'\t%d\tLoss\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case RTRFR:
-                                fprintf(mapsl_outfile,"\'RTransf-%d_%d\'\t%d\tRTransf\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            case RGC:
-                                fprintf(mapsl_outfile,"\'Rgc-%d_%d\'\t%d\tRgc\t\'%s\'\n",wl_node->conts->index,wl_node->paralog,wl_node->paralog,(names->names+(wl_node->sp_index*names->max_lname)));
-                                break;
-                            default:
-                                return UNEXPECTED_VALUE;
-                                break;
-                        }
-                    }
-                        
-
                 }
 
             }
@@ -9126,48 +9077,113 @@ long int WriteMappingLG(g_tree *gene_tree, name_c *names, char *maplg_outname)
                 }
                 else //External l_node
                 {
-                    switch (wg_node->contl->kind_node)
+                    if(wg_node->conts==NULL) //No species tree
                     {
-                        case LOSS:
-                            fprintf(maplg_outfile,"%d\t\'Lost-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                            break;
-                        case RTRFR:
-                            fprintf(maplg_outfile,"%d\t\'Rtransf-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                            break;
-                        case RGC:
-                            fprintf(maplg_outfile,"%d\t\'Rgc-%d_%d\'\t%d\n",wg_node->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                            break;
-                            
-                        default:
-                            if (names==NULL)
-                                fprintf(maplg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
-                            else
+                        switch (wg_node->contl->kind_node)
+                        {
+                            case LOSS:
+                                fprintf(maplg_outfile,"%d\t\'Lost_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                break;
+                            case RTRFR:
+                                fprintf(maplg_outfile,"%d\t\'Rtransf_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                break;
+                            case RGC:
+                                fprintf(maplg_outfile,"%d\t\'Rgc_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                break;
+                                
+                            default:
                                 fprintf(maplg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
-                            break;
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        if(wg_node->conts->n_child!=0)//Internal Stree
+                        {
+                            switch (wg_node->contl->kind_node)
+                            {
+                                case LOSS:
+                                    fprintf(maplg_outfile,"%d\t\'Lost_%d-%d_%d\'\t%d\n",wg_node->index,wg_node->contl->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                                    break;
+                                case RTRFR:
+                                    fprintf(maplg_outfile,"%d\t\'Rtransf_%d-%d_%d\'\t%d\n",wg_node->index,wg_node->contl->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                                    break;
+                                case RGC:
+                                    fprintf(maplg_outfile,"%d\t\'Rgc_%d-%d_%d\'\t%d\n",wg_node->index,wg_node->contl->index,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
+                                    break;
+                                    
+                                default:
+                                    fprintf(maplg_outfile,"%d\t\'%d_%d\'\t%d\n",wg_node->index,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            switch (wg_node->contl->kind_node)//External Stree
+                            {
+                                case LOSS:
+                                    fprintf(maplg_outfile,"%d\t\'Lost_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                    break;
+                                case RTRFR:
+                                    fprintf(maplg_outfile,"%d\t\'Rtransf_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                    break;
+                                case RGC:
+                                    fprintf(maplg_outfile,"%d\t\'Rgc_%d-%s_%d\'\t%d\n",wg_node->index,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                    break;
+                                    
+                                default:
+                                    fprintf(maplg_outfile,"%d\t\'%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                                    break;
+                            }
+                        }
+
                     }
                 }
             }
             else //g_node and l_node external
             {
-                switch (wg_node->contl->kind_node)
+                if(wg_node->conts==NULL) //No species tree
                 {
-                    case LOSS:
-                        fprintf(maplg_outfile,"\'Lost-%d_%d_%d\'\t\'Lost-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                        break;
-                    case RTRFR:
-                        fprintf(maplg_outfile,"\'Rtransf-%d_%d_%d\'\t\'Rtransf-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                        break;
-                    case RGC:
-                        fprintf(maplg_outfile,"\'Rgc-%d_%d_%d\'\t\'Rgc-%d_%d\'\t%d\n",wg_node->conts->index,wg_node->paralog, wg_node->replica,wg_node->conts->index,wg_node->paralog,wg_node->paralog);
-                        break;
-                        
-                    default:
-                        if (names==NULL)
-                            fprintf(maplg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
-                        else
+                    switch (wg_node->contl->kind_node)
+                    {
+                        case LOSS:
+                            fprintf(maplg_outfile,"\'Lost_%d-%s_%d_%d\t\'Lost_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RTRFR:
+                            fprintf(maplg_outfile,"\'Rtransf_%d-%s_%d_%d\t\'Rtransf_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RGC:
+                            fprintf(maplg_outfile,"\'Rgc_%d-%s_%d_%d\t\'Rgc_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                            
+                        default:
                             fprintf(maplg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
-                        break;
+                            break;
+                    }
                 }
+                else
+                {
+                    switch (wg_node->contl->kind_node)
+                    {
+                        case LOSS:
+                            fprintf(maplg_outfile,"\'Lost_%d-%s_%d_%d\'\t\'Lost_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog, wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RTRFR:
+                            fprintf(maplg_outfile,"\'Rtransf_%d-%s_%d_%d\'\t\'Rtransf_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog, wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                        case RGC:
+                            fprintf(maplg_outfile,"\'Rgc_%d-%s_%d_%d\'\t\'Rgc_%d-%s_%d\'\t%d\n",wg_node->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog, wg_node->replica,wg_node->contl->index,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                            
+                        default:
+                            if (names==NULL)
+                                fprintf(maplg_outfile,"\'%d_%d_%d\'\t\'%d_%d\'\t%d\n",wg_node->sp_index,wg_node->paralog, wg_node->replica,wg_node->sp_index,wg_node->paralog,wg_node->paralog);
+                            else
+                                fprintf(maplg_outfile,"\'%s_%d_%d\'\t\'%s_%d\'\t%d\n",(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->replica,(names->names+(wg_node->sp_index*names->max_lname)),wg_node->paralog,wg_node->paralog);
+                            break;
+                    }
+                }
+                
             }
         }
         else
@@ -11247,43 +11263,43 @@ void WriteLNodesGen (l_node * p, name_c * names)
                     case LOSS:
                         if (p->conts==NULL)
                         {
-                            printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Lost_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if(p->conts->n_child==0)
                         {
-                            printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts==NULL)
                         {
-                            printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if(p->conts->n_child==0)
                         {
-                            printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts==NULL)
                         {
-                            printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            printf("Rgc_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0)
                         {
-                            printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            printf("Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            printf("Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                         
@@ -11342,43 +11358,43 @@ void WriteLNodesGenIntlabel (l_node * p, name_c * names)
                 case LOSS:
                     if (p->conts==NULL)
                     {
-                        printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        printf("Lost_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
                     else if(p->conts->n_child==0)
                     {
-                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                        printf("Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
                     else
                     {
-                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        printf("Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
                 case RTRFR:
                     if (p->conts==NULL)
                     {
-                        printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
                     else if(p->conts->n_child==0)
                     {
-                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                        printf("Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
                     else
                     {
-                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
                 case RGC:
                     if (p->conts==NULL)
                     {
-                        printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        printf("Rgc_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
                     else if (p->conts->n_child==0)
                     {
-                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                        printf("Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
                     else
                     {
-                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        printf("Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
                     
@@ -11437,31 +11453,31 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                     
@@ -11520,31 +11536,31 @@ void WriteLNodesTimeIntlabel (l_node * p, name_c * names, double gen_time)
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        printf("Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        printf("Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                     
@@ -11602,43 +11618,43 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                     case LOSS:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RTRFR:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                     case RGC:
                         if (p->conts==NULL)
                         {
-                            fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                         }
                         else if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                            fprintf(file,"Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
                         else
                         {
-                            fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                            fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                         }
                         break;
                 }
@@ -11695,43 +11711,43 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                 case LOSS:
                     if (p->conts==NULL)
                     {
-                        fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
-                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
+                    else if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }*/
+                        fprintf(file,"Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
                     else
                     {
-                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
                 case RTRFR:
                     if (p->conts==NULL)
                     {
-                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
-                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
+                    else if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }*/
+                        fprintf(file,"Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
                     else
                     {
-                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
                 case RGC:
                     if (p->conts==NULL)
                     {
-                        fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
+                        fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->index,p->paralog,p->gen_length);
                     }
-                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
+                    else if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }*/
+                        fprintf(file,"Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                    }
                     else
                     {
-                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
+                        fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length);
                     }
                     break;
             }
@@ -11788,31 +11804,31 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
             }
@@ -11869,31 +11885,31 @@ void WriteLNodesFileTimeIntlabel (FILE * file,l_node * p, name_c * names, double
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Lost_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rtransf_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc_%d-%s_%d:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     else
                     {
-                        fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                        fprintf(file,"Rgc_%d-%d_%d:%.8lf",p->index,p->conts->index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
                     break;
             }
@@ -12003,31 +12019,31 @@ void WriteGNodes (g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0)
                         {
-                            printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Lost_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Lost_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0)
                         {
-                            printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Rtransf_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Rtransf_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0)
                         {
-                            printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            printf("Rgc_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            printf("Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            printf("Rgc_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                 }
@@ -12086,31 +12102,31 @@ void WriteGNodesIntlabel (g_node * p, name_c * names)
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        printf("Lost_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        printf("Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        printf("Lost_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        printf("Rtransf_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        printf("Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        printf("Rtransf_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        printf("Rgc_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        printf("Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        printf("Rgc_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
             }
@@ -12171,31 +12187,31 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0)
                         {
-                            sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sLost_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sLost-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sLost_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0)
                         {
-                            sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sRtransf_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sRtransf-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sRtransf_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0)
                         {
-                            sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            sprintf(str,"%sRgc_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            sprintf(str,"%sRgc-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                            sprintf(str,"%sRgc_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                         
@@ -12259,31 +12275,31 @@ void WriteGNodesStrIntlabel (char * str, g_node * p, name_c * names)
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        sprintf(str,"%sLost_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        sprintf(str,"%sLost-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        sprintf(str,"%sLost_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        sprintf(str,"%sRtransf_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        sprintf(str,"%sRtransf-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        sprintf(str,"%sRtransf_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        sprintf(str,"%sRgc_%d-%s_%d_0:%.8lf",str,p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        sprintf(str,"%sRgc-%d_%d_0:%.8lf",str,p->conts->index,p->paralog,p->bl);
+                        sprintf(str,"%sRgc_%d-%d_%d_0:%.8lf",str,p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                     
@@ -12346,31 +12362,31 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                     case LOSS:
                         if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Lost_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Lost_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RTRFR:
                         if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Rtransf_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Rtransf_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                     case RGC:
                         if (p->conts->n_child==0)
                         {
-                            fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                            fprintf(file,"Rgc_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
                         else
                         {
-                            fprintf(file,"Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                            fprintf(file,"Rgc_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                         }
                         break;
                 }
@@ -12428,31 +12444,31 @@ void WriteGNodesFileIntlabel (FILE * file, g_node * p, name_c * names)
                 case LOSS:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        fprintf(file,"Lost_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        fprintf(file,"Lost-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        fprintf(file,"Lost_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RTRFR:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        fprintf(file,"Rtransf_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        fprintf(file,"Rtransf-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        fprintf(file,"Rtransf_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
                 case RGC:
                     if (p->conts->n_child==0)
                     {
-                        fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
+                        fprintf(file,"Rgc_%d-%s_%d_0:%.8lf",p->index,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
                     else
                     {
-                        fprintf(file,"Rgc-%d_%d_0:%.8lf",p->conts->index,p->paralog,p->bl);
+                        fprintf(file,"Rgc_%d-%d_%d_0:%.8lf",p->index,p->conts->index,p->paralog,p->bl);
                     }
                     break;
             }
