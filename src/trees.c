@@ -7462,7 +7462,7 @@ long int RenameSTree(name_c **names_ptr, s_tree *sp_tree)
         {
             switch ((sp_tree->m_node+i)->n_child) {
                 case 0:
-                    snprintf((*names_ptr)->names+((*names_ptr)->max_lname*n_name), sizeof(char)*(*names_ptr)->max_lname, "S%d",(sp_tree->m_node+i)->sp_index);
+                    snprintf((*names_ptr)->names+((*names_ptr)->max_lname*n_name), sizeof(char)*(*names_ptr)->max_lname, "%d",(sp_tree->m_node+i)->sp_index);
                     (sp_tree->m_node+i)->sp_index=n_name;
                     n_name+=1;
                     break;
@@ -10707,7 +10707,7 @@ static void RenameSNodes(s_node *p, name_c *names, int *n_name)
     
     switch (p->n_child) {
         case 0:
-            snprintf(names->names+(names->max_lname**n_name), sizeof(char)*names->max_lname, "S%d",p->sp_index);
+            snprintf(names->names+(names->max_lname**n_name), sizeof(char)*names->max_lname, "%d",p->sp_index);
             p->sp_index=*n_name;
             *n_name+=1;
             break;
@@ -11697,10 +11697,10 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0)
+                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
                     {
                         fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }
+                    }*/
                     else
                     {
                         fprintf(file,"Lost-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
@@ -11711,10 +11711,10 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0)
+                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
                     {
                         fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }
+                    }*/
                     else
                     {
                         fprintf(file,"Rtransf-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
@@ -11725,10 +11725,10 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0)
+                    /*else if (p->conts->n_child==0) //TODO: Uncoment this? Comented for backwards compatibility, but I may want to change it
                     {
                         fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
-                    }
+                    }*/
                     else
                     {
                         fprintf(file,"Rgc-%d_%d:%.8lf",p->conts->index,p->paralog,p->gen_length);
@@ -11957,11 +11957,15 @@ void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names)
                     case TRFR:
                     case GC:
                         daughter=*(p->children+1);
-                        if (daughter->n_child!=0)
+                        if (daughter->n_child!=0) //Locus tree internal node
                         {
                             fprintf(file,"%d,",daughter->index);
                         }
-                        else
+                        else if (daughter->conts->n_child!=0) //Species tree internal node
+                        {
+                            fprintf(file,"\'%d_%d\'",daughter->conts->index,daughter->paralog);
+                        }
+                        else //Tip in both trees
                         {
                             fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
                         }

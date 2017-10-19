@@ -682,11 +682,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "src/trees.c"
-            timestampString = "530070213.172472"
+            timestampString = "530084059.675148"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "12851"
-            endingLineNumber = "12851"
+            startingLineNumber = "12855"
+            endingLineNumber = "12855"
             landmarkName = "GetLnodeParamsFromNexusComments()"
             landmarkType = "9">
          </BreakpointContent>
