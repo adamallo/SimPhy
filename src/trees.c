@@ -5315,23 +5315,11 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             if (w_lnode->conts==NULL) //There is no species tree
             {
-                if(names!=NULL)
-                    printf("\n\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
-                }
+                printf("\n\t\tLocus tree node %s_%d... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
             }
             else
             {
-                if(names!=NULL)
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog);
-                }
+                printf("\n\t\tSpecies tree node %s, locus tree node %s_%d... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog);
             }
             
             
@@ -5343,23 +5331,11 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             if (w_lnode->conts==NULL)
             {
-                if(names!=NULL)
-                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
-                }
+                printf("\n\t\tLocus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
             }
             else
             {
-                if(names!=NULL)
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
-                }
+                printf("\n\t\tSpecies tree node %s, locus tree node %s_%d (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,w_lnode->index, w_lnode->sp_index, k);
             }
             
 #ifdef DBG
@@ -5665,23 +5641,11 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             if (w_lnode->conts==NULL) //There is no species tree
             {
-                if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d%s... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d%s... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
-                }
+                printf("\n\t\t\t\tLocus tree node %s_%d%s... ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
             }
             else
             {
-                if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s... ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
-                }
+                printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s... ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"");
             }
             
             
@@ -5693,23 +5657,11 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         {
             if (w_lnode->conts==NULL)
             {
-                if(names!=NULL)
-                    printf("\n\t\t\t\tLocus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->sp_index);
-                    printf("\n\t\t\t\tLocus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
-                }
+                printf("\n\t\t\t\tLocus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
             }
             else
             {
-                if(names!=NULL)
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
-                else
-                {
-                    sprintf(iobuffer, "%d",w_lnode->conts->sp_index);
-                    printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",w_lnode->conts->sp_index==0?"Internal node":iobuffer,(w_lnode->kind_node==SP && w_lnode->n_child==0)?iobuffer:"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
-                }
+                printf("\n\t\t\t\tSpecies tree node %s, locus tree node %s_%d%s (index %d, sp_index %d, n_nodes %d) ",(names->names+(w_lnode->conts->sp_index*names->max_lname)),(w_lnode->kind_node==SP && w_lnode->n_child==0)?(names->names+(w_lnode->sp_index*names->max_lname)):"Internal node",w_lnode->paralog,no_counts==0?b_subtree:"",w_lnode->index, w_lnode->sp_index, w_lnode->n_nodes);
             }
             
 #ifdef DBG
@@ -7493,7 +7445,7 @@ long int RenameSTree(name_c **names_ptr, s_tree *sp_tree)
         n/=10;
     }
     
-    *names_ptr=NewNames(sp_tree->n_leaves+1, max_length+1+2); //1 for NULL, 2 for quotes
+    *names_ptr=NewNames(sp_tree->n_leaves+1, max_length+1+1); //1 for NULL, 1 for S
     
     //Initialization of the internal node name
     strncpy((*names_ptr)->names,"Internal node",max_length);
@@ -7510,7 +7462,7 @@ long int RenameSTree(name_c **names_ptr, s_tree *sp_tree)
         {
             switch ((sp_tree->m_node+i)->n_child) {
                 case 0:
-                    snprintf((*names_ptr)->names+((*names_ptr)->max_lname*n_name), sizeof(char)*(*names_ptr)->max_lname, "\"%d\"",n_name);
+                    snprintf((*names_ptr)->names+((*names_ptr)->max_lname*n_name), sizeof(char)*(*names_ptr)->max_lname, "S%d",(sp_tree->m_node+i)->sp_index);
                     (sp_tree->m_node+i)->sp_index=n_name;
                     n_name+=1;
                     break;
@@ -10755,7 +10707,7 @@ static void RenameSNodes(s_node *p, name_c *names, int *n_name)
     
     switch (p->n_child) {
         case 0:
-            snprintf(names->names+(names->max_lname**n_name), sizeof(char)*names->max_lname, "\"%d\"",*n_name);
+            snprintf(names->names+(names->max_lname**n_name), sizeof(char)*names->max_lname, "S%d",p->sp_index);
             p->sp_index=*n_name;
             *n_name+=1;
             break;
@@ -10885,10 +10837,7 @@ void WriteSNodesGen (s_node * p, name_c * names)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                printf("%d:%.8lf",p->sp_index,p->gen_length);
-            else
-                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+            printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
 		else
         {
@@ -10932,10 +10881,7 @@ void WriteSNodesGenIntlabel (s_node * p, name_c * names)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                printf("%d:%.8lf",p->sp_index,p->gen_length);
-            else
-                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+            printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
         else
         {
@@ -10979,10 +10925,7 @@ void WriteSNodesTime (s_node * p, name_c * names, double gen_time)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                printf("%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
-            else
-                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+            printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
         }
 		else
         {
@@ -11026,10 +10969,7 @@ void WriteSNodesTimeIntlabel (s_node * p, name_c * names, double gen_time)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                printf("%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
-            else
-                printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+            printf("%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
         }
         else
         {
@@ -11120,10 +11060,7 @@ void WriteSNodesFileGen(FILE * file,s_node * p, name_c * names)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length);
-            else
-                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+            fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
 		else
         {
@@ -11167,10 +11104,7 @@ void WriteSNodesFileGenIntlabel(FILE * file,s_node * p, name_c * names)
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length);
-            else
-                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
+            fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length);
         }
         else
         {
@@ -11214,10 +11148,7 @@ void WriteSNodesFileTime (FILE * file,s_node * p, name_c * names, double gen_tim
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
-            else
-                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+            fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
         }
         else
         {
@@ -11261,10 +11192,7 @@ void WriteSNodesFileTimeIntlabel (FILE * file,s_node * p, name_c * names, double
             /// <dl><dt>If the node is a leaf:</dt><dd>
             // *
             /// Prints the node name and its branch length.</dd></dl>
-            if (names==NULL)
-                fprintf(file,"%d:%.8lf",p->sp_index,p->gen_length*p->gtime_mult*gen_time);
-            else
-                fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
+            fprintf(file,"%s:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->gen_length*p->gtime_mult*gen_time);
         }
 		else
         {
@@ -11313,10 +11241,7 @@ void WriteLNodesGen (l_node * p, name_c * names)
                 {
                         
                     default:
-                        if (names==NULL)
-                            printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
-                        else
-                            printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
+                        printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         break;
                         
                     case LOSS:
@@ -11324,7 +11249,7 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         {
                             printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if(p->conts->n_child==0 && names!=NULL)
+                        else if(p->conts->n_child==0)
                         {
                             printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11338,7 +11263,7 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         {
                             printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if(p->conts->n_child==0 && names!=NULL)
+                        else if(p->conts->n_child==0)
                         {
                             printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11352,7 +11277,7 @@ void WriteLNodesGen (l_node * p, name_c * names)
                         {
                             printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if (p->conts->n_child==0 && names!=NULL)
+                        else if (p->conts->n_child==0)
                         {
                             printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11411,9 +11336,6 @@ void WriteLNodesGenIntlabel (l_node * p, name_c * names)
             {
                     
                 default:
-                    if (names==NULL)
-                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
-                    else
                         printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     break;
                     
@@ -11422,7 +11344,7 @@ void WriteLNodesGenIntlabel (l_node * p, name_c * names)
                     {
                         printf("Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if(p->conts->n_child==0 && names!=NULL)
+                    else if(p->conts->n_child==0)
                     {
                         printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11436,7 +11358,7 @@ void WriteLNodesGenIntlabel (l_node * p, name_c * names)
                     {
                         printf("Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if(p->conts->n_child==0 && names!=NULL)
+                    else if(p->conts->n_child==0)
                     {
                         printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11450,7 +11372,7 @@ void WriteLNodesGenIntlabel (l_node * p, name_c * names)
                     {
                         printf("Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0 && names!=NULL)
+                    else if (p->conts->n_child==0)
                     {
                         printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11509,14 +11431,11 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
             {
                     
                 default:
-                    if (names==NULL)
-                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
-                    else
-                        printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
+                    printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     break;
                     
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11526,7 +11445,7 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11536,7 +11455,7 @@ void WriteLNodesTime (l_node * p, name_c * names, double gen_time)
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11595,14 +11514,11 @@ void WriteLNodesTimeIntlabel (l_node * p, name_c * names, double gen_time)
             {
                     
                 default:
-                    if (names==NULL)
-                        printf("%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
-                    else
                         printf("%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     break;
                     
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11612,7 +11528,7 @@ void WriteLNodesTimeIntlabel (l_node * p, name_c * names, double gen_time)
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11622,7 +11538,7 @@ void WriteLNodesTimeIntlabel (l_node * p, name_c * names, double gen_time)
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11681,9 +11597,6 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                 switch (p->kind_node)
                 {
                     default:
-                        if (names==NULL)
-                            fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
-                        else
                             fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         break;
                     case LOSS:
@@ -11691,7 +11604,7 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                         {
                             fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if (p->conts->n_child==0 && names!=NULL)
+                        else if (p->conts->n_child==0)
                         {
                             fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11705,7 +11618,7 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                         {
                             fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if (p->conts->n_child==0 && names!=NULL)
+                        else if (p->conts->n_child==0)
                         {
                             fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11719,7 +11632,7 @@ void WriteLNodesFileGen (FILE * file,l_node * p, name_c * names)
                         {
                             fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                         }
-                        else if (p->conts->n_child==0 && names!=NULL)
+                        else if (p->conts->n_child==0)
                         {
                             fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                         }
@@ -11777,9 +11690,6 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                 switch (p->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length);
-                    else
                         fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     break;
                 case LOSS:
@@ -11787,7 +11697,7 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Lost-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0 && names!=NULL)
+                    else if (p->conts->n_child==0)
                     {
                         fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11801,7 +11711,7 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Rtransf-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0 && names!=NULL)
+                    else if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11815,7 +11725,7 @@ void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
                     {
                         fprintf(file,"Rgc-%d_%d:%.8lf",p->index,p->paralog,p->gen_length);
                     }
-                    else if (p->conts->n_child==0 && names!=NULL)
+                    else if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length);
                     }
@@ -11873,13 +11783,10 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
                 switch (p->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
-                    else
                         fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     break;
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11889,7 +11796,7 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11899,7 +11806,7 @@ void WriteLNodesFileTime (FILE * file,l_node * p, name_c * names, double gen_tim
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11957,13 +11864,10 @@ void WriteLNodesFileTimeIntlabel (FILE * file,l_node * p, name_c * names, double
                 switch (p->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        fprintf(file,"%d_%d:%.8lf",p->sp_index,p->paralog,p->gen_length*gen_time*p->gtime_mult);
-                    else
                         fprintf(file,"%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     break;
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Lost-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11973,7 +11877,7 @@ void WriteLNodesFileTimeIntlabel (FILE * file,l_node * p, name_c * names, double
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rtransf-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -11983,7 +11887,7 @@ void WriteLNodesFileTimeIntlabel (FILE * file,l_node * p, name_c * names, double
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rgc-%s_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->gen_length*gen_time*p->gtime_mult);
                     }
@@ -12057,13 +11961,9 @@ void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names)
                         {
                             fprintf(file,"%d,",daughter->index);
                         }
-                        else if (names!=NULL)
-                        {
-                            fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
-                        }
                         else
                         {
-                            fprintf(file,"\'%d_%d\',",daughter->conts->index,daughter->paralog);
+                            fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
                         }
                         break;
                 }
@@ -12094,14 +11994,10 @@ void WriteGNodes (g_node * p, name_c * names)
                 switch (p->contl->kind_node)
                 {
                     default:
-                        if (names==NULL)
-                            printf("%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
-                        
-                        else
                             printf("%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                         break;
                     case LOSS:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12111,7 +12007,7 @@ void WriteGNodes (g_node * p, name_c * names)
                         }
                         break;
                     case RTRFR:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12121,7 +12017,7 @@ void WriteGNodes (g_node * p, name_c * names)
                         }
                         break;
                     case RGC:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12181,14 +12077,10 @@ void WriteGNodesIntlabel (g_node * p, name_c * names)
                 switch (p->contl->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        printf("%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
-                    
-                    else
                         printf("%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                     break;
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12198,7 +12090,7 @@ void WriteGNodesIntlabel (g_node * p, name_c * names)
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12208,7 +12100,7 @@ void WriteGNodesIntlabel (g_node * p, name_c * names)
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         printf("Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12269,15 +12161,11 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
                 switch (p->contl->kind_node)
                 {
                     default:
-                        if (names==NULL)
-                            sprintf(str,"%s%d_%d_%d:%.8lf",str,p->sp_index,p->paralog,p->replica,p->bl);
-                        
-                        else
                             sprintf(str,"%s%s_%d_%d:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                         break;
                         
                     case LOSS:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12287,7 +12175,7 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
                         }
                         break;
                     case RTRFR:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12297,7 +12185,7 @@ void WriteGNodesStr (char * str, g_node * p, name_c * names)
                         }
                         break;
                     case RGC:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12361,15 +12249,11 @@ void WriteGNodesStrIntlabel (char * str, g_node * p, name_c * names)
                 switch (p->contl->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        sprintf(str,"%s%d_%d_%d:%.8lf",str,p->sp_index,p->paralog,p->replica,p->bl);
-                    
-                    else
                         sprintf(str,"%s%s_%d_%d:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                     break;
                     
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         sprintf(str,"%sLost-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12379,7 +12263,7 @@ void WriteGNodesStrIntlabel (char * str, g_node * p, name_c * names)
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         sprintf(str,"%sRtransf-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12389,7 +12273,7 @@ void WriteGNodesStrIntlabel (char * str, g_node * p, name_c * names)
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         sprintf(str,"%sRgc-%s_%d_0:%.8lf",str,(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12453,14 +12337,10 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                 switch (p->contl->kind_node)
                 {
                     default:
-                        if (names==NULL)
-                            fprintf(file,"%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
-                        
-                        else
                             fprintf(file,"%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                         break;
                     case LOSS:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12470,7 +12350,7 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                         }
                         break;
                     case RTRFR:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12480,7 +12360,7 @@ void WriteGNodesFile (FILE * file, g_node * p, name_c * names)
                         }
                         break;
                     case RGC:
-                        if (p->conts->n_child==0 && names!=NULL)
+                        if (p->conts->n_child==0)
                         {
                             fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                         }
@@ -12539,14 +12419,10 @@ void WriteGNodesFileIntlabel (FILE * file, g_node * p, name_c * names)
                 switch (p->contl->kind_node)
             {
                 default:
-                    if (names==NULL)
-                        fprintf(file,"%d_%d_%d:%.8lf",p->sp_index,p->paralog, p->replica,p->bl);
-                    
-                    else
                         fprintf(file,"%s_%d_%d:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->replica,p->bl);
                     break;
                 case LOSS:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Lost-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12556,7 +12432,7 @@ void WriteGNodesFileIntlabel (FILE * file, g_node * p, name_c * names)
                     }
                     break;
                 case RTRFR:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rtransf-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
@@ -12566,7 +12442,7 @@ void WriteGNodesFileIntlabel (FILE * file, g_node * p, name_c * names)
                     }
                     break;
                 case RGC:
-                    if (p->conts->n_child==0 && names!=NULL)
+                    if (p->conts->n_child==0)
                     {
                         fprintf(file,"Rgc-%s_%d_0:%.8lf",(names->names+(p->sp_index*names->max_lname)),p->paralog,p->bl);
                     }
