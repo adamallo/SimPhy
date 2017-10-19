@@ -441,6 +441,21 @@ static long double Measure_g_node_bl_length(g_node *node);
 static void RefineSNodes(s_node * node, int ind_persp, double gen_time);
 
 /**
+ * Generates the name_c for a just-simulated species tree.
+ *
+ * It does not need the tree to be Collapsed, although if so it will be quicker
+ * (implements both a loop-based and an recursion approach).
+ *
+ * \param node
+ *  s_node to work with (root in the first call).
+ * \param names
+ *  Pre-allocated and initialized name_c pointer to modify
+ * \param n_name
+ *  Pointer to the position of the next name
+ *******************************************************************************/
+static void RenameSNodes(s_node *node, name_c *names, int *n_name);
+
+/**
  * Refines a just-read-from-Newick l_node group with tree structure.
  *
  * This function puts the correct l_node::n_nodes, l_node::n_gen and allocates
@@ -7464,6 +7479,52 @@ void FreeNames(name_c **names)
 
 // *** Tree data modification *** //
 
+// ** Species-name generation for simulated trees ** //
+
+long int RenameSTree(name_c **names_ptr, s_tree *sp_tree)
+{
+    int n=sp_tree->n_nodes;
+    int max_length;
+    int n_name=1;
+    int i=0;
+    
+    for(max_length=0; max_length<MAX_IT && n>0; ++max_length)
+    {
+        n/=10;
+    }
+    
+    *names_ptr=NewNames(sp_tree->n_leaves+1, max_length+1+2); //1 for NULL, 2 for quotes
+    
+    //Initialization of the internal node name
+    strncpy((*names_ptr)->names,"Internal node",max_length);
+    *((*names_ptr)->names+max_length+1)=0; //NULL terminated string
+    
+    if(sp_tree->m_node==NULL)
+    {
+        //Recursion
+         RenameSNodes(sp_tree->root, *names_ptr, &n_name);
+    }
+    else //Loop
+    {
+        for (i=0; i<sp_tree->n_nodes; ++i)
+        {
+            switch ((sp_tree->m_node+i)->n_child) {
+                case 0:
+                    snprintf((*names_ptr)->names+((*names_ptr)->max_lname*n_name), sizeof(char)*(*names_ptr)->max_lname, "\"%d\"",n_name);
+                    (sp_tree->m_node+i)->sp_index=n_name;
+                    n_name+=1;
+                    break;
+            }
+        }
+    }
+    
+    if(max_length==MAX_IT)
+        return(LOOP_ERROR);
+    else
+        return(NO_ERROR);
+}
+
+
 // ** G and L tree reassociation ** //
 
 long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, int includelosses)
@@ -10687,6 +10748,25 @@ static void RefineLNodes(l_node * node, int n_gleaves, int ind_persp, double gen
     }
     
 }
+
+static void RenameSNodes(s_node *p, name_c *names, int *n_name)
+{
+    int i=0;
+    
+    switch (p->n_child) {
+        case 0:
+            snprintf(names->names+(names->max_lname**n_name), sizeof(char)*names->max_lname, "\"%d\"",*n_name);
+            p->sp_index=*n_name;
+            *n_name+=1;
+            break;
+    }
+    
+    for (i=0; i<p->n_child; ++i)
+    {
+        RenameSNodes(*(p->children+i), names, n_name);
+    }
+}
+
 //\cond DOXYGEN_EXCLUDE
 //static void CleanlossesLNodes(l_node * node, l_node ** root, int *n_deletions, int *n_leaves)
 //{
