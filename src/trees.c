@@ -11977,11 +11977,11 @@ void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names)
                         {
                             fprintf(file,"%d,",daughter->index);
                         }
-                        else if (daughter->conts->n_child!=0) //Species tree internal node
+                        else if (daughter->conts!= NULL && daughter->conts->n_child!=0)//Species tree internal node with species tree info
                         {
                             fprintf(file,"\'%d_%d\'",daughter->conts->index,daughter->paralog);
                         }
-                        else //Tip in both trees
+                        else //Tip in both trees (or no sp info) 
                         {
                             fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
                         }
