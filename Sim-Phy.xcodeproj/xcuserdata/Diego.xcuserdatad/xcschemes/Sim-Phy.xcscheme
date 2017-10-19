@@ -68,8 +68,12 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-sb f:0.0000000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 1 -rl U:10,100 -o SimPhy_test -sp f:10000 -su f:0.00001 -sl U:20,50 -st f:1000000 -om 1 -v 2 -od 1 -op 1 -oc 1 -on 1 -cs 22 -ol 1"
+            argument = "-rs 1 -rl f:2 -sl f:5 -sp f:1000 -sb f:0.00001 -lb f:0.00001 -ld f:0.00001 -lt f:0.00001 -o test_daughters -om 1 -od 1 -ol 1 -on 1"
             isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-sb f:0.0000000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 1 -rl U:10,100 -o SimPhy_test -sp f:10000 -su f:0.00001 -sl U:20,50 -st f:1000000 -om 1 -v 2 -od 1 -op 1 -oc 1 -on 1 -cs 22 -ol 1"
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -sb f:0.000001 -o si_test -sp f:10000 -su f:0.00001 -sg f:1 -si u:2,5 -st f:1000000 -op 1 -oc 1 -cs 1"
