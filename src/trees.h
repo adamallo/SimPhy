@@ -1074,6 +1074,23 @@ void FreeNames (name_c ** names);
 /** \name Tree data modification **/
 ///@{
 
+// ** Species-name generation for simulated trees ** //
+
+/**
+ * Allocates and populates name_c for a simulated Species tree
+ *
+ * Implements strategies for collapsed and non-collapsed species trees.
+ *
+ * \param names_ptr
+ *  Pointer to name_c pointer to allocate memory and populate it.
+ * \param sp_tree
+ *  Species tree to generate names for.
+ * \return \ref NO_ERROR on OK or an \ref ERRORS "error code" if any error
+ *  ocurrs.
+ *******************************************************************************/
+
+long int RenameSTree(name_c **names_ptr, s_tree *sp_tree);
+
 // ** G and L tree reunification ** //
 
 /**

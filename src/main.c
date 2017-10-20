@@ -775,6 +775,8 @@ int main (int argc, char **argv)
             
             CollapseSTree(sp_tree,0); //Memory reallocation in preorder
             
+            RenameSTree(&names, sp_tree);
+            
             // *****
             /// Species tree modification (substitution rate and generation time heterogeneities)
             if (get_sampling(alpha_s)!=0)
