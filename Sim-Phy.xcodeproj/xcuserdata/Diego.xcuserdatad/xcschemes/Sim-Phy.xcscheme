@@ -72,7 +72,7 @@
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
-            argument = "-rs 1 -rl f:2 -sl f:5 -sp f:1000 -sb f:0.00001 -lb f:0.0000001 -o test_xml -om 1"
+            argument = "-rs 1 -rl f:2 -sl f:5 -sp f:1000 -sb f:0.00001 -lb f:0.000001 -o test_xml -om 1 -cs 20"
             isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
