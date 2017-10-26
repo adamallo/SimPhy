@@ -8982,7 +8982,7 @@ long int WriteLrecGenTreeXML (FILE *file,l_tree *in_tree, name_c * names, int ti
     }
     else
     {
-        fprintf(file, "\n\t<recGeneTree>\n\t\t<phylogeny rooted=\"true\" rerootable=\"false\" type= \"species tree\" branch_length_unit=\"gen\">");
+        fprintf(file, "\n\t<recGeneTree>\n\t\t<phylogeny rooted=\"true\" rerootable=\"false\" type= \"locus tree\" branch_length_unit=\"gen\">");
         WriteLNodesrecGenTreeXMLGen(file,in_tree->root,names,3);
         fprintf(file, "\n\t\t</phylogeny>\n\t</recGeneTree>");
         return(NO_ERROR);
@@ -12015,9 +12015,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                     fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                     indent(file,n_tab+1,1,0);
                     fprintf(file,"<eventsRec>");
+                    indent(file,n_tab+2,1,0);
+                    if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                    {
+                        fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<leaf speciesLocation=%s></leaf>",(names->names+(p->sp_index*names->max_lname)));
-                        indent(file,n_tab+1,1,0);
+                    }
+                    fprintf(file,"<leaf speciesLocation=\"%s\"></leaf>",(names->names+(p->sp_index*names->max_lname)));
+                    indent(file,n_tab+1,1,0);
                     fprintf(file,"</eventsRec>");
                     break;
                 case LOSS:
@@ -12028,9 +12033,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     else
@@ -12040,9 +12050,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     break;
@@ -12054,9 +12069,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     else
@@ -12066,9 +12086,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     break;
@@ -12080,9 +12105,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     else
@@ -12092,9 +12122,14 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         fprintf(file,"<branch_length>%.8lf</branch_length>",p->gen_length);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
+                        indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
                             indent(file,n_tab+2,1,0);
-                            fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
-                            indent(file,n_tab+1,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
+                        indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
                     break;
@@ -12117,7 +12152,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<duplication speciesLocation=%s></duplication>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<duplication speciesLocation=\"%s\"></duplication>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12129,7 +12169,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<duplication speciesLocation=%d></duplication>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<duplication speciesLocation=\"%d\"></duplication>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12145,16 +12190,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%s></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
-                        indent(file,n_tab+2,1,0);
-                        if ((*(p->children+1))->conts->n_child==0)// children+1 in a TRFR node is always the transfered lineage (bound!!)
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
                         {
-                            fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+((*(p->children+1))->sp_index*names->max_lname)));
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
                         }
-                        else
-                        {
-                            fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",(*(p->children+1))->conts->index);
-                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%s\"></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12166,16 +12207,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%d></speciationOut>",p->conts->index);
-                        indent(file,n_tab+2,1,0);
-                        if ((*(p->children+1))->conts->n_child==0) // children+1 in a TRFR node is always the transfered lineage (bound!!)
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
                         {
-                            fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+((*(p->children+1))->sp_index*names->max_lname)));
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
                         }
-                        else
-                        {
-                            fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",(*(p->children+1))->conts->index);
-                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%d\"></speciationOut>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12189,10 +12226,13 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
                         //GC are always to the same species tree branch, this is why it is less complicated than TRFR
-                        fprintf(file,"<speciationOut speciesLocation=%s></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
-                        indent(file,n_tab+2,1,0);
-                        fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                        fprintf(file,"<speciationOut speciesLocation=\"%s\"></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12204,13 +12244,16 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%d></speciationOut>",p->conts->index);
-                        indent(file,n_tab+2,1,0);
-                        fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%d\"></speciationOut>",p->conts->index);;
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
-
+                    
                     break;
                 case SP:
                     // **
@@ -12223,7 +12266,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciation speciesLocation=%s></speciation>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciation speciesLocation=\"%s\"></speciation>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12235,7 +12283,12 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciation speciesLocation=%d></speciation>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciation speciesLocation=\"%d\"></speciation>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12256,7 +12309,6 @@ void WriteLNodesrecGenTreeXMLGen (FILE * file, l_node * p, name_c * names, int n
         fprintf(file,"</clade>");
     }
 }
-
 
 void WriteLNodesFileGenIntlabel (FILE * file,l_node * p, name_c * names)
 {
@@ -12462,7 +12514,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                     indent(file,n_tab+1,1,0);
                     fprintf(file,"<eventsRec>");
                     indent(file,n_tab+2,1,0);
-                    fprintf(file,"<leaf speciesLocation=%s></leaf>",(names->names+(p->sp_index*names->max_lname)));
+                    if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                    {
+                        fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                        indent(file,n_tab+2,1,0);
+                    }
+                    fprintf(file,"<leaf speciesLocation=\"%s\"></leaf>",(names->names+(p->sp_index*names->max_lname)));
                     indent(file,n_tab+1,1,0);
                     fprintf(file,"</eventsRec>");
                     break;
@@ -12475,7 +12532,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12487,7 +12549,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12501,7 +12568,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12513,7 +12585,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12527,7 +12604,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%s></loss>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%s\"></loss>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12539,7 +12621,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<loss speciesLocation=%d></loss>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<loss speciesLocation=\"%d\"></loss>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12563,7 +12650,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<duplication speciesLocation=%s></duplication>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<duplication speciesLocation=\"%s\"></duplication>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12575,7 +12667,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<duplication speciesLocation=%d></duplication>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<duplication speciesLocation=\"%d\"></duplication>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12591,16 +12688,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%s></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
-                        indent(file,n_tab+2,1,0);
-                        if ((*(p->children+1))->conts->n_child==0)// children+1 in a TRFR node is always the transfered lineage (bound!!)
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
                         {
-                            fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+((*(p->children+1))->sp_index*names->max_lname)));
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
                         }
-                        else
-                        {
-                            fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",(*(p->children+1))->conts->index);
-                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%s\"></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12612,16 +12705,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%d></speciationOut>",p->conts->index);
-                        indent(file,n_tab+2,1,0);
-                        if ((*(p->children+1))->conts->n_child==0) // children+1 in a TRFR node is always the transfered lineage (bound!!)
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
                         {
-                            fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+((*(p->children+1))->sp_index*names->max_lname)));
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
                         }
-                        else
-                        {
-                            fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",(*(p->children+1))->conts->index);
-                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%d\"></speciationOut>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12635,10 +12724,13 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
                         //GC are always to the same species tree branch, this is why it is less complicated than TRFR
-                        fprintf(file,"<speciationOut speciesLocation=%s></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
-                        indent(file,n_tab+2,1,0);
-                        fprintf(file,"<transferBack destinationSpecies=%s></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                        fprintf(file,"<speciationOut speciesLocation=\"%s\"></speciationOut>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12650,9 +12742,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciationOut speciesLocation=%d></speciationOut>",p->conts->index);
-                        indent(file,n_tab+2,1,0);
-                        fprintf(file,"<transferBack destinationSpecies=%d></transferBack>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciationOut speciesLocation=\"%d\"></speciationOut>",p->conts->index);;
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12669,7 +12764,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciation speciesLocation=%s></speciation>",(names->names+(p->sp_index*names->max_lname)));
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%s\"></transferBack>",(names->names+(p->sp_index*names->max_lname)));
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciation speciesLocation=\"%s\"></speciation>",(names->names+(p->sp_index*names->max_lname)));
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }
@@ -12681,7 +12781,12 @@ void WriteLNodesrecGenTreeXMLTime (FILE * file, l_node * p, name_c * names, doub
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"<eventsRec>");
                         indent(file,n_tab+2,1,0);
-                        fprintf(file,"<speciation speciesLocation=%d></speciation>",p->conts->index);
+                        if (p->anc_node != NULL && (p->anc_node->kind_node==TRFR || p->anc_node->kind_node==GC) && *(p->anc_node->children+1)==p)
+                        {
+                            fprintf(file,"<transferBack destinationSpecies=\"%d\"></transferBack>",p->conts->index);
+                            indent(file,n_tab+2,1,0);
+                        }
+                        fprintf(file,"<speciation speciesLocation=\"%d\"></speciation>",p->conts->index);
                         indent(file,n_tab+1,1,0);
                         fprintf(file,"</eventsRec>");
                     }

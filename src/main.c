@@ -66,11 +66,11 @@ double FLOAT_PRECISION=0.001;
 // NOTE: Function documentation is in the bottom of the text, in the function declaration section.
 
 // ** I/O ** //
-static inline long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *map, int *db, int *params, int *out_time, int *commands, int *labels, int *daughters, long unsigned *u_seed, char **confile_name,const sampling_table sampling_vars);
-static inline long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit * lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *salpha_g, sampling_unit *lalpha_g,sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *map, int *db, int *params, int *out_time, int *commands, int *labels, int * daughters, long unsigned *u_seed, const sampling_table sampling_vars);
+static inline long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *map, int *mapf, int *db, int *params, int *out_time, int *commands, int *labels, int *daughters, long unsigned *u_seed, char **confile_name,const sampling_table sampling_vars);
+static inline long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit * lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *salpha_g, sampling_unit *lalpha_g,sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *map, int *mapf,int *db, int *params, int *out_time, int *commands, int *labels, int * daughters, long unsigned *u_seed, const sampling_table sampling_vars);
 static inline void PrintXStringError(char **string, int x, char *errormsg);
 void PrintUsage(void);
-static inline void PrintGlobalSettings(FILE *output_file,char * s_tree_newick, char *stree_ifile, int n_istrees,int n_strees,sampling_unit *gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit *sb_rate, sampling_unit *sd_rate, sampling_unit *s_leaves, sampling_unit *s_time, sampling_unit *outgroup, sampling_unit *b_rate, sampling_unit *d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit *lb_rate, sampling_unit *ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit *ind_per_sp,sampling_unit *nl_trees,int ng_trees,sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g,float epsilon, int verbosity, char * out_file,long unsigned u_seed,int stats,int map,int db, int params, int command, int labels, int daughters, const sampling_table stable);
+static inline void PrintGlobalSettings(FILE *output_file,char * s_tree_newick, char *stree_ifile, int n_istrees,int n_strees,sampling_unit *gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit *sb_rate, sampling_unit *sd_rate, sampling_unit *s_leaves, sampling_unit *s_time, sampling_unit *outgroup, sampling_unit *b_rate, sampling_unit *d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit *lb_rate, sampling_unit *ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit *ind_per_sp,sampling_unit *nl_trees,int ng_trees,sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g,float epsilon, int verbosity, char * out_file,long unsigned u_seed,int stats,int map, int mapf, int db, int params, int command, int labels, int daughters, const sampling_table stable);
 static inline void PrintSettingsSloop(char * s_tree_newick, sampling_unit gen_time, char *l_tree_newick, char *ltree_ifile, int n_iltrees,sampling_unit sb_rate, sampling_unit sd_rate, sampling_unit s_leaves, sampling_unit s_time,sampling_unit b_rate, sampling_unit d_rate, sampling_unit t_rate, sampling_unit gc_rate,sampling_unit lb_rate, sampling_unit ld_rate, sampling_unit lt_rate, sampling_unit lgc_rate,int t_kind,sampling_unit outgroup, int min_lleaves, int min_lsleaves, sampling_unit ind_per_sp,sampling_unit nl_trees,int ng_trees,sampling_unit Ne,sampling_unit mu,sampling_unit alpha_s, sampling_unit alpha_l, sampling_unit alpha_g,float epsilon, int verbosity, char * out_file, int n_replicate);
 static inline void PrintSettingsLloop(int curr_ltree,sampling_unit lb_rate,sampling_unit ld_rate,sampling_unit lt_rate,sampling_unit lgc_rate,double gamma_l,sampling_unit lalpha_g);
 static inline void PrintSettingsGloop(int curr_gtree,sampling_unit alpha_g);
@@ -115,7 +115,7 @@ int main (int argc, char **argv)
     
     // ******
     /// Configuration variables
-    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=1,min_lsleaves=0, stats=0, map=0, db=0, params=0, command=1, weirdness=0, t_kind=1, out_time=0, out_daughters=0, out_labels=0;
+    int ns_trees=1,ng_trees=1,verbosity=1,min_lleaves=1,min_lsleaves=0, stats=0, map=0, mapf=0, db=0, params=0, command=1, weirdness=0, t_kind=1, out_time=0, out_daughters=0, out_labels=0;
     float epsilon_brent=0.000001;
     unsigned long u_seed=(time (NULL) * clock());
     char *species_tree_str=NULL,*locus_tree_str=NULL,*out_name=NULL,*base_out_name=NULL,*confile_name=NULL;
@@ -300,7 +300,7 @@ int main (int argc, char **argv)
     fflush(stdout);
 #endif
     
-    ErrorReporter(GetSettings(argc, argv, &ns_trees, &nl_trees, &ng_trees, &species_tree_str, &stree_ifile, &n_istrees, &stree_iname, &gen_time, &locus_tree_str, &ltree_ifile, &n_iltrees, &ltree_iname, &b_rate, &d_rate, &t_rate, &gc_rate, &lb_rate, &ld_rate, &lt_rate, &lgc_rate, &t_kind, &min_lleaves, &min_lsleaves, &ind_per_sp, &sb_rate, &sd_rate, &bds_leaves, &bds_length, &outgroup, &Ne, &mu, &alpha_s, &alpha_l, &alpha_g, &lalpha_g, &salpha_g, &epsilon_brent, &verbosity, &out_name, &stats, &map, &db, &params,&out_time ,&command, &out_labels, &out_daughters, &u_seed, &confile_name, sampling_vars), ": getting settings");
+    ErrorReporter(GetSettings(argc, argv, &ns_trees, &nl_trees, &ng_trees, &species_tree_str, &stree_ifile, &n_istrees, &stree_iname, &gen_time, &locus_tree_str, &ltree_ifile, &n_iltrees, &ltree_iname, &b_rate, &d_rate, &t_rate, &gc_rate, &lb_rate, &ld_rate, &lt_rate, &lgc_rate, &t_kind, &min_lleaves, &min_lsleaves, &ind_per_sp, &sb_rate, &sd_rate, &bds_leaves, &bds_length, &outgroup, &Ne, &mu, &alpha_s, &alpha_l, &alpha_g, &lalpha_g, &salpha_g, &epsilon_brent, &verbosity, &out_name, &stats, &map, &mapf, &db, &params,&out_time ,&command, &out_labels, &out_daughters, &u_seed, &confile_name, sampling_vars), ": getting settings");
 
 #ifdef NO_VAR
     gsl_rng_set(r,5);
@@ -325,7 +325,7 @@ int main (int argc, char **argv)
     /// Printing of recognized settings
     if (verbosity)
     {
-        PrintGlobalSettings(stdout,species_tree_str,stree_iname,n_istrees,ns_trees,&gen_time,locus_tree_str,ltree_iname,n_iltrees,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&b_rate,&d_rate,&t_rate,&gc_rate,&lb_rate, &ld_rate, &lt_rate, &lgc_rate,t_kind,min_lleaves,min_lsleaves,&ind_per_sp,&nl_trees,ng_trees,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&lalpha_g,&salpha_g,epsilon_brent,verbosity,out_name, u_seed,stats,map,db,params,command,out_labels,out_daughters,sampling_vars);
+        PrintGlobalSettings(stdout,species_tree_str,stree_iname,n_istrees,ns_trees,&gen_time,locus_tree_str,ltree_iname,n_iltrees,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&b_rate,&d_rate,&t_rate,&gc_rate,&lb_rate, &ld_rate, &lt_rate, &lgc_rate,t_kind,min_lleaves,min_lsleaves,&ind_per_sp,&nl_trees,ng_trees,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&lalpha_g,&salpha_g,epsilon_brent,verbosity,out_name, u_seed,stats,map,mapf,db,params,command,out_labels,out_daughters,sampling_vars);
     }
     
     
@@ -429,7 +429,7 @@ int main (int argc, char **argv)
             perror("Error opening .params file:");
             ErrorReporter(IO_ERROR,NULL);
         }
-        PrintGlobalSettings(params_outfile,species_tree_str,stree_iname,n_istrees,ns_trees,&gen_time,locus_tree_str,ltree_iname,n_iltrees,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&b_rate,&d_rate,&t_rate,&gc_rate,&lb_rate, &ld_rate, &lt_rate, &lgc_rate,t_kind,min_lleaves,min_lsleaves,&ind_per_sp,&nl_trees,ng_trees,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&lalpha_g,&salpha_g,epsilon_brent,verbosity,out_name, u_seed,stats,map,db,params,command,out_labels,out_daughters,sampling_vars);
+        PrintGlobalSettings(params_outfile,species_tree_str,stree_iname,n_istrees,ns_trees,&gen_time,locus_tree_str,ltree_iname,n_iltrees,&sb_rate,&sd_rate,&bds_leaves,&bds_length,&outgroup,&b_rate,&d_rate,&t_rate,&gc_rate,&lb_rate, &ld_rate, &lt_rate, &lgc_rate,t_kind,min_lleaves,min_lsleaves,&ind_per_sp,&nl_trees,ng_trees,&Ne,&mu,&alpha_s,&alpha_l,&alpha_g,&lalpha_g,&salpha_g,epsilon_brent,verbosity,out_name, u_seed,stats,map,mapf,db,params,command,out_labels,out_daughters,sampling_vars);
         fclose(params_outfile);
         free(params_outname);
         
@@ -929,9 +929,14 @@ int main (int argc, char **argv)
                 if (map>0 && map!=2)
                 {
                     sprintf(mapsl_outname,"%.*d%s",n_ldigits,curr_ltree,mapsl_sufix2);
-                    //ErrorReporter(WriteMappingSL(sp_tree, locus_tree, names, mapsl_outname),"");
-                    //DEBUG
-                    ErrorReporter(WriteSLrecPhyloXML(mapsl_outname, sp_tree, locus_tree, names, out_time),"");
+                    if(mapf==1)
+                    {
+                        ErrorReporter(WriteMappingSL(sp_tree, locus_tree, names, mapsl_outname),"");
+                    }
+                    else
+                    {
+                        ErrorReporter(WriteSLrecPhyloXML(mapsl_outname, sp_tree, locus_tree, names, out_time),"");
+                    }
                 }
 #endif
                 
@@ -1275,7 +1280,18 @@ int main (int argc, char **argv)
                 if (map>0)
                 {
                     if (map!=2)
-                        ErrorReporter(WriteMappingLG(gene_tree, names, maplg_outname),": obtaining LG mapping");
+                    {
+                        if(mapf==1)
+                        {
+                            ErrorReporter(WriteMappingLG(gene_tree, names, maplg_outname),": obtaining LG mapping");
+                        }
+                        else
+                        {
+                            ErrorReporter(WriteMappingLG(gene_tree, names, maplg_outname),": obtaining LG mapping");
+                            ////ErrorReporter(WriteSLrecPhyloXML(mapsl_outname, sp_tree, locus_tree, names, out_time),""); /TODO: This has to be changed when the recPhyloXML supports the coalescent tree
+                        }
+                        
+                    }
                 }
 #endif
                 // ****
@@ -1516,7 +1532,7 @@ int main (int argc, char **argv)
 
 void PrintUsage(void)
 {
-    printf("\nUsage: ./SimPhy -[Parameter code] value(i|r|c|b|*) ...\n\nValue kinds\n\ti=integer\n\tr=real\n\tc=character string\n\tb=boolean(1 or 0)\n\t*=sampling notation\n\nPARAMETERS\n__________\n__________\n\n-R...→ Replicates\n_________________\n\n\t-RS i: Number of species tree replicates (study replicates).\n\t-RL *: Number of locus trees per species tree.\n\t-RG i: Number of gene trees per locus tree (Not for general usage).\n\n-G... → Genome-wide parameters (sampled for each species tree)\n______________________________________________________________\n\n\t-GB *: Duplication parameter (to use with LB)\n\t-GD *: Loss rate parameter (to use with LD).\n\t-GT *: Transfer parameter (to use with LT).\n\t-GG *: Gene conversion parameter (to use with LG).\n\t-GP *: Gene-by-lineage-specific parameter (to use with HG).\n\n-S... → Species tree\n____________________\n\n\t-S c: Fixed species tree (extended Newick format).\n\t-SR c: Nexus file with species trees.\n\t-SB *: Speciation rate (events/time unit).\n\t-SD *: Extinction rate (events/time unit).\n\t-ST *: Species tree height (time units).\n\t-SL *: Number of taxa.\n\t-SO *: Ratio between ingroup height and the branch from the root to the ingroup. If this parameter is not set the outgroup is not simulated.\n\t-SI *: Number of individuals per species.\n\t-SP *: Tree-wide effective population size.\n\t-SU *: Tree-wide substitution rate.\n\t-SG *: Tree-wide generation time.\n\n-L... → Locus tree\n__________________\n\n\t-L c: Locus tree (extended Newick format).\n\t-LR c: Nexus file containing locus trees.\n\t-LB *: Duplication rate (events/generation).\n\t-LD *: Loss rate (events/generation).\n\t-LT *: Horizontal gene transfer (HGT) rate (events/generation). \n\t-LG *: Gene conversion (GC) rate (events/generation).\n\t-LK b: Distance-dependent HGT/GC: Determines whether the sampling of receptors of genetic material depends (1) or not (0) on the evolutionary distance between candidates and donors.\n\t-LL i: Minimum number of locus tree leaves.\n\t-LS i: Minimum number of species represented by the locus tree leaves.\n\n-H...→ Substitution rate heterogeneity parameters\n_________________________________________________\n\n\t-HS *: Species-specific branch rate heterogeneity modifiers.\n\t-HL *: Gene-family-specific rate heterogeneity modifiers.\n\t-HH *:Gene-by-lineage-specific locus tree parameter (to use with the HG argument below).\n\t-HG *: Gene-by-lineage-specific rate heterogeneity modifiers.\n\n-C... → Global options\n______________________\n\n\t-CS i: Random number generator seed.\n\t-CE r: Precision of the Brent’s method for root-finding when sampling the multilocus coalescent. (Not for general usage)\n\n-I c: Input configuration file\n\n-V [0,6]: Verbosity. (Note: the bigger the verbosity the slower SimPhy becomes. Levels over 3 may only make sense for debugging or study the way SimPhy works).\n\n-O...→ Output\n_____________\n\n\t-O c: Common output prefix-name (for folder and names).\n\t-OT b: Determines whether the species and locus tree branches are written in number of generations (0) or time units (1).\n\t-OM b: Activates the tree mapping output.\n\t-OD b: Activates the SQLite database output.\n\t-OP b: Activates the logging of sampled options.\n\t-OC b: Activates the logging of original command line parameters and input configuration files.\n\t-OL b: Activates the output of trees with internal nodes labelled by its post-order id starting from 0.\n\t-ON b: Activates the output of the bounded locus subtrees file.\n\n\nSampling notation\n_________________\n\nNotation squeme= Distribution_code:parameter_1,parameter_2,...,parameter_n\nDistribution codes:\n\tF: fixed value\n\tU: Uniform\n\tN: Normal\n\tE: Exponential\n\tG: Gamma\n\tLN: Lognormal\n\tLU: LogUniform\n\tSL: Lognormal * constant\nExample: N:1,1 (Normal with mean and sd equal 1)\n\nExample\n_______\n\nsimphy -sb f:0.000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 100 -rl U:10,100 -rg 1 -o SimPhy_test -sp f:10000 -su f:0.00001 -sg f:1 -sl U:20,50 -st f:1000000 -om 1 -v 2 -od 1 -op 1 -oc 1 -on 1 -cs 22\n\n");
+    printf("\nUsage: ./SimPhy -[Parameter code] value(i|r|c|b|*) ...\n\nValue kinds\n\ti=integer\n\tr=real\n\tc=character string\n\tb=boolean(1 or 0)\n\t*=sampling notation\n\nPARAMETERS\n__________\n__________\n\n-R...→ Replicates\n_________________\n\n\t-RS i: Number of species tree replicates (study replicates).\n\t-RL *: Number of locus trees per species tree.\n\t-RG i: Number of gene trees per locus tree (Not for general usage).\n\n-G... → Genome-wide parameters (sampled for each species tree)\n______________________________________________________________\n\n\t-GB *: Duplication parameter (to use with LB)\n\t-GD *: Loss rate parameter (to use with LD).\n\t-GT *: Transfer parameter (to use with LT).\n\t-GG *: Gene conversion parameter (to use with LG).\n\t-GP *: Gene-by-lineage-specific parameter (to use with HG).\n\n-S... → Species tree\n____________________\n\n\t-S c: Fixed species tree (extended Newick format).\n\t-SR c: Nexus file with species trees.\n\t-SB *: Speciation rate (events/time unit).\n\t-SD *: Extinction rate (events/time unit).\n\t-ST *: Species tree height (time units).\n\t-SL *: Number of taxa.\n\t-SO *: Ratio between ingroup height and the branch from the root to the ingroup. If this parameter is not set the outgroup is not simulated.\n\t-SI *: Number of individuals per species.\n\t-SP *: Tree-wide effective population size.\n\t-SU *: Tree-wide substitution rate.\n\t-SG *: Tree-wide generation time.\n\n-L... → Locus tree\n__________________\n\n\t-L c: Locus tree (extended Newick format).\n\t-LR c: Nexus file containing locus trees.\n\t-LB *: Duplication rate (events/generation).\n\t-LD *: Loss rate (events/generation).\n\t-LT *: Horizontal gene transfer (HGT) rate (events/generation). \n\t-LG *: Gene conversion (GC) rate (events/generation).\n\t-LK b: Distance-dependent HGT/GC: Determines whether the sampling of receptors of genetic material depends (1) or not (0) on the evolutionary distance between candidates and donors.\n\t-LL i: Minimum number of locus tree leaves.\n\t-LS i: Minimum number of species represented by the locus tree leaves.\n\n-H...→ Substitution rate heterogeneity parameters\n_________________________________________________\n\n\t-HS *: Species-specific branch rate heterogeneity modifiers.\n\t-HL *: Gene-family-specific rate heterogeneity modifiers.\n\t-HH *:Gene-by-lineage-specific locus tree parameter (to use with the HG argument below).\n\t-HG *: Gene-by-lineage-specific rate heterogeneity modifiers.\n\n-C... → Global options\n______________________\n\n\t-CS i: Random number generator seed.\n\t-CE r: Precision of the Brent’s method for root-finding when sampling the multilocus coalescent. (Not for general usage)\n\n-I c: Input configuration file\n\n-V [0,6]: Verbosity. (Note: the bigger the verbosity the slower SimPhy becomes. Levels over 3 may only make sense for debugging or study the way SimPhy works).\n\n-O...→ Output\n_____________\n\n\t-O c: Common output prefix-name (for folder and names).\n\t-OT b: Determines whether the species and locus tree branches are written in number of generations (0) or time units (1).\n\t-OM b: Activates the tree mapping output.\n\t-OF b: Activates the legacy tree mapping output (recPhyloXML by default).\n\t-OD b: Activates the SQLite database output.\n\t-OP b: Activates the logging of sampled options.\n\t-OC b: Activates the logging of original command line parameters and input configuration files.\n\t-OL b: Activates the output of trees with internal nodes labelled by its post-order id starting from 0.\n\t-ON b: Activates the output of the bounded locus subtrees file.\n\n\nSampling notation\n_________________\n\nNotation squeme= Distribution_code:parameter_1,parameter_2,...,parameter_n\nDistribution codes:\n\tF: fixed value\n\tU: Uniform\n\tN: Normal\n\tE: Exponential\n\tG: Gamma\n\tLN: Lognormal\n\tLU: LogUniform\n\tSL: Lognormal * constant\nExample: N:1,1 (Normal with mean and sd equal 1)\n\nExample\n_______\n\nsimphy -sb f:0.000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 100 -rl U:10,100 -rg 1 -o SimPhy_test -sp f:10000 -su f:0.00001 -sg f:1 -sl U:20,50 -st f:1000000 -om 1 -v 2 -od 1 -op 1 -oc 1 -on 1 -cs 22\n\n");
     
     fflush(stdout);
     
@@ -1611,6 +1627,8 @@ void PrintUsage(void)
  *   Logical flag, if ==1 it generates a csv with some stats.
  * \param map
  *   Logical flag, if ==1 it generates a mapping between species and gene trees.
+ * \param mapf
+ *   Logical flag, if ==1 the mapping format is the legacy format, otherwise, recPhyloXML
  * \return Error-control code.
  * \param db
  *   Logical flag, if ==1 it generates a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.
@@ -1634,7 +1652,7 @@ void PrintUsage(void)
  * \todo Think about the idea of using this library https://github.com/Cofyc/argparse to get the options, because it is much more flexible.
  *******************************************************************************/
 
-long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *map, int *db, int *params, int *out_time, int *commands, int *labels, int *daughters, unsigned long *u_seed, char **confile_name,const sampling_table sampling_vars)
+long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE **stree_ifile, int *n_istrees, char **stree_iname, sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees, char **ltree_iname,sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit *sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit *outgroup, sampling_unit *Ne,sampling_unit *mu, sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g,sampling_unit *lalpha_g,sampling_unit *salpha_g, float *epsilon,int *verbosity,char **out_name, int *stats, int *map, int *mapf,int *db, int *params, int *out_time, int *commands, int *labels, int *daughters, unsigned long *u_seed, char **confile_name,const sampling_table sampling_vars)
 {
     int i=0,read_file=0;
     char code=0,sub_code=0,buff_char=0;
@@ -1810,6 +1828,15 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                         /// -OM. Mapping output
                     case 'M':
                         if(sscanf(argv[i],"%u",map)==0)
+                        {
+                            PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
+                            return (SETTINGS_ERROR);
+                        }
+                        break;
+                        // **
+                        /// -OF. Mapping format
+                    case 'F':
+                        if(sscanf(argv[i],"%u",mapf)==0)
                         {
                             PrintXStringError(argv,i, "|<– ERROR in this parameter\n");
                             return (SETTINGS_ERROR);
@@ -2192,7 +2219,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
                                     printf("\n\tWARNING! You are using both the input file option -I and command line parameters. If you define a parameter using both input options, command line options will have preference\n");
                                 }
                                 read_file=1;
-                                ErrorReporter(GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time,commands,labels,daughters, u_seed, sampling_vars),"");
+                                ErrorReporter(GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, mapf, db, params, out_time,commands,labels,daughters, u_seed, sampling_vars),"");
                                 
                                 fclose(input_file);
                                 i=0;
@@ -2423,6 +2450,8 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
  *   Logical flag, if ==1 it generates a csv with some stats.
  * \param map
  *   Logical flag, if ==1 it generates a mapping between species and gene trees.
+ * \param mapf
+ *   Logical flag, if ==1 the mapping format is the legacy format, otherwise, recPhyloXML
  * \return Error-control code.
  * \param db
  *   Logical flag, if ==1 it generates a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.
@@ -2442,7 +2471,7 @@ long int GetSettings(int argc, char **argv, int *ns_trees, sampling_unit *nl_tre
  * \return Error-control code.
  *******************************************************************************/
 
-long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit * lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *salpha_g, sampling_unit *lalpha_g,sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *map, int *db, int *params, int *out_time,int *commands,int *labels,int *daughters, unsigned long *u_seed, const sampling_table sampling_vars)
+long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_trees, int *ng_trees, char ** newick_stree, FILE ** stree_ifile, int *n_istrees,char **stree_iname,sampling_unit * gen_time, char ** newick_ltree, FILE **ltree_ifile, int *n_iltrees,char **ltree_iname, sampling_unit * b_rate, sampling_unit * d_rate, sampling_unit * t_rate, sampling_unit *gc_rate,sampling_unit * lb_rate, sampling_unit * ld_rate, sampling_unit * lt_rate, sampling_unit *lgc_rate, int *t_kind, int *min_lleaves, int *min_lsleaves, sampling_unit *ind_per_sp,sampling_unit * sb_rate, sampling_unit * sd_rate, sampling_unit * bds_leaves, sampling_unit * bds_length, sampling_unit * outgroup, sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *salpha_g, sampling_unit *lalpha_g,sampling_unit *alpha_g,float *epsilon, int *verbosity,char **out_name, int *stats, int *map, int *mapf, int *db, int *params, int *out_time,int *commands,int *labels,int *daughters, unsigned long *u_seed, const sampling_table sampling_vars)
 {
     int i=0,offset=0;
     unsigned int LENGTH=10000;
@@ -2645,6 +2674,16 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
                             /// -OM. Mapping output
                         case 'M':
                             if(sscanf(buffer+offset,"%u",map)==0)
+                            {
+                                
+                                fprintf(stderr,"Error in the parameter: %s\n",buffer);
+                                return (SETTINGS_ERROR);
+                            }
+                            break;
+                            // **
+                            /// -OF. Mapping format output
+                        case 'F':
+                            if(sscanf(buffer+offset,"%u",mapf)==0)
                             {
                                 
                                 fprintf(stderr,"Error in the parameter: %s\n",buffer);
@@ -3140,6 +3179,8 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
  *   Logical flag, if ==1 it generates a csv with some stats.
  * \param map
  *   Logical flag, if ==1 it generates a mapping between species and gene trees.
+ * \param mapf
+ *   Logical flag, if ==1 it uses the legacy format for the reconciliation.
  * \return Error-control code.
  * \param db
  *   Logical flag, if ==1 it generates a SQLite database with 3 linked tables (Species_Trees, Locus_Trees and Gene_Trees) with some characteristics of each tree.
@@ -3155,7 +3196,7 @@ long int GetSettingsFromFile(FILE *input_file,int *ns_trees, sampling_unit *nl_t
  *  Logical flag to activate the output of the bounded locus subtrees file.
  *******************************************************************************/
 
-static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifile, int n_istrees, int n_strees,sampling_unit *gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit *sb_rate, sampling_unit *sd_rate, sampling_unit *s_leaves, sampling_unit *s_time, sampling_unit *outgroup, sampling_unit *b_rate, sampling_unit *d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit *lb_rate, sampling_unit *ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit *ind_per_sp,sampling_unit *nl_trees,int ng_trees,sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g, sampling_unit *lalpha_g, sampling_unit *salpha_g,float epsilon, int verbosity, char * out_file,unsigned long u_seed,int stats,int map,int db, int params, int command,int labels, int daughters, const sampling_table stable)
+static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifile, int n_istrees, int n_strees,sampling_unit *gen_time, char * l_tree_newick, char *ltree_ifile, int n_iltrees, sampling_unit *sb_rate, sampling_unit *sd_rate, sampling_unit *s_leaves, sampling_unit *s_time, sampling_unit *outgroup, sampling_unit *b_rate, sampling_unit *d_rate, sampling_unit *t_rate, sampling_unit *gc_rate,sampling_unit *lb_rate, sampling_unit *ld_rate, sampling_unit *lt_rate, sampling_unit *lgc_rate, int t_kind, int min_lleaves, int min_lsleaves, sampling_unit *ind_per_sp,sampling_unit *nl_trees,int ng_trees,sampling_unit *Ne,sampling_unit *mu,sampling_unit *alpha_s, sampling_unit *alpha_l, sampling_unit *alpha_g, sampling_unit *lalpha_g, sampling_unit *salpha_g,float epsilon, int verbosity, char * out_file,unsigned long u_seed,int stats,int map, int mapf, int db, int params, int command,int labels, int daughters, const sampling_table stable)
 {
     char * buffer=calloc(100,sizeof(char));
     
@@ -3266,7 +3307,7 @@ static void PrintGlobalSettings(FILE *file,char * s_tree_newick, char *stree_ifi
     fprintf(file,"\n\t-Individuals per species: %s",buffer);
     Print_Sampling(nl_trees,buffer,stable);
     fprintf(file,"\n\nMisc parameters:\n\t-Rooting method epsilon: %f\n\t-Seed: %lu",epsilon,u_seed);
-    fprintf(file,"\n\nI/O options:\n\t-Output files prefix: %s\n\t-Verbosity: %d\n\t-Stats file: %s\n\t-Mapping: %s\n\t-Database: %s\n\t-Parameterization: %s \n\t-Command-line arguments: %s\n\t-Bounded locus subtrees: %s\n\t-Output trees with internal node labels: %s\n",out_file,verbosity,stats==0?"OFF":"ON",map==0?"OFF":"ON",db==0?"OFF":"ON",params==0?"OFF":"ON",command==0?"OFF":"ON",daughters==0?"OFF":"ON",labels==0?"OFF":"ON");
+    fprintf(file,"\n\nI/O options:\n\t-Output files prefix: %s\n\t-Verbosity: %d\n\t-Stats file: %s\n\t-Mapping: %s\n\t-Mapping format: %s\n\t-Database: %s\n\t-Parameterization: %s \n\t-Command-line arguments: %s\n\t-Bounded locus subtrees: %s\n\t-Output trees with internal node labels: %s\n",out_file,verbosity,stats==0?"OFF":"ON",map==0?"OFF":"ON",mapf==0?"recPhyloXML":"legacy",db==0?"OFF":"ON",params==0?"OFF":"ON",command==0?"OFF":"ON",daughters==0?"OFF":"ON",labels==0?"OFF":"ON");
     
     fflush(stdout);
     
