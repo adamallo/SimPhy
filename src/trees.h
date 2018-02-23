@@ -800,6 +800,8 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
  *   Seed for the random number generator.
  * \paran tn_lcoals
  *   Pointer to return the number of observed extra lineages.
+ * \paran max_extralineages
+ *   Pointer to return the number of maximum extra lineages for this gene tree along this locus tree.
  * \param simlosses
  *   Logical flag. If ==1, then the lost locus tree lineages are simulated at the gene tree level, using only one leave. This is mainly for DBGging and it is not recomended for general users.
  * \param verbosity
@@ -811,7 +813,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention If collapse==0 the resulting tree has to be collapsed to be a proper tree (with proper memory structure)
  *******************************************************************************/
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int simlosses,int verbosity, double gen_time, int collapse);
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int *max_extralineages,int simlosses,int verbosity, double gen_time, int collapse);
 
 /**
  *  Simulates a new gene tree under the multilocus coalescent process along a locus tree.
@@ -828,6 +830,8 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  *   Seed for the random number generator.
  * \paran tn_lcoals
  *   Pointer to return the number of observed extra lineages.
+ * \paran max_extralineages
+ *   Pointer to return the number of maximum extra lineages for this gene tree along this locus tree.
  * \param verbosity
  *   Config about verbosity.
  * \param gen_time
@@ -837,7 +841,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
  * \return NO_ERROR on OK or an ErrorCode if any error ocurrs.
  * \attention If collapse==0 the resulting tree has to be collapsed to be a proper tree (with proper memory structure)
  *******************************************************************************/
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time, int collapse);
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *tn_lcoals, int *max_extralineages, int verbosity, double gen_time, int collapse);
 
 /**
  * Creates a new l_tree, and initializes it.

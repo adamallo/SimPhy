@@ -268,13 +268,13 @@ int main (int argc, char **argv)
     // *******
     /// Statistical output exclusive variables
     unsigned long long st_locustsumextralin=0;
-    long double st_locustsum_height_cu=0,st_locustsum_height_bl=0;
+    long double st_locustsum_height_cu=0,st_locustsum_height_bl=0,st_locustsumpropextralin=0;
     int st_lleaves=0,st_gleaves=0;
     
     // *******
     /// <dl><dt>Loging variables</dt><dd></dd></dl></dd></dl>
     long double height_bl=0,height_cu=0,st_height=0,st_length=0,length_bl=0;
-    int n_extralin=0,n_dups=0,n_losses=0,n_trans=0,n_gc=0,n_ltrials=0;
+    int n_extralin=0,max_extralin=0,n_dups=0,n_losses=0,n_trans=0,n_gc=0,n_ltrials=0;
     
     // ********
     /// <dl><dt>Main program</dt><dd>
@@ -660,7 +660,7 @@ int main (int argc, char **argv)
                 perror("Error opening stats.txt:");
                 ErrorReporter(IO_ERROR,NULL);
             }
-            fprintf(stat_outfile,"L_tree;N_losses;N_duplications;N_transfers;N_lt_totaltips;N_gt_presenttips;Mean_gt_height(cu);Mean_gt_height(ec);Mean_extra_lineages\n");
+            fprintf(stat_outfile,"L_tree;N_losses;N_duplications;N_transfers;N_lt_totaltips;N_gt_presenttips;Mean_gt_height(cu);Mean_gt_height(ec);Mean_extra_lineages;Mean_prop_extra_lineages\n");
             if (verbosity>4)
             {
                 printf("Done\n");
@@ -886,7 +886,7 @@ int main (int argc, char **argv)
         {
             ErrorReporter(sample_distr(r,5,&lb_rate,&ld_rate,&lt_rate,&lgc_rate,&lalpha_g),": sampling distributions");
             ErrorReporter(CheckSampledSettingsLloop(lb_rate,ld_rate,lt_rate,lgc_rate,lalpha_g), ": improper sampled values");
-            n_dups=n_losses=n_trans=n_gc=n_extralin=n_ltrials=0;
+            n_dups=n_losses=n_trans=n_gc=n_extralin=max_extralin=n_ltrials=0;
             
             if(get_sampling(alpha_l)!=0)
                 gamma_l=gsl_ran_gamma(r, get_sampling(alpha_l), 1/(get_sampling(alpha_l)));
@@ -1084,6 +1084,7 @@ int main (int argc, char **argv)
                 st_locustsum_height_bl=0;
                 st_locustsum_height_cu=0;
                 st_locustsumextralin=0;
+                st_locustsumpropextralin=0;
             }
             
 #ifdef SORTHOLOGS
@@ -1206,9 +1207,9 @@ int main (int argc, char **argv)
                 // ****
                 /// Gene tree simulation
                 if (n_dups==0 && n_trans==0 && n_gc==0)
-                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,map>1?1:0,verbosity,get_sampling(gen_time),map>0||out_labels==1?1:0),": simulating a gene tree");
+                    ErrorReporter(SimMSCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,&max_extralin,map>1?1:0,verbosity,get_sampling(gen_time),map>0||out_labels==1?1:0),": simulating a gene tree");
                 else
-                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,verbosity,get_sampling(gen_time),map>0||out_labels==1?1:0),": simulating a gene tree");
+                    ErrorReporter(SimMLCGTree(locus_tree,&gene_tree,names,epsilon_brent,r,&n_extralin,&max_extralin,verbosity,get_sampling(gen_time),map>0||out_labels==1?1:0),": simulating a gene tree");
                 
                 // ****
                 /// <dl><dt>Gene tree bl modifications</dt><dd>
@@ -1349,11 +1350,12 @@ int main (int argc, char **argv)
                     st_locustsum_height_cu+=height_cu;
                     st_locustsum_height_bl+=height_bl;
                     st_locustsumextralin+=n_extralin;
+                    st_locustsumpropextralin+=n_extralin/(long double)max_extralin;
                 }
 #ifndef NO_OUT
                 if (db>0)
                 {
-                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, get_sampling(alpha_g),locus_tree->n_gleaves, n_extralin, height_cu, length_bl),": writting gene tree table");
+                    ErrorReporter(WriteGTreeDB(&database, curr_gtree, t_n_ltree,curr_ltree, curr_stree, get_sampling(alpha_g),locus_tree->n_gleaves, n_extralin, max_extralin, height_cu, length_bl),": writting gene tree table");
                 }
                 
 #endif
@@ -1365,7 +1367,7 @@ int main (int argc, char **argv)
             /// Statistical output </dd></dl>
             if (stats==1)
             {
-                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Le;%Le;%Le\n",n_ldigits,curr_ltree,n_losses,n_dups,n_trans,st_lleaves,st_gleaves,st_locustsum_height_cu/ng_trees,st_locustsum_height_bl/ng_trees,((long double)st_locustsumextralin)/ng_trees);
+                fprintf(stat_outfile,"%.*d;%d;%d;%d;%d;%d;%Le;%Le;%Le;%Le\n",n_ldigits,curr_ltree,n_losses,n_dups,n_trans,st_lleaves,st_gleaves,st_locustsum_height_cu/ng_trees,st_locustsum_height_bl/ng_trees,((long double)st_locustsumextralin)/ng_trees,st_locustsumpropextralin/ng_trees);
             }
             // *******
             /// Gene tree I/O close</dd></dl>
