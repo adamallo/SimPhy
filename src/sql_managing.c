@@ -62,7 +62,7 @@ long int InitDB(sqlite3 **database, char * db_filename)
 	  return(DB_ERROR);
 	}
 
-	sprintf(query,"CREATE TABLE IF NOT EXISTS Gene_Trees(GID INTEGER PRIMARY KEY,n_gtree INTEGER NOT NULL,LID INTEGER NOT NULL,n_ltree INTEGER NOT NULL, SID INTEGER NOT NULL,Alpha_g REAL,n_leaves INTEGER,Extra_l INTEGER,Tree_h_cu REAL,Tree_l_bl REAL,FOREIGN KEY(LID) REFERENCES Locus_Trees(LID),FOREIGN KEY(SID) REFERENCES Species_Trees(SID))");
+	sprintf(query,"CREATE TABLE IF NOT EXISTS Gene_Trees(GID INTEGER PRIMARY KEY,n_gtree INTEGER NOT NULL,LID INTEGER NOT NULL,n_ltree INTEGER NOT NULL, SID INTEGER NOT NULL,Alpha_g REAL,n_leaves INTEGER,Extra_l INTEGER,Max_extra_l INTEGER,Tree_h_cu REAL,Tree_l_bl REAL,FOREIGN KEY(LID) REFERENCES Locus_Trees(LID),FOREIGN KEY(SID) REFERENCES Species_Trees(SID))");
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	if(db_iserror!=SQLITE_OK)
 	{
@@ -155,7 +155,7 @@ long int WriteLTreeDB(sqlite3 **database, int n_ltree, int SID, double b_rate, d
     return NO_ERROR;
 }
 
-long int WriteGTreeDB(sqlite3 **database, int n_gtree, unsigned long long LID, int n_ltree, int SID,double alpha_g,int n_leaves, int extra_lineages, double tree_h_cu, double tree_l_ss)
+long int WriteGTreeDB(sqlite3 **database, int n_gtree, unsigned long long LID, int n_ltree, int SID,double alpha_g,int n_leaves, int extra_lineages, int max_extra_lineages, double tree_h_cu, double tree_l_ss)
 {
 	char *query;
 	char *zErrMsg=NULL;
@@ -164,7 +164,7 @@ long int WriteGTreeDB(sqlite3 **database, int n_gtree, unsigned long long LID, i
     
     query=calloc(1000, sizeof(char));
 	
-	sprintf(query,"INSERT INTO Gene_Trees VALUES(NULL,'%d','%lld','%d','%d','%e','%d','%d','%e','%e')",n_gtree,LID,n_ltree,SID,alpha_g,n_leaves,extra_lineages,tree_h_cu,tree_l_ss);//52+numbers
+	sprintf(query,"INSERT INTO Gene_Trees VALUES(NULL,'%d','%lld','%d','%d','%e','%d','%d','%d', '%e','%e')",n_gtree,LID,n_ltree,SID,alpha_g,n_leaves,extra_lineages,max_extra_lineages,tree_h_cu,tree_l_ss);//52+numbers
 	db_iserror=sqlite3_exec(*database,query,NULL,NULL,&zErrMsg);
 	
 	if(db_iserror!=SQLITE_OK)

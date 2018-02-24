@@ -5210,7 +5210,7 @@ long int SimBDLHTree(s_tree *wsp_tree,l_tree **wlocus_tree, l_node **node_ptrs, 
     
 }
 
-long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals,int simlosses, int verbosity, double gen_time, int collapse)
+long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent, gsl_rng *seed, int *n_lcoals, int *max_extralineages,int simlosses, int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5262,6 +5262,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     w_gnodes=(*gene_tree)->m_node;
     next_avail_inode=wlocus_tree->n_gleaves;
     *n_lcoals=0;
+    *max_extralineages=0;
     
     // ****
     /// <dl><dt>Post-order iteration loop over l_nodes to perform a coalescent simulation along each l_tree branch</dt><dd>
@@ -5480,6 +5481,11 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         
         if (anc_lnode != NULL)
         {
+            if(w_lnode->fmax_nlin>1)
+            {
+                *max_extralineages+=w_lnode->fmax_nlin-1;//We count the number of maximum extra lineages exiting the branch. Therefore, the root branch does not add extra
+            }
+            
             n_anc_nodes=anc_lnode->n_nodes;
             for (j=0;j<w_lnode->n_nodes;++j) //Uncoalesced nodes in the current l_node
             {
@@ -5525,7 +5531,7 @@ long int SimMSCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     return(NO_ERROR);
 }
 
-long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals,int verbosity, double gen_time, int collapse)
+long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, float epsilon_brent,gsl_rng *seed, int *tn_lcoals, int *max_extralineages, int verbosity, double gen_time, int collapse)
 {
     // *******
     /// <dl><dt>Variable declaration</dt><dd>
@@ -5588,6 +5594,7 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
     w_gnodes=(*gene_tree)->m_node;
     next_avail_inode=wlocus_tree->n_gleaves;
     *tn_lcoals=0;
+    *max_extralineages=0;
     
     for (i=0; i<wlocus_tree->n_nodes; ++i)
     {
@@ -5887,6 +5894,11 @@ long int SimMLCGTree(l_tree *wlocus_tree, g_tree **gene_tree, name_c * names, fl
         
         if (anc_lnode != NULL)
         {
+            if(w_lnode->fmax_nlin>1)
+            {
+                *max_extralineages+=w_lnode->fmax_nlin-1;//We count the number of maximum extra lineages exiting the branch. Therefore, the root branch does not add extra
+            }
+            
             n_anc_nodes=anc_lnode->n_nodes;
             for (j=0;j<w_lnode->n_nodes;++j) //Uncoalesced nodes in the current l_node
             {
@@ -7548,9 +7560,11 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                     case RTRFR:
                     case RGC:
                         w_lnode->n_nodes=includelosses;
+                        w_lnode->fmax_nlin=includelosses;
                         break;
                     default:
                         w_lnode->n_nodes=w_lnode->conts!=NULL?w_lnode->conts->n_replicas:w_lnode->n_ilin; // If there is no species tree node (fixed locus tree), the locus tree doesn't change, and therefore we can use the number of input lineages in the same way as conts->n_replicas
+                        w_lnode->fmax_nlin=w_lnode->n_nodes;
                         break;
                 }
                 // *
@@ -7571,6 +7585,7 @@ long int MatchTreesMSC(l_tree *locus_tree, g_tree *gene_tree, int reset_gtree, i
                 
             default:
                 w_lnode->n_nodes=0;
+                w_lnode->fmax_nlin=(*(w_lnode->children))->fmax_nlin+(*(w_lnode->children+1))->fmax_nlin;
                 break;
         }
     }
