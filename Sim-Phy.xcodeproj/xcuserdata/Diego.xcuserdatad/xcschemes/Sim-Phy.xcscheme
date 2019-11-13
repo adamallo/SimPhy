@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "1120"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -26,10 +26,7 @@
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -39,14 +36,13 @@
             ReferencedContainer = "container:Sim-Phy.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
-      language = ""
       launchStyle = "0"
       useCustomWorkingDirectory = "YES"
       customWorkingDirectory = "/Users/Diego/Desktop/Sim-Phy_debug"
@@ -67,11 +63,15 @@
       <CommandLineArguments>
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_controlfile.conf"
+            isEnabled = "YES">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-st f:1.0 -sb f:0.01 -sd f:0.001 -cs 112233 -sp f:10000 -sg f:1000 -o test -v 1"
             isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sb f:0.0000000001 -ld f:0.0000006 -lb f:0.0000005 -lt f:0.0000005 -rs 1 -rl U:10,100 -o SimPhy_test -sp f:10000 -su f:0.00001 -sl U:20,50 -st f:1000000 -om 1 -v 2 -f 0 -od 1 -op 1 -oc 1 -on 1 -cs 22 -ol 1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -sb f:0.000001 -o si_test -sp f:10000 -su f:0.00001 -sg f:1 -si u:2,5 -st f:1000000 -op 1 -oc 1 -cs 1"
