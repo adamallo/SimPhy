@@ -51,7 +51,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2013"
             endingLineNumber = "2013"
-            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -68,7 +68,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "4199"
             endingLineNumber = "4199"
-            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+            landmarkName = "SimBDLTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_leaves, st_gleaves)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -85,7 +85,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "4197"
             endingLineNumber = "4197"
-            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+            landmarkName = "SimBDLTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_leaves, st_gleaves)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -102,7 +102,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "4198"
             endingLineNumber = "4198"
-            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+            landmarkName = "SimBDLTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_leaves, st_gleaves)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -221,7 +221,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "4184"
             endingLineNumber = "4184"
-            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+            landmarkName = "SimBDLTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_leaves, st_gleaves)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -255,7 +255,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "7904"
             endingLineNumber = "7904"
-            landmarkName = "CollapseResizeLTree(in_tree, new_nnodes, new_nleaves, post_order, relink, probs)"
+            landmarkName = "CollapseLTree(in_tree, post_order, relink, probs)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -289,7 +289,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8462"
             endingLineNumber = "8462"
-            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
+            landmarkName = "Measure_GT_height(tree, height, unit)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -306,7 +306,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "11537"
             endingLineNumber = "11537"
-            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+            landmarkName = "WriteLNodesGenIntlabel(p, names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -323,7 +323,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "11559"
             endingLineNumber = "11559"
-            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+            landmarkName = "WriteLNodesGenIntlabel(p, names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -340,7 +340,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "11560"
             endingLineNumber = "11560"
-            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+            landmarkName = "WriteLNodesGenIntlabel(p, names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -357,7 +357,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8515"
             endingLineNumber = "8515"
-            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
+            landmarkName = "Measure_GT_length(tree, length, unit)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -595,7 +595,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2106"
             endingLineNumber = "2106"
-            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -612,7 +612,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2968"
             endingLineNumber = "2968"
-            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -629,7 +629,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2965"
             endingLineNumber = "2965"
-            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -663,8 +663,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1150"
             endingLineNumber = "1150"
-            landmarkName = "NNexusTrees(ifile, n_trees)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -697,7 +697,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8633"
             endingLineNumber = "8633"
-            landmarkName = "CheckUltrametricityLTree(tree)"
+            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -714,7 +714,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8634"
             endingLineNumber = "8634"
-            landmarkName = "CheckUltrametricityLTree(tree)"
+            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -731,7 +731,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "12923"
             endingLineNumber = "12923"
-            landmarkName = "GetLnodeParamsFromNexusComments(string, node, n_char)"
+            landmarkName = "WriteGNodesFile(file, p, names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -748,24 +748,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "11904"
             endingLineNumber = "11904"
-            landmarkName = "WriteLNodesFileTimeIntlabel(file, p, names, gen_time)"
-            landmarkType = "9">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "34CB57BE-270E-4C64-8649-8C9CA4939C31"
-            shouldBeEnabled = "No"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "src/trees.c"
-            timestampString = "454584673.388297"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "8835"
-            endingLineNumber = "8835"
-            landmarkName = "WriteLTreeFile(file, in_tree, names, time, int_labels)"
+            landmarkName = "WriteLNodesFileGenIntlabel(file, p, names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -833,7 +816,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "7546"
             endingLineNumber = "7546"
-            landmarkName = "MatchTreesMSC(locus_tree, gene_tree, reset_gtree, includelosses)"
+            landmarkName = "FreeNames(names)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -850,7 +833,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "9045"
             endingLineNumber = "9045"
-            landmarkName = "WriteMappingSL(wsp_tree, locus_tree, names, mapsl_outname)"
+            landmarkName = "WriteGTreeFile(file, in_tree, names, unit, int_labels)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -935,7 +918,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1924"
             endingLineNumber = "1924"
-            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -952,7 +935,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2769"
             endingLineNumber = "2769"
-            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -969,8 +952,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3202"
             endingLineNumber = "3202"
-            landmarkName = "PrintGlobalSettings(file, s_tree_newick, stree_ifile, n_istrees, n_strees, gen_time, l_tree_newick, ltree_ifile, n_iltrees, sb_rate, sd_rate, s_leaves, s_time, outgroup, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, nl_trees, ng_trees, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_file, u_seed, stats, map, db, params, command, labels, daughters, stable)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -986,7 +969,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2245"
             endingLineNumber = "2245"
-            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1003,7 +986,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2217"
             endingLineNumber = "2217"
-            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1105,8 +1088,8 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3189"
             endingLineNumber = "3189"
-            landmarkName = "PrintGlobalSettings(file, s_tree_newick, stree_ifile, n_istrees, n_strees, gen_time, l_tree_newick, ltree_ifile, n_iltrees, sb_rate, sd_rate, s_leaves, s_time, outgroup, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, nl_trees, ng_trees, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_file, u_seed, stats, map, db, params, command, labels, daughters, stable)"
-            landmarkType = "9">
+            landmarkName = "unknown"
+            landmarkType = "0">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
@@ -1156,7 +1139,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2960"
             endingLineNumber = "2960"
-            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+            landmarkName = "NewSTree(n_nodes, n_leaves, n_gleaves, max_children, gen_time, Ne, mu)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1207,7 +1190,7 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "8955"
             endingLineNumber = "8955"
-            landmarkName = "WriteMappingSL(wsp_tree, locus_tree, names, mapsl_outname)"
+            landmarkName = "WriteGTree(in_tree, names, unit, int_labels)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
@@ -1224,6 +1207,70 @@
             startingLineNumber = "1040"
             endingLineNumber = "1040"
             landmarkName = "RndGamma1(s, seed)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "01C2A615-A19A-4174-9ECC-E2E14EBCD03E"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "118"
+            endingLineNumber = "118"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "87BD483B-1AC4-4BBC-9434-4FAF972BFFCE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1816"
+            endingLineNumber = "1816"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, slout_unit, gout_unit, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "DD86A097-6C31-4445-A024-F843C6F57C8B"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1247"
+            endingLineNumber = "1247"
+            landmarkName = "main(argc, argv)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "5D68AD09-B639-4453-B0EA-E73BBED1EEAE"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/main.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1261"
+            endingLineNumber = "1261"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
