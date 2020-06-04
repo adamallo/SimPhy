@@ -12005,15 +12005,49 @@ void WriteDaughtersNodesFile(FILE * file,l_node * p, name_c *names)
                         {
                             fprintf(file,"%d,",daughter->index);
                         }
-                        else if (names!=NULL)
-                        {
-                            fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
-                        }
                         else
                         {
-                            fprintf(file,"\'%d_%d\',",daughter->conts->index,daughter->paralog);
+                            switch (daughter->kind_node)
+                            {
+                                default:
+                                    if (names==NULL)
+                                        fprintf(file,"\'%d_%d\',",daughter->sp_index,daughter->paralog);
+                                    else
+                                        fprintf(file,"\'%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
+                                    break;
+                                case LOSS:
+                                    if (daughter->conts->n_child==0 && names!=NULL)
+                                    {
+                                        fprintf(file,"\'Lost-%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
+                                    }
+                                    else
+                                    {
+                                        fprintf(file,"\'Lost-%d_%d\',",daughter->conts->index,daughter->paralog);
+                                    }
+                                    break;
+                                case RTRFR:
+                                    if (daughter->conts->n_child==0 && names!=NULL)
+                                    {
+                                        fprintf(file,"\'Rtransf-%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
+                                    }
+                                    else
+                                    {
+                                        fprintf(file,"\'Rtransf-%d_%d\',",daughter->conts->index,daughter->paralog);
+                                    }
+                                    break;
+                                case RGC:
+                                    if (daughter->conts->n_child==0 && names!=NULL)
+                                    {
+                                        fprintf(file,"\'Rgc-%s_%d\',",(names->names+(daughter->sp_index*names->max_lname)),daughter->paralog);
+                                    }
+                                    else
+                                    {
+                                        fprintf(file,"\'Rgc-%d_%d\',",daughter->conts->index,daughter->paralog);
+                                    }
+                                    break;
+                            }
+                            break;
                         }
-                        break;
                 }
                 break;
             
