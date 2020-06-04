@@ -1,0 +1,1 @@
+./simphy -SR /Users/Diego/Downloads/test.tree.nex -RL U:381,381 -RG 1 -v 3 -CS 12345 -O test -LT U:0.0000002,0.0000002 -LK 1 -SP U:10000000,10000000 -HS LN:1.5,1 -HL LN:1.2,1 -HG LN:1.4,1 
