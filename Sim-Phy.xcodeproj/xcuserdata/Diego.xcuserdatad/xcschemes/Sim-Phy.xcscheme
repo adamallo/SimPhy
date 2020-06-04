@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "0800"
+   LastUpgradeVersion = "1120"
    version = "1.3">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -27,8 +27,6 @@
       selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
       selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       shouldUseLaunchSchemeArgsEnv = "YES">
-      <Testables>
-      </Testables>
       <MacroExpansion>
          <BuildableReference
             BuildableIdentifier = "primary"
@@ -38,8 +36,8 @@
             ReferencedContainer = "container:Sim-Phy.xcodeproj">
          </BuildableReference>
       </MacroExpansion>
-      <AdditionalOptions>
-      </AdditionalOptions>
+      <Testables>
+      </Testables>
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
@@ -69,7 +67,7 @@
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-sb f:0.0000000001 -ld f:0.0000005 -lb f:0.0000005 -lt f:0.0000005 -rs 1 -rl U:10,100 -o SimPhy_test -sp f:10000 -su f:0.00001 -sl U:20,50 -st f:1000000 -om 1 -v 2 -od 1 -op 1 -oc 1 -on 1 -cs 22 -ol 1"
-            isEnabled = "YES">
+            isEnabled = "NO">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-rs 100 -sb f:0.000001 -o si_test -sp f:10000 -su f:0.00001 -sg f:1 -si u:2,5 -st f:1000000 -op 1 -oc 1 -cs 1"
@@ -82,6 +80,10 @@
          <CommandLineArgument
             argument = "-i /Users/Diego/Desktop/newsim/SimPhy_configV1.conf"
             isEnabled = "NO">
+         </CommandLineArgument>
+         <CommandLineArgument
+            argument = "-i /Users/Diego/Desktop/Sim-Phy/configuration_files/SimPhy_complex.conf"
+            isEnabled = "YES">
          </CommandLineArgument>
          <CommandLineArgument
             argument = "-Rs 100 -Rl U:10,500 -Rg 1 -St U:100000,10000000 -si F:1 -Sl U:10,50 -Sb LN:-14,1 -SP LN:12,0.5 -Hs LN:1.5,1 -Hl LN:1.2,1 -Hg LN:1.4,1 -SU E:10000000 -OD 1 -op 1 -oc 1 -v 1 -So SL:0,0.1,0.5 -Cs 22 -O final_first_1000rep_1"

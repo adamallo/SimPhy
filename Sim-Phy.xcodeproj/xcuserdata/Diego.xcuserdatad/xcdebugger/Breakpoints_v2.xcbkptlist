@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Bucket
+   uuid = "3E444494-773E-44B7-A9E3-C9B453C26BA5"
    type = "1"
    version = "2.0">
    <Breakpoints>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "EB1C77C4-B65E-4BDE-B765-E0B63AC26F37"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -15,13 +17,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "875"
             endingLineNumber = "875"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "04752C52-6F4A-4829-B308-80C1F022B120"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -31,13 +34,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "874"
             endingLineNumber = "874"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "BDA11E70-0CFA-4C12-BCCB-5A5C6795079A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -47,13 +51,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2013"
             endingLineNumber = "2013"
-            landmarkName = "GetSettings()"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "F6147E5C-51E4-40BE-A9C5-F6AAB13BDC65"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -61,15 +66,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4203"
             endingLineNumber = "4203"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4199"
+            endingLineNumber = "4199"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "FEEA3BF6-3DEB-4F74-814D-19489FCA0152"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -77,15 +89,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4201"
             endingLineNumber = "4201"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4197"
+            endingLineNumber = "4197"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "2456A1FA-B1B8-4015-9418-9FD53C751D65"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -93,15 +112,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4202"
             endingLineNumber = "4202"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4198"
+            endingLineNumber = "4198"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "36D9AB58-B7A4-43F7-8E7B-4239AC9B39D0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -109,15 +135,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8565"
             endingLineNumber = "8565"
             landmarkName = "ExpectedPrunedLtreeNleavesSNodes()"
+=======
+            startingLineNumber = "8561"
+            endingLineNumber = "8561"
+            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "4E697805-6E07-4528-B934-9ABC66E0D651"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -125,15 +158,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "5183"
             endingLineNumber = "5183"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "5179"
+            endingLineNumber = "5179"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "AA9C6EEB-2A77-4156-9DBE-2336E445DE94"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -143,13 +183,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "917"
             endingLineNumber = "917"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "517D732A-000D-4279-B496-191380A1C23E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -157,15 +198,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4766"
             endingLineNumber = "4766"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4762"
+            endingLineNumber = "4762"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "32F8DE28-BCC2-43DB-857A-C8DA4FF08400"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -173,15 +221,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4692"
             endingLineNumber = "4692"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4688"
+            endingLineNumber = "4688"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "A1620040-F5EC-4A38-B9B1-CD6091CF97B4"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -189,15 +244,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4346"
             endingLineNumber = "4346"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4342"
+            endingLineNumber = "4342"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "46B422B0-3104-41E2-9121-3DF3CC04D33C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -205,15 +267,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "4188"
             endingLineNumber = "4188"
             landmarkName = "SimBDLHTree()"
+=======
+            startingLineNumber = "4184"
+            endingLineNumber = "4184"
+            landmarkName = "SimBDLHTree(wsp_tree, wlocus_tree, node_ptrs, b_rate, d_rate, h_rate, gc_rate, t_kind, seed, min_lleaves, min_lsleaves, verbosity, st_losses, st_dups, st_transfr, st_gc, st_leaves, st_gleaves, st_ntrials)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "039D2DBC-133D-4943-AD4C-966DDA20F679"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -223,13 +292,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "734"
             endingLineNumber = "734"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "4B3418D8-9232-4ADE-8BE6-299E18583D5D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -237,15 +307,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "7908"
             endingLineNumber = "7908"
             landmarkName = "CollapseResizeLTree()"
+=======
+            startingLineNumber = "7904"
+            endingLineNumber = "7904"
+            landmarkName = "CollapseResizeLTree(in_tree, new_nnodes, new_nleaves, post_order, relink, probs)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "235BED51-FB8B-4FB9-99A8-6739B73B884A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -255,13 +332,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1287"
             endingLineNumber = "1287"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "AFB21506-68D1-4E60-9AC5-214A2979B985"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -269,15 +347,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8466"
             endingLineNumber = "8466"
             landmarkName = "MeasureMRCAEVdistance()"
+=======
+            startingLineNumber = "8462"
+            endingLineNumber = "8462"
+            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "A6BAAEFA-09ED-4CC6-B7E2-88D857023A9F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -285,15 +370,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "11550"
             endingLineNumber = "11550"
             landmarkName = "WriteLNodesTimeIntlabel()"
+=======
+            startingLineNumber = "11537"
+            endingLineNumber = "11537"
+            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "08DF4E55-0CB2-45DC-9044-4DE5C948FAE1"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -301,15 +393,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "11572"
             endingLineNumber = "11572"
             landmarkName = "WriteLNodesTimeIntlabel()"
+=======
+            startingLineNumber = "11559"
+            endingLineNumber = "11559"
+            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "A25D981B-11E9-4450-ADF4-DD4F3F161583"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -317,15 +416,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "11573"
             endingLineNumber = "11573"
             landmarkName = "WriteLNodesTimeIntlabel()"
+=======
+            startingLineNumber = "11560"
+            endingLineNumber = "11560"
+            landmarkName = "WriteLNodesTimeIntlabel(p, names, gen_time)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "F918EC0E-9A22-4AAF-902A-1B6721DEBBEE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -333,15 +439,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8519"
             endingLineNumber = "8519"
             landmarkName = "MeasureMRCAEVdistance()"
+=======
+            startingLineNumber = "8515"
+            endingLineNumber = "8515"
+            landmarkName = "MeasureMRCAEVdistance(wg_tree, event, distances, n_dup, unit)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "494C08D2-C14B-4E7F-B1C8-992F95687B35"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -351,13 +464,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "760"
             endingLineNumber = "760"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "6AE05363-CBAB-4629-AC18-7BA0853967AF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -365,15 +479,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3403"
             endingLineNumber = "3403"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3399"
+            endingLineNumber = "3399"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "218D3122-30AA-479A-A9C4-BF3D1913A2D0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -381,15 +502,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3064"
             endingLineNumber = "3064"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3060"
+            endingLineNumber = "3060"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "86DF8A5E-A765-411B-99C8-832369AF476B"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -397,15 +525,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3108"
             endingLineNumber = "3108"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3104"
+            endingLineNumber = "3104"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "FB8145EE-3054-49BE-9959-69547420E156"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -413,15 +548,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3247"
             endingLineNumber = "3247"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3243"
+            endingLineNumber = "3243"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "02EDAD8C-9302-4039-9B1F-040ECE57818F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -429,15 +571,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3129"
             endingLineNumber = "3129"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3125"
+            endingLineNumber = "3125"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "BE25C498-C225-47FA-B93A-9159F797A439"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -445,15 +594,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3160"
             endingLineNumber = "3160"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3156"
+            endingLineNumber = "3156"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "41B9D43C-6837-4869-86E8-4C1140177477"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -461,15 +617,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3203"
             endingLineNumber = "3203"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3199"
+            endingLineNumber = "3199"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "E9C4ABB2-9C78-450A-B6A2-9DC7DA7B2031"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -477,15 +640,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3284"
             endingLineNumber = "3284"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3280"
+            endingLineNumber = "3280"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "4DA07FB4-C5D0-4646-876E-7A74950D011C"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -493,15 +663,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3267"
             endingLineNumber = "3267"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3263"
+            endingLineNumber = "3263"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "4BBAAF7F-5895-420B-8C76-F33C73B71DAF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -509,15 +686,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3354"
             endingLineNumber = "3354"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3350"
+            endingLineNumber = "3350"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "CED5EDA1-EFF2-4C98-A6AA-CB40366ACD9D"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -525,15 +709,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3630"
             endingLineNumber = "3630"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3626"
+            endingLineNumber = "3626"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "6142C124-C504-43A0-998F-86F55831EF25"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -541,15 +732,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3502"
             endingLineNumber = "3502"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3498"
+            endingLineNumber = "3498"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "BDD4E055-F2F6-4352-B055-0E0991AE18AF"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -559,13 +757,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2106"
             endingLineNumber = "2106"
-            landmarkName = "GetSettings()"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "38365ABA-FA5B-4916-B35A-CF7BCAACC784"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -575,13 +774,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2968"
             endingLineNumber = "2968"
-            landmarkName = "GetSettingsFromFile()"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "89AD727B-FC30-498F-9767-F2DA9B92ABB5"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -591,13 +791,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2965"
             endingLineNumber = "2965"
-            landmarkName = "GetSettingsFromFile()"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "CD2CC695-951D-4E76-82D0-6DCB370258AF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -605,15 +806,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3029"
             endingLineNumber = "3029"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3025"
+            endingLineNumber = "3025"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "2E542EE0-5EB1-4028-919C-890F3E0DF972"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -621,15 +829,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "1154"
             endingLineNumber = "1154"
             landmarkName = "NNexusTrees()"
+=======
+            startingLineNumber = "1150"
+            endingLineNumber = "1150"
+            landmarkName = "NNexusTrees(ifile, n_trees)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "0920DC37-2049-4A03-BB7D-7E638D05281F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -637,15 +852,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "2325"
             endingLineNumber = "2325"
             landmarkName = "ParseNexusLTree()"
+=======
+            startingLineNumber = "2321"
+            endingLineNumber = "2321"
+            landmarkName = "ParseNexusLTree(nexus, names_ptr, verbosity, gen_time, Ne, mu, ind_persp, n_dup, n_loss, n_trans, n_gc)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "85A2AC45-F3D0-47AF-929C-DB18863F97B7"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -653,15 +875,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8637"
             endingLineNumber = "8637"
             landmarkName = "CheckUltrametricityLTree()"
+=======
+            startingLineNumber = "8633"
+            endingLineNumber = "8633"
+            landmarkName = "CheckUltrametricityLTree(tree)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "117E108B-19E8-4453-913C-AC9BDC5FB2BE"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -669,15 +898,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8638"
             endingLineNumber = "8638"
             landmarkName = "CheckUltrametricityLTree()"
+=======
+            startingLineNumber = "8634"
+            endingLineNumber = "8634"
+            landmarkName = "CheckUltrametricityLTree(tree)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "D0F19291-B674-49BA-BA19-EAB8E072B1CE"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -685,15 +921,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "12936"
             endingLineNumber = "12936"
             landmarkName = "GetLnodeParamsFromNexusComments()"
+=======
+            startingLineNumber = "12923"
+            endingLineNumber = "12923"
+            landmarkName = "GetLnodeParamsFromNexusComments(string, node, n_char)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "5AA41488-7187-4216-A06D-3221676AF609"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -701,15 +944,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "11917"
             endingLineNumber = "11917"
             landmarkName = "WriteLNodesFileTimeIntlabel()"
+=======
+            startingLineNumber = "11904"
+            endingLineNumber = "11904"
+            landmarkName = "WriteLNodesFileTimeIntlabel(file, p, names, gen_time)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "34CB57BE-270E-4C64-8649-8C9CA4939C31"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -717,15 +967,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8846"
             endingLineNumber = "8846"
             landmarkName = "WriteDaughtersFile()"
+=======
+            startingLineNumber = "8835"
+            endingLineNumber = "8835"
+            landmarkName = "WriteLTreeFile(file, in_tree, names, time, int_labels)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "7EB5DF70-229B-47B8-82E0-D85D5DB539C0"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -735,13 +992,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "863"
             endingLineNumber = "863"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "B56ADC75-A36A-4F77-A618-851A3ABF2133"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -751,13 +1009,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1035"
             endingLineNumber = "1035"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "8C6968C6-6563-4885-9E84-9B7E8AAE0CCD"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -767,13 +1026,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1068"
             endingLineNumber = "1068"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "EDF68314-7BBB-4E58-BCE7-DEFE060F69DD"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -781,15 +1041,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "7550"
             endingLineNumber = "7550"
             landmarkName = "MatchTreesMSC()"
+=======
+            startingLineNumber = "7546"
+            endingLineNumber = "7546"
+            landmarkName = "MatchTreesMSC(locus_tree, gene_tree, reset_gtree, includelosses)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "7A304EAE-7947-4A5E-B8AF-78E7F62BF705"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -797,15 +1064,22 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "9056"
             endingLineNumber = "9056"
             landmarkName = "WriteMappingSL()"
+=======
+            startingLineNumber = "9045"
+            endingLineNumber = "9045"
+            landmarkName = "WriteMappingSL(wsp_tree, locus_tree, names, mapsl_outname)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "0403A9C5-0147-49CE-95EB-5A67E7C68A1A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -813,15 +1087,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "5929"
             endingLineNumber = "5929"
             landmarkName = "SimMLCGTree()"
+=======
+            startingLineNumber = "5925"
+            endingLineNumber = "5925"
+            landmarkName = "SimMLCGTree(wlocus_tree, gene_tree, names, epsilon_brent, seed, tn_lcoals, max_extralineages, verbosity, gen_time, collapse)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "CBB872DB-D517-4FD1-A852-6CE64D37AB6F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -831,13 +1112,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1096"
             endingLineNumber = "1096"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "004BF2E8-B606-4D85-AE63-992E4ABFDCC4"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -854,6 +1136,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "3DA458A9-9812-4047-824B-DCA2DE5B45BF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -870,6 +1153,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "79DA2380-2EB0-4E8A-83FC-A7DCB372248F"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -879,13 +1163,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1924"
             endingLineNumber = "1924"
-            landmarkName = "GetSettings()"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "6DE8DB95-14FF-4D73-8547-166B267D95F3"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -895,13 +1180,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2769"
             endingLineNumber = "2769"
-            landmarkName = "GetSettingsFromFile()"
+            landmarkName = "GetSettingsFromFile(input_file, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, salpha_g, lalpha_g, alpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "F5E5F7F9-2CAA-42E4-9DEC-2F7C56BE2D59"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -911,13 +1197,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3202"
             endingLineNumber = "3202"
-            landmarkName = "PrintGlobalSettings()"
+            landmarkName = "PrintGlobalSettings(file, s_tree_newick, stree_ifile, n_istrees, n_strees, gen_time, l_tree_newick, ltree_ifile, n_iltrees, sb_rate, sd_rate, s_leaves, s_time, outgroup, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, nl_trees, ng_trees, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_file, u_seed, stats, map, db, params, command, labels, daughters, stable)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "20675470-EC64-49AC-848D-C5B82C8455D6"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -927,13 +1214,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2245"
             endingLineNumber = "2245"
-            landmarkName = "GetSettings()"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "397F980F-912D-4B2A-9A79-E0A12370DE38"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -943,13 +1231,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "2217"
             endingLineNumber = "2217"
-            landmarkName = "GetSettings()"
+            landmarkName = "GetSettings(argc, argv, ns_trees, nl_trees, ng_trees, newick_stree, stree_ifile, n_istrees, stree_iname, gen_time, newick_ltree, ltree_ifile, n_iltrees, ltree_iname, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, sb_rate, sd_rate, bds_leaves, bds_length, outgroup, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_name, stats, map, db, params, out_time, commands, labels, daughters, u_seed, confile_name, sampling_vars)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "05A0BAF1-A8CF-470E-8E9A-0C4B3F685784"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -966,6 +1255,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "4DBBC5C6-6A10-46FC-901E-275A03E0F203"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -975,13 +1265,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "695"
             endingLineNumber = "695"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "0EF0281F-B020-46EB-A973-47478E2F1C6E"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -991,13 +1282,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "1070"
             endingLineNumber = "1070"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "B9344638-4E7E-4F6D-ABA5-1399280D4AC0"
             shouldBeEnabled = "Yes"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1014,6 +1306,7 @@
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "0F0557D8-1EFB-445E-8C5B-06087F5A14E4"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1023,13 +1316,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "328"
             endingLineNumber = "328"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "119A77A1-D1A4-41D1-9AD4-3CD122EF8896"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1039,13 +1333,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "3189"
             endingLineNumber = "3189"
-            landmarkName = "PrintGlobalSettings()"
+            landmarkName = "PrintGlobalSettings(file, s_tree_newick, stree_ifile, n_istrees, n_strees, gen_time, l_tree_newick, ltree_ifile, n_iltrees, sb_rate, sd_rate, s_leaves, s_time, outgroup, b_rate, d_rate, t_rate, gc_rate, lb_rate, ld_rate, lt_rate, lgc_rate, t_kind, min_lleaves, min_lsleaves, ind_per_sp, nl_trees, ng_trees, Ne, mu, alpha_s, alpha_l, alpha_g, lalpha_g, salpha_g, epsilon, verbosity, out_file, u_seed, stats, map, db, params, command, labels, daughters, stable)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "C80A30DF-3899-4F0B-A745-4D857EAC57DF"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1055,13 +1350,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "309"
             endingLineNumber = "309"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "B4E0CA4B-CEB8-43B6-8DFC-331C98CCA99A"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1071,13 +1367,14 @@
             endingColumnNumber = "9223372036854775807"
             startingLineNumber = "881"
             endingLineNumber = "881"
-            landmarkName = "main()"
+            landmarkName = "main(argc, argv)"
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "C8E1AD37-2ADD-4CAF-A29C-BF5435B262A8"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1085,15 +1382,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "2964"
             endingLineNumber = "2964"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "2960"
+            endingLineNumber = "2960"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "85C751BC-61BF-4E9C-8568-9B8424981E82"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1101,15 +1405,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3127"
             endingLineNumber = "3127"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3123"
+            endingLineNumber = "3123"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "1D235ADA-6B21-42ED-BDC6-ECDDA33FB079"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1117,15 +1428,22 @@
             timestampString = "517552688.971788"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "3639"
             endingLineNumber = "3639"
             landmarkName = "NewBDSTree()"
+=======
+            startingLineNumber = "3635"
+            endingLineNumber = "3635"
+            landmarkName = "NewBDSTree(out_tree, leaves, time, b_rate, d_rate, gen_time, Ne, mu, ind_per_sp, outgroup, complete, mrca_time, seed, out_time, labels, verbosity)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
       <BreakpointProxy
          BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
          <BreakpointContent
+            uuid = "D96481BC-BD64-4751-98CF-969D4C083021"
             shouldBeEnabled = "No"
             ignoreCount = "0"
             continueAfterRunningActions = "No"
@@ -1133,9 +1451,31 @@
             timestampString = "517552936.442138"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
+<<<<<<< HEAD
             startingLineNumber = "8966"
             endingLineNumber = "8966"
             landmarkName = "WriteMappingSL()"
+=======
+            startingLineNumber = "8955"
+            endingLineNumber = "8955"
+            landmarkName = "WriteMappingSL(wsp_tree, locus_tree, names, mapsl_outname)"
+            landmarkType = "9">
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "6FBE3237-F5F1-409B-8910-D99044BA9340"
+            shouldBeEnabled = "Yes"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "src/num_methods.c"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "1040"
+            endingLineNumber = "1040"
+            landmarkName = "RndGamma1(s, seed)"
+>>>>>>> master
             landmarkType = "9">
          </BreakpointContent>
       </BreakpointProxy>
